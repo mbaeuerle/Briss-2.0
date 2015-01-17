@@ -71,7 +71,7 @@ public class CropJob {
 	public File getRecommendedDestination() {
 		// create file recommendation
 		String origName = getSource().getAbsolutePath();
-		String recommendedName = origName.substring(0, origName.length() - 4) + RECOMMENDED_ENDING;
+		String recommendedName = origName.substring(0, origName.lastIndexOf('.')) + RECOMMENDED_ENDING;
 		return new File(recommendedName);
 	}
 

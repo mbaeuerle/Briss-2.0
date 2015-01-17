@@ -35,6 +35,6 @@ public class PDFFileFilter extends FileFilter {
 
 	@Override
 	public final String getDescription() {
-		return null;
+		return "PDF (*.pdf)";
 	}
 }
