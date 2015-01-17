@@ -26,6 +26,8 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -86,6 +88,10 @@ import com.itextpdf.text.DocumentException;
 @SuppressWarnings("serial")
 public class BrissGUI extends JFrame implements ActionListener, PropertyChangeListener, ComponentListener {
 
+	private static final int DEFAULT_HEIGHT = 600;
+	private static final int DEFAULT_WIDTH = 800;
+	private static final int MIN_HEIGHT = 400;
+	private static final int MIN_WIDTH = 400;
 	private static final String EXCLUDE_PAGES_DESCRIPTION = "Enter pages to be excluded from merging (e.g.: \"1-4;6;9\").\n"
 			+ "First page has number: 1\n" + "If you don't know what you should do just press \"Cancel\"";
 	private static final String SET_SIZE_DESCRIPTION = "Enter size in milimeters (width height)";
@@ -285,7 +291,7 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 		previewPanel = new JPanel();
 		previewPanel.setLayout(new WrapLayout(FlowLayout.LEFT, 4, 4));
 		previewPanel.setEnabled(true);
-		previewPanel.setBackground(Color.BLACK);
+		previewPanel.setBackground(new Color(0xf0, 0xf0, 0xf0));
 		previewPanel.addComponentListener(this);
 
 		progressBar = new JProgressBar(0, 100);
@@ -298,8 +304,19 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 		scrollPane.getVerticalScrollBar().setUnitIncrement(30);
 		add(scrollPane, BorderLayout.CENTER);
 		add(progressBar, BorderLayout.PAGE_END);
+
+		setWindowBounds();
 		pack();
 		setVisible(true);
+	}
+
+	private void setWindowBounds() {
+		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+		int screenWidth = gd.getDisplayMode().getWidth();
+		int screenHeight = gd.getDisplayMode().getHeight();
+		setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
+		setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+		setLocation(screenWidth / 2 - DEFAULT_WIDTH / 2, screenHeight / 2 - DEFAULT_HEIGHT / 2);
 	}
 
 	private void setUILook() {
