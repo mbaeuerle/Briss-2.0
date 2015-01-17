@@ -1,0 +1,53 @@
+<h2>BRISS HowTo</h2>
+<h3>Typical work flow</h3>
+<ol>
+	<li>Load a PDF by clicking <span style="font-family: monospace">File-&gt;Load</span>
+		and choose the pdf to which should be cropped.<i>(Optional: Set
+			the pages to exclude from merging)</i></li>
+	<li>Now the PDF is loaded and you are shown the merged pages. A
+		page is merged to a cluster if it has the same size and is either even
+		or odd.</li>
+	<li>Draw multiple crop rectangle by clicking+holding the left
+		mouse button down. The content of each crop rectangle will be
+		transformed into a distinct page in the output PDF.</li>
+	<li>Start the cropping by <span style="font-family: monospace">Action-&gt;Crop</span>.
+		Next chose the output file name and press "Ok"
+	</li>
+</ol>
+<h3>Preview</h3>
+<ul>
+	<li>If you just want to check if your rectangle selection is
+		appropriate you can press <span style="font-family: monospace">Action-&gt;Preview</span>.
+		This will generate a temporary cropped PDF.
+	</li>
+</ul>
+<h3>Handle crop rectangles</h3>
+<ul>
+	<li>If you want to <b>delete</b> a crop rectangle move the mouse
+		pointer into the rectangle, press the right mouse button and click
+		"Delete rectangle"
+	</li>
+	<li>You can <b>move</b> crop rectangles around by clicking and
+		holding the left mousebutton in a crop rectangle!
+	</li>
+	<li>You can copy and paste a rectangle between different page
+		clusters. Therefore you must select some crop rectangles. Afterwards
+		press ctrl+c, then click into the page cluster where you want to paste
+		the selected crop rectangles and paste them by pressing ctrl+v.</li>
+	<li>Various other self describing actions are available through the <span style="font-family: monospace">Action-</span> menu.</li>
+</ul>
+<h3>Command line usage</h3>
+<p>
+	If you prefer command line and trust the basic automatic detection
+	algorithm use it this way (can be batched!):<br />
+<pre>
+java -jar briss-0.0.13.jar -s [SOURCEFILE] [-d [DESTINATIONFILE]]
+</pre>
+Example:
+<pre>
+java -jar briss-0.0.13.jar -s dogeatdog.pdf -d dogcrop.pdf
+java -jar briss-0.0.13.jar -s dogeatdog.pdf 
+</pre>
+<p>the second line will crop the file into
+<pre>dogeatdog_cropped.pdf</pre>
+</p>
