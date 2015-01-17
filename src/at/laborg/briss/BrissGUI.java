@@ -85,13 +85,15 @@ import com.itextpdf.text.DocumentException;
  * @author gerhard
  * 
  */
-@SuppressWarnings("serial")
+
 public class BrissGUI extends JFrame implements ActionListener, PropertyChangeListener, ComponentListener {
 
+	private static final long serialVersionUID = 5623134571633965275L;
 	private static final int DEFAULT_HEIGHT = 600;
 	private static final int DEFAULT_WIDTH = 800;
 	private static final int MIN_HEIGHT = 400;
 	private static final int MIN_WIDTH = 400;
+
 	private static final String EXCLUDE_PAGES_DESCRIPTION = "Enter pages to be excluded from merging (e.g.: \"1-4;6;9\").\n"
 			+ "First page has number: 1\n" + "If you don't know what you should do just press \"Cancel\"";
 	private static final String SET_SIZE_DESCRIPTION = "Enter size in milimeters (width height)";
@@ -390,6 +392,7 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 		return null;
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent action) {
 		if (action.getActionCommand().equals(DONATE)) {
 			try {
@@ -713,6 +716,7 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 		}
 	}
 
+	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if ("progress".equals(evt.getPropertyName())) {
 			progressBar.setValue((Integer) evt.getNewValue());
@@ -824,6 +828,7 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 		}
 	}
 
+	@Override
 	public void componentResized(ComponentEvent e) {
 		previewPanel.revalidate();
 		for (Component component : previewPanel.getComponents()) {
@@ -831,12 +836,15 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 		}
 	}
 
+	@Override
 	public void componentMoved(ComponentEvent e) {
 	}
 
+	@Override
 	public void componentShown(ComponentEvent e) {
 	}
 
+	@Override
 	public void componentHidden(ComponentEvent e) {
 	}
 }
