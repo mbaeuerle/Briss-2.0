@@ -11,8 +11,7 @@ public class CropRectangle {
 	 */
 	private float xToLeft, yToBottom, xToRight, yToTop;
 
-	public CropRectangle(final float xToLeft, final float yToBottom, final float xToRight,
-			final float yToTop) {
+	public CropRectangle(final float xToLeft, final float yToBottom, final float xToRight, final float yToTop) {
 		super();
 		this.xToLeft = xToLeft;
 		this.yToBottom = yToBottom;

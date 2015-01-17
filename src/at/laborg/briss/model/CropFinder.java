@@ -40,16 +40,13 @@ public final class CropFinder {
 
 		Float[] result = new Float[4];
 		result[0] = (positionXLeft / (float) image.getWidth());
-		result[1] = ((image.getHeight() - positionYBottom) / (float) image
-				.getHeight());
-		result[2] = ((image.getWidth() - positionXRight) / (float) image
-				.getWidth());
+		result[1] = ((image.getHeight() - positionYBottom) / (float) image.getHeight());
+		result[2] = ((image.getWidth() - positionXRight) / (float) image.getWidth());
 		result[3] = (positionYTop / (float) image.getHeight());
 		return result;
 	}
 
-	private static double[] sumFrom2dTo1d(final WritableRaster raster,
-			final int axis) {
+	private static double[] sumFrom2dTo1d(final WritableRaster raster, final int axis) {
 		if (axis == X_AXIS) {
 			double[] values = new double[raster.getWidth()];
 			for (int i = 0; i < raster.getWidth(); i++) {
@@ -84,8 +81,7 @@ public final class CropFinder {
 		return derivedValues;
 	}
 
-	private static int findPosition(final double[] sds,
-			final int orientationLeft) {
+	private static int findPosition(final double[] sds, final int orientationLeft) {
 		int position = 0;
 
 		switch (orientationLeft) {
@@ -150,8 +146,7 @@ public final class CropFinder {
 		return sds;
 	}
 
-	private static int diffCounter(final double[] values, final int start,
-			final int end) {
+	private static int diffCounter(final double[] values, final int start, final int end) {
 
 		int cnt = 0;
 		for (int i = start; i < end; i++) {

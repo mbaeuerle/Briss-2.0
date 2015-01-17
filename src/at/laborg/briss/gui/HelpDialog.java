@@ -31,8 +31,7 @@ public class HelpDialog extends JDialog {
 
 	private static final String HELP_FILE_PATH = "/help.html";
 
-	public HelpDialog(final Frame owner, final String title,
-			final Dialog.ModalityType modalityType) {
+	public HelpDialog(final Frame owner, final String title, final Dialog.ModalityType modalityType) {
 		super(owner, title, modalityType);
 		setBounds(232, 232, 500, 800);
 

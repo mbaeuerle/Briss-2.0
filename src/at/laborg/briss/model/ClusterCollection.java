@@ -33,8 +33,7 @@ public class ClusterCollection {
 		this.clusterToPagesMapping = new HashMap<SingleCluster, List<Integer>>();
 	}
 
-	private <T extends Comparable<? super T>> List<T> asSortedList(
-			Collection<T> c) {
+	private <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
 		List<T> list = new ArrayList<T>(c);
 		java.util.Collections.sort(list);
 		return list;

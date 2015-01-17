@@ -18,7 +18,7 @@
 package at.laborg.briss;
 
 public final class Briss {
-	
+
 	private Briss() {
 	};
 

@@ -33,9 +33,7 @@ public class CropJob {
 
 	private static final String RECOMMENDED_ENDING = "_cropped.pdf";
 
-	public CropJob(File source, int pageCount,
-			HashMap<String, String> metaInfo,
-			List<HashMap<String, Object>> bookmarks) {
+	public CropJob(File source, int pageCount, HashMap<String, String> metaInfo, List<HashMap<String, Object>> bookmarks) {
 		super();
 		this.source = source;
 		this.sourcePageCount = pageCount;
@@ -63,8 +61,7 @@ public class CropJob {
 		return destinationFile;
 	}
 
-	public void setAndCreateDestinationFile(File destinationFile)
-			throws IOException {
+	public void setAndCreateDestinationFile(File destinationFile) throws IOException {
 		if (!destinationFile.exists()) {
 			destinationFile.createNewFile();
 		}
@@ -74,8 +71,7 @@ public class CropJob {
 	public File getRecommendedDestination() {
 		// create file recommendation
 		String origName = getSource().getAbsolutePath();
-		String recommendedName = origName.substring(0, origName.length() - 4)
-				+ RECOMMENDED_ENDING;
+		String recommendedName = origName.substring(0, origName.length() - 4) + RECOMMENDED_ENDING;
 		return new File(recommendedName);
 	}
 

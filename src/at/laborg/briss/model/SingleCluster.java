@@ -30,7 +30,6 @@ public class SingleCluster implements Comparable<SingleCluster> {
 	private List<Integer> allPages;
 	private final List<Float[]> cropRatiosList = new ArrayList<Float[]>();
 
-	
 	private ClusterImageData imageData;
 
 	private int excludedPageNumber = -1;
@@ -38,8 +37,7 @@ public class SingleCluster implements Comparable<SingleCluster> {
 	private final int pageWidth;
 	private final int pageHeight;
 
-	public SingleCluster(boolean isEvenPage, int pageWidth, int pageHeight,
-			int excludedPageNumber) {
+	public SingleCluster(boolean isEvenPage, int pageWidth, int pageHeight, int excludedPageNumber) {
 		super();
 		this.pageWidth = pageWidth;
 		this.pageHeight = pageHeight;
@@ -48,13 +46,11 @@ public class SingleCluster implements Comparable<SingleCluster> {
 		this.pagesToMerge = new ArrayList<Integer>();
 	}
 
-	
 	public ClusterImageData getImageData() {
-		if (imageData==null)
-			imageData = new ClusterImageData(pageWidth, pageHeight,pagesToMerge.size());
+		if (imageData == null)
+			imageData = new ClusterImageData(pageWidth, pageHeight, pagesToMerge.size());
 		return imageData;
 	}
-
 
 	/**
 	 * returns the ratio to crop the page x1,y1,x2,y2, origin = bottom left x1:
@@ -135,8 +131,7 @@ public class SingleCluster implements Comparable<SingleCluster> {
 			float stepWidth = (float) pages.size() / MAX_MERGE_PAGES;
 			float totalStepped = 0;
 			for (int i = 0; i < MAX_MERGE_PAGES; i++) {
-				pagesToMerge.add(pages.get(new Double(Math.floor(totalStepped))
-						.intValue()));
+				pagesToMerge.add(pages.get(new Double(Math.floor(totalStepped)).intValue()));
 				totalStepped += stepWidth;
 			}
 		}

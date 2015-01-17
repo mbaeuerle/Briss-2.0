@@ -9,9 +9,7 @@ public final class RectangleHandler {
 	private RectangleHandler() {
 	};
 
-	public static Rectangle calculateScaledRectangle(
-			final List<Rectangle> boxes, final Float[] ratios,
-			final int rotation) {
+	public static Rectangle calculateScaledRectangle(final List<Rectangle> boxes, final Float[] ratios, final int rotation) {
 		if (ratios == null || boxes.size() == 0)
 			return null;
 		Rectangle smallestBox = null;
@@ -38,14 +36,10 @@ public final class RectangleHandler {
 		// use smallest box as basis for calculation
 		Rectangle scaledBox = new Rectangle(smallestBox);
 
-		scaledBox.setLeft(smallestBox.getLeft()
-				+ (smallestBox.getWidth() * rotRatios[0]));
-		scaledBox.setBottom(smallestBox.getBottom()
-				+ (smallestBox.getHeight() * rotRatios[1]));
-		scaledBox.setRight(smallestBox.getLeft()
-				+ (smallestBox.getWidth() * (1 - rotRatios[2])));
-		scaledBox.setTop(smallestBox.getBottom()
-				+ (smallestBox.getHeight() * (1 - rotRatios[3])));
+		scaledBox.setLeft(smallestBox.getLeft() + (smallestBox.getWidth() * rotRatios[0]));
+		scaledBox.setBottom(smallestBox.getBottom() + (smallestBox.getHeight() * rotRatios[1]));
+		scaledBox.setRight(smallestBox.getLeft() + (smallestBox.getWidth() * (1 - rotRatios[2])));
+		scaledBox.setTop(smallestBox.getBottom() + (smallestBox.getHeight() * (1 - rotRatios[3])));
 
 		return scaledBox;
 	}

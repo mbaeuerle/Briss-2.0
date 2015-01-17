@@ -54,8 +54,7 @@ final class BrissTransferHandler extends TransferHandler {
 		// Fetch the Transferable and its data
 		Transferable t = support.getTransferable();
 		try {
-			String dropInput = (String) t
-					.getTransferData(DataFlavor.stringFlavor);
+			String dropInput = (String) t.getTransferData(DataFlavor.stringFlavor);
 
 			String[] filenames = dropInput.split("\n");
 

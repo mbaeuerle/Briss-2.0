@@ -38,13 +38,12 @@ public final class CropDefinition {
 		this.pageToCropRectangles = pageToCropRectangles;
 	}
 
-	public static CropDefinition createCropDefinition(final File source,
-			final File destination, final ClusterDefinition clusters) throws IOException {
+	public static CropDefinition createCropDefinition(final File source, final File destination,
+			final ClusterDefinition clusters) throws IOException {
 		if (source == null)
 			throw new IllegalArgumentException("Source must be provided");
 		if (!source.exists())
-			throw new IllegalArgumentException("Source("
-					+ source.getAbsolutePath() + ") file doesn't exist");
+			throw new IllegalArgumentException("Source(" + source.getAbsolutePath() + ") file doesn't exist");
 
 		HashMap<Integer, List<Float[]>> pagesToCrops = new HashMap<Integer, List<Float[]>>();
 
@@ -59,8 +58,7 @@ public final class CropDefinition {
 			}
 		}
 
-		CropDefinition result = new CropDefinition(source, destination,
-				pagesToCrops);
+		CropDefinition result = new CropDefinition(source, destination, pagesToCrops);
 
 		return result;
 	}

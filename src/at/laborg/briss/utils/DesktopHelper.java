@@ -28,8 +28,7 @@ public final class DesktopHelper {
 	private DesktopHelper() {
 	};
 
-	public static void openFileWithDesktopApp(final File cropDestinationFile)
-			throws IOException {
+	public static void openFileWithDesktopApp(final File cropDestinationFile) throws IOException {
 		if (Desktop.isDesktopSupported()) {
 			Desktop.getDesktop().open(cropDestinationFile);
 		}

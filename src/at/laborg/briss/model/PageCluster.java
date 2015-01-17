@@ -38,8 +38,8 @@ public class PageCluster implements Comparable<PageCluster> {
 	private final int pageWidth;
 	private final int pageHeight;
 
-	public PageCluster(final boolean isEvenPage, final int pageWidth, final int pageHeight,
-			final boolean excluded, final int pageNumber) {
+	public PageCluster(final boolean isEvenPage, final int pageWidth, final int pageHeight, final boolean excluded,
+			final int pageNumber) {
 		super();
 		this.pageWidth = pageWidth;
 		this.pageHeight = pageHeight;
@@ -52,8 +52,7 @@ public class PageCluster implements Comparable<PageCluster> {
 
 	public final ClusterImageData getImageData() {
 		if (imageData == null) {
-			imageData = new ClusterImageData(pageWidth, pageHeight,
-					pagesToMerge.size());
+			imageData = new ClusterImageData(pageWidth, pageHeight, pagesToMerge.size());
 		}
 		return imageData;
 	}
@@ -122,8 +121,7 @@ public class PageCluster implements Comparable<PageCluster> {
 			float stepWidth = (float) allPages.size() / MAX_MERGE_PAGES;
 			float totalStepped = 0;
 			for (int i = 0; i < MAX_MERGE_PAGES; i++) {
-				pagesToMerge.add(allPages.get(new Double(Math
-						.floor(totalStepped)).intValue()));
+				pagesToMerge.add(allPages.get(new Double(Math.floor(totalStepped)).intValue()));
 				totalStepped += stepWidth;
 			}
 		}

@@ -39,8 +39,7 @@ public class ClusterImageData {
 	}
 
 	private void initializeOutputImage(final BufferedImage imageToAdd) {
-		outputImageHeight = imageToAdd.getHeight() > MAX_PAGE_HEIGHT ? MAX_PAGE_HEIGHT
-				: imageToAdd.getHeight();
+		outputImageHeight = imageToAdd.getHeight() > MAX_PAGE_HEIGHT ? MAX_PAGE_HEIGHT : imageToAdd.getHeight();
 		float scaleFactor = (float) outputImageHeight / imageToAdd.getHeight();
 		outputImageWidth = (int) (imageToAdd.getWidth() * scaleFactor);
 		imgdata = new short[outputImageWidth][outputImageHeight][totalImages];
@@ -52,8 +51,7 @@ public class ClusterImageData {
 		int width = image.getWidth();
 		for (int i = 0; i < width; ++i) {
 			for (int j = 0; j < height; ++j) {
-				imgdata[i][j][imageCnt] = (short) image.getRaster().getPixel(i,
-						j, tmp)[0];
+				imgdata[i][j][imageCnt] = (short) image.getRaster().getPixel(i, j, tmp)[0];
 			}
 		}
 		imageCnt++;
@@ -71,22 +69,20 @@ public class ClusterImageData {
 	}
 
 	private BufferedImage renderOutputImage() {
-                if ((outputImageWidth <=0) || (outputImageHeight <= 0))
-                {
-                        // we have no image data - jpedal was probably not able to provide us with the data
-                        // so we create an empty image
-                        BufferedImage im = new BufferedImage(100, 100, BufferedImage.TYPE_BYTE_BINARY);
-                        WritableRaster raster = im.getRaster();
-                        for(int h=0;h<100;h++)
-                                for(int w=0;w<100;w++)
-                                        raster.setSample(w,h,0,1);
-                        addImageToPreview(im);
-                }
-                
-		BufferedImage outputImage = new BufferedImage(outputImageWidth,
-				outputImageHeight, BufferedImage.TYPE_BYTE_GRAY);
-		WritableRaster raster = outputImage.getRaster()
-				.createCompatibleWritableRaster();
+		if ((outputImageWidth <= 0) || (outputImageHeight <= 0)) {
+			// we have no image data - jpedal was probably not able to provide us with
+			// the data
+			// so we create an empty image
+			BufferedImage im = new BufferedImage(100, 100, BufferedImage.TYPE_BYTE_BINARY);
+			WritableRaster raster = im.getRaster();
+			for (int h = 0; h < 100; h++)
+				for (int w = 0; w < 100; w++)
+					raster.setSample(w, h, 0, 1);
+			addImageToPreview(im);
+		}
+
+		BufferedImage outputImage = new BufferedImage(outputImageWidth, outputImageHeight, BufferedImage.TYPE_BYTE_GRAY);
+		WritableRaster raster = outputImage.getRaster().createCompatibleWritableRaster();
 
 		if (totalImages == 1) {
 			for (int i = 0; i < outputImage.getWidth(); ++i) {
@@ -107,14 +103,11 @@ public class ClusterImageData {
 		return outputImage;
 	}
 
-	private static BufferedImage scaleImage(final BufferedImage bsrc, final int width,
-			final int height) {
+	private static BufferedImage scaleImage(final BufferedImage bsrc, final int width, final int height) {
 
-		BufferedImage bdest = new BufferedImage(width, height,
-				BufferedImage.TYPE_BYTE_GRAY);
+		BufferedImage bdest = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
 		Graphics2D g = bdest.createGraphics();
-		AffineTransform at = AffineTransform.getScaleInstance(
-				(double) bdest.getWidth() / bsrc.getWidth(),
+		AffineTransform at = AffineTransform.getScaleInstance((double) bdest.getWidth() / bsrc.getWidth(),
 				(double) bdest.getHeight() / bsrc.getHeight());
 		g.drawRenderedImage(bsrc, at);
 		g.dispose();
@@ -127,8 +120,7 @@ public class ClusterImageData {
 		int height = 200;
 
 		// Create buffered image that does not support transparency
-		BufferedImage bimage = new BufferedImage(width, height,
-				BufferedImage.TYPE_INT_RGB);
+		BufferedImage bimage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
 		Graphics2D g2d = bimage.createGraphics();
 
@@ -173,8 +165,7 @@ public class ClusterImageData {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				for (int k = 0; k < imageCnt; k++) {
-					sum[i][j] += (imgdata[i][j][k] - mean[i][j])
-							* (imgdata[i][j][k] - mean[i][j]);
+					sum[i][j] += (imgdata[i][j][k] - mean[i][j]) * (imgdata[i][j][k] - mean[i][j]);
 				}
 			}
 		}

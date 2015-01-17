@@ -32,8 +32,7 @@ public final class ClusterCreator {
 	private ClusterCreator() {
 	};
 
-	public static ClusterDefinition clusterPages(final File source,
-			final PageExcludes pageExcludes) throws IOException {
+	public static ClusterDefinition clusterPages(final File source, final PageExcludes pageExcludes) throws IOException {
 		PdfReader reader = new PdfReader(source.getAbsolutePath());
 
 		ClusterDefinition clusters = new ClusterDefinition();
@@ -46,11 +45,9 @@ public final class ClusterCreator {
 			// if the pagenumber should be excluded then use it as a
 			// discriminating parameter, else use default value
 
-			boolean excluded = checkExclusionAndGetPageNumber(pageExcludes,
-					page);
+			boolean excluded = checkExclusionAndGetPageNumber(pageExcludes, page);
 
-			PageCluster tmpCluster = new PageCluster(page % 2 == 0,
-					(int) layoutBox.getWidth(), (int) layoutBox.getHeight(),
+			PageCluster tmpCluster = new PageCluster(page % 2 == 0, (int) layoutBox.getWidth(), (int) layoutBox.getHeight(),
 					excluded, page);
 
 			clusters.addOrMergeCluster(tmpCluster);
@@ -69,8 +66,7 @@ public final class ClusterCreator {
 		return layoutBox;
 	}
 
-	private static boolean checkExclusionAndGetPageNumber(
-			final PageExcludes pageExcludes, final int page) {
+	private static boolean checkExclusionAndGetPageNumber(final PageExcludes pageExcludes, final int page) {
 		return (pageExcludes != null && pageExcludes.containsPage(page));
 	}
 }

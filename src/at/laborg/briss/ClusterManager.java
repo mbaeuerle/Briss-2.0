@@ -33,8 +33,7 @@ import com.itextpdf.text.pdf.PdfReader;
 
 public class ClusterManager {
 
-	public static ClusterJob createClusterJob(File origFile)
-			throws IOException, PdfException {
+	public static ClusterJob createClusterJob(File origFile) throws IOException, PdfException {
 
 		PdfReader reader = new PdfReader(origFile.getAbsolutePath());
 		ClusterJob clusterJob = new ClusterJob(origFile);
@@ -43,10 +42,9 @@ public class ClusterManager {
 	}
 
 	public static void clusterPages(ClusterJob clusterJob) throws IOException {
-		PdfReader reader = new PdfReader(clusterJob.getSource()
-				.getAbsolutePath());
+		PdfReader reader = new PdfReader(clusterJob.getSource().getAbsolutePath());
 
-		ClusterCollection clusters=clusterJob.getClusterCollection();
+		ClusterCollection clusters = clusterJob.getClusterCollection();
 		for (int page = 1; page <= reader.getNumberOfPages(); page++) {
 			Rectangle layoutBox = reader.getBoxSize(page, "crop");
 
@@ -59,14 +57,12 @@ public class ClusterManager {
 			// discriminating parameter, else use default value
 
 			int pageNumber = -1;
-			if (clusterJob.getExcludedPageSet() != null
-					&& clusterJob.getExcludedPageSet().contains(page)) {
+			if (clusterJob.getExcludedPageSet() != null && clusterJob.getExcludedPageSet().contains(page)) {
 				pageNumber = page;
 			}
 
-			SingleCluster tmpCluster = new SingleCluster(page % 2 == 0,
-					(int) layoutBox.getWidth(), (int) layoutBox.getHeight(),
-					pageNumber);
+			SingleCluster tmpCluster = new SingleCluster(page % 2 == 0, (int) layoutBox.getWidth(),
+					(int) layoutBox.getHeight(), pageNumber);
 
 			clusters.addPageToCluster(tmpCluster, page);
 		}
@@ -92,22 +88,19 @@ public class ClusterManager {
 		public void run() {
 			PdfDecoder pdfDecoder = new PdfDecoder(true);
 			try {
-				pdfDecoder
-						.openPdfFile(clusterJob.getSource().getAbsolutePath());
+				pdfDecoder.openPdfFile(clusterJob.getSource().getAbsolutePath());
 			} catch (PdfException e1) {
 				e1.printStackTrace();
 			}
 
-			for (SingleCluster cluster : clusterJob.getClusterCollection()
-					.getAsList()) {
+			for (SingleCluster cluster : clusterJob.getClusterCollection().getAsList()) {
 				for (Integer pageNumber : cluster.getPagesToMerge()) {
 					// TODO jpedal isn't able to render big images
 					// correctly, so let's check if the image is big an
 					// throw it away
 					try {
 						if (cluster.getImageData().isRenderable()) {
-							BufferedImage renderedPage = pdfDecoder
-									.getPageAsImage(pageNumber);
+							BufferedImage renderedPage = pdfDecoder.getPageAsImage(pageNumber);
 							cluster.getImageData().addImageToPreview(renderedPage);
 							workerUnitCounter++;
 						}

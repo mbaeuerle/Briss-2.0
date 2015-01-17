@@ -45,9 +45,9 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import at.laborg.briss.BrissGUI;
 import at.laborg.briss.model.CropFinder;
 import at.laborg.briss.model.PageCluster;
-import at.laborg.briss.BrissGUI;
 
 @SuppressWarnings("serial")
 public class MergedPanel extends JPanel {
@@ -63,15 +63,11 @@ public class MergedPanel extends JPanel {
 
 	private final static int SELECT_BORDER_WIDTH = 1;
 	private final static Font BASE_FONT = new Font(null, Font.PLAIN, 10);
-	private final static Composite SMOOTH_NORMAL = AlphaComposite.getInstance(
-			AlphaComposite.SRC_OVER, .2f);
-	private final static Composite SMOOTH_SELECT = AlphaComposite.getInstance(
-			AlphaComposite.SRC_OVER, .5f);
-	private final static Composite XOR_COMPOSITE = AlphaComposite.getInstance(
-			AlphaComposite.SRC_OVER, .8f);
+	private final static Composite SMOOTH_NORMAL = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f);
+	private final static Composite SMOOTH_SELECT = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f);
+	private final static Composite XOR_COMPOSITE = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f);
 	private final static float[] DASH_PATTERN = { 25f, 25f };
-	private final static BasicStroke SELECTED_STROKE = new BasicStroke(
-			SELECT_BORDER_WIDTH, BasicStroke.CAP_SQUARE,
+	private final static BasicStroke SELECTED_STROKE = new BasicStroke(SELECT_BORDER_WIDTH, BasicStroke.CAP_SQUARE,
 			BasicStroke.JOIN_BEVEL, 1.0f, DASH_PATTERN, 0f);
 
 	private final PageCluster cluster;
@@ -82,12 +78,12 @@ public class MergedPanel extends JPanel {
 	private enum ActionState {
 		NOTHING, DRAWING_NEW_CROP, RESIZING_HOTCORNER_UL, RESIZING_HOTCORNER_LR, MOVE_CROP
 	}
-        
-        private final BrissGUI briss;
+
+	private final BrissGUI briss;
 
 	public MergedPanel(PageCluster cluster, BrissGUI briss) {
 		super();
-                this.briss = briss;
+		this.briss = briss;
 		this.cluster = cluster;
 		this.img = cluster.getImageData().getPreviewImage();
 		Float[] autoRatios = CropFinder.getAutoCropFloats(img);
@@ -162,8 +158,7 @@ public class MergedPanel extends JPanel {
 
 	}
 
-	private void drawNormalCropRectangle(Graphics2D g2, int cropCnt,
-			DrawableCropRect crop) {
+	private void drawNormalCropRectangle(Graphics2D g2, int cropCnt, DrawableCropRect crop) {
 		g2.setComposite(SMOOTH_NORMAL);
 		g2.setColor(Color.BLUE);
 		g2.fill(crop);
@@ -172,8 +167,7 @@ public class MergedPanel extends JPanel {
 		g2.drawString(String.valueOf(cropCnt + 1), crop.x, crop.y + crop.height);
 		int cD = DrawableCropRect.CORNER_DIMENSION;
 		g2.fillRect(crop.x, crop.y, cD, cD);
-		g2.fillRect(crop.x + crop.width - cD - 1,
-				crop.y + crop.height - cD - 1, cD, cD);
+		g2.fillRect(crop.x + crop.width - cD - 1, crop.y + crop.height - cD - 1, cD, cD);
 	}
 
 	private void drawSelectionOverlay(Graphics2D g2, DrawableCropRect crop) {
@@ -181,19 +175,17 @@ public class MergedPanel extends JPanel {
 		g2.setColor(Color.BLACK);
 
 		g2.setStroke(SELECTED_STROKE);
-		g2.drawRect(crop.x + SELECT_BORDER_WIDTH / 2, crop.y
-				+ SELECT_BORDER_WIDTH / 2, crop.width - SELECT_BORDER_WIDTH,
+		g2.drawRect(crop.x + SELECT_BORDER_WIDTH / 2, crop.y + SELECT_BORDER_WIDTH / 2, crop.width - SELECT_BORDER_WIDTH,
 				crop.height - SELECT_BORDER_WIDTH);
 
-                // display crop size in milimeters
-                int w = Math.round(25.4f * crop.width / 72f);
-                int h = Math.round(25.4f * crop.height / 72f);
-                String size = Integer.toString(w) + "x" + Integer.toString(h);
+		// display crop size in milimeters
+		int w = Math.round(25.4f * crop.width / 72f);
+		int h = Math.round(25.4f * crop.height / 72f);
+		String size = Integer.toString(w) + "x" + Integer.toString(h);
 		g2.setFont(scaleFont(size, crop));
 		g2.setColor(Color.YELLOW);
 		g2.setComposite(SMOOTH_SELECT);
-		g2.drawString(size, crop.x + SELECT_BORDER_WIDTH, crop.y
-				+ crop.height - SELECT_BORDER_WIDTH);
+		g2.drawString(size, crop.x + SELECT_BORDER_WIDTH, crop.y + crop.height - SELECT_BORDER_WIDTH);
 	}
 
 	private void changeSelectRectangle(Point p) {
@@ -259,12 +251,12 @@ public class MergedPanel extends JPanel {
 		int maxW = -1;
 		int maxH = -1;
 		for (DrawableCropRect crop : crops) {
-                        if (crop.width > maxW) {
-                                maxW = crop.width;
-                        }
-                        if (crop.height > maxH) {
-                                maxH = crop.height;
-                        }
+			if (crop.width > maxW) {
+				maxW = crop.width;
+			}
+			if (crop.height > maxH) {
+				maxH = crop.height;
+			}
 		}
 		return new Dimension(maxW, maxH);
 	}
@@ -294,9 +286,9 @@ public class MergedPanel extends JPanel {
 	public void setSelCropSize(int width, int height) {
 		for (DrawableCropRect crop : crops) {
 			if (crop.isSelected()) {
-                                int diffToMaxW = width - crop.width;
-                                int diffToMaxH = height - crop.height;
-                                crop.grow(diffToMaxW / 2, diffToMaxH / 2);
+				int diffToMaxW = width - crop.width;
+				int diffToMaxH = height - crop.height;
+				crop.grow(diffToMaxW / 2, diffToMaxH / 2);
 			}
 		}
 		updateClusterRatios(crops);
@@ -306,10 +298,9 @@ public class MergedPanel extends JPanel {
 	public void resizeSelCrop(int width, int height) {
 		for (DrawableCropRect crop : crops) {
 			if (crop.isSelected()) {
-                                if (((width < 0) && (crop.width <= -width)) ||
-                                        ((height < 0) && (crop.height <= -height)))
-                                        return;
-                                crop.setSize(crop.width + width, crop.height + height);
+				if (((width < 0) && (crop.width <= -width)) || ((height < 0) && (crop.height <= -height)))
+					return;
+				crop.setSize(crop.width + width, crop.height + height);
 			}
 		}
 		updateClusterRatios(crops);
@@ -318,7 +309,7 @@ public class MergedPanel extends JPanel {
 
 	public void setAllCropSize(int width, int height) {
 		for (DrawableCropRect crop : crops) {
-                        crop.setSize(width, height);
+			crop.setSize(width, height);
 		}
 		updateClusterRatios(crops);
 		repaint();
@@ -353,8 +344,7 @@ public class MergedPanel extends JPanel {
 	private void updateClusterRatios(List<DrawableCropRect> tmpCrops) {
 		cluster.clearRatios();
 		for (Rectangle crop : tmpCrops) {
-			cluster.addRatios(getCutRatiosForPdf(crop, img.getWidth(),
-					img.getHeight()));
+			cluster.addRatios(getCutRatiosForPdf(crop, img.getWidth(), img.getHeight()));
 		}
 	}
 
@@ -366,8 +356,7 @@ public class MergedPanel extends JPanel {
 	 * 
 	 * @return the cropped ratios or null if to small
 	 */
-	private static Float[] getCutRatiosForPdf(Rectangle crop, int imgWidth,
-			int imgHeight) {
+	private static Float[] getCutRatiosForPdf(Rectangle crop, int imgWidth, int imgHeight) {
 		int x1, x2, y1, y2;
 
 		x1 = crop.x;
@@ -413,9 +402,7 @@ public class MergedPanel extends JPanel {
 		float scaleFactorHeight = rect.height / height;
 		float scaledWidth = (scaleFactorWidth * size);
 		float scaledHeight = (scaleFactorHeight * size);
-		return BASE_FONT
-				.deriveFont((scaleFactorHeight > scaleFactorWidth) ? scaledWidth
-						: scaledHeight);
+		return BASE_FONT.deriveFont((scaleFactorHeight > scaleFactorWidth) ? scaledWidth : scaledHeight);
 	}
 
 	private void copyToClipBoard() {
@@ -442,12 +429,12 @@ public class MergedPanel extends JPanel {
 	}
 
 	private void alignSelected(Point p) {
-                for (DrawableCropRect crop : crops) {
-                        if (crop.contains(p)) {
-                                briss.alignSelRects(crop.x, crop.y, crop.width, crop.height);
-                                break;
-                        }
-                }
+		for (DrawableCropRect crop : crops) {
+			if (crop.contains(p)) {
+				briss.alignSelRects(crop.x, crop.y, crop.width, crop.height);
+				break;
+			}
+		}
 	}
 
 	private void deleteAllSelected() {
@@ -499,58 +486,56 @@ public class MergedPanel extends JPanel {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			switch (e.getKeyCode()) {
-                            case KeyEvent.VK_C:
+			case KeyEvent.VK_C:
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
 					copyToClipBoard();
 				}
-                                break;
-                            case KeyEvent.VK_V:
+				break;
+			case KeyEvent.VK_V:
 				if (e.getModifiers() == InputEvent.CTRL_MASK) {
 					pasteFromClipBoard();
 				}
-                                break;
-                            case KeyEvent.VK_DELETE:
+				break;
+			case KeyEvent.VK_DELETE:
 				deleteAllSelected();
-                                break;
-                            case KeyEvent.VK_LEFT:
-                            case KeyEvent.VK_RIGHT:
-                            case KeyEvent.VK_UP:
-                            case KeyEvent.VK_DOWN:
-                                int x = 0;
-                                int y = 0;
-                                switch (e.getKeyCode()) {
-                                    case KeyEvent.VK_LEFT:
-                                        x = -1;
-                                        break;
-                                    case KeyEvent.VK_RIGHT:
-                                        x = 1;
-                                        break;
-                                    case KeyEvent.VK_UP:
-                                        y = -1;
-                                        break;
-                                    case KeyEvent.VK_DOWN:
-                                        y = 1;
-                                        break;
-                                }
+				break;
+			case KeyEvent.VK_LEFT:
+			case KeyEvent.VK_RIGHT:
+			case KeyEvent.VK_UP:
+			case KeyEvent.VK_DOWN:
+				int x = 0;
+				int y = 0;
+				switch (e.getKeyCode()) {
+				case KeyEvent.VK_LEFT:
+					x = -1;
+					break;
+				case KeyEvent.VK_RIGHT:
+					x = 1;
+					break;
+				case KeyEvent.VK_UP:
+					y = -1;
+					break;
+				case KeyEvent.VK_DOWN:
+					y = 1;
+					break;
+				}
 				if ((e.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
-                                    x *= 10;
-                                    y *= 10;
-                                }
+					x *= 10;
+					y *= 10;
+				}
 				if ((e.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-                                        briss.resizeSelRects(x, y);
-                                }
-                                else {
-                                        briss.moveSelectedRects(x, y);
-                                }
-                                break;
-                            default:
-                        }
+					briss.resizeSelRects(x, y);
+				} else {
+					briss.moveSelectedRects(x, y);
+				}
+				break;
+			default:
+			}
 		}
 
 	}
 
-	private class MergedPanelMouseAdapter extends MouseAdapter implements
-			ActionListener {
+	private class MergedPanelMouseAdapter extends MouseAdapter implements ActionListener {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
@@ -569,17 +554,13 @@ public class MergedPanel extends JPanel {
 				}
 				cluster.clearRatios();
 				repaint();
-			} else if (PopUpMenuForCropRectangles.SELECT_DESELECT.equals(e
-					.getActionCommand())) {
+			} else if (PopUpMenuForCropRectangles.SELECT_DESELECT.equals(e.getActionCommand())) {
 				changeSelectRectangle(popUpMenuPoint);
-			} else if (PopUpMenuForCropRectangles.COPY.equals(e
-					.getActionCommand())) {
+			} else if (PopUpMenuForCropRectangles.COPY.equals(e.getActionCommand())) {
 				copyToClipBoard();
-			} else if (PopUpMenuForCropRectangles.PASTE.equals(e
-					.getActionCommand())) {
+			} else if (PopUpMenuForCropRectangles.PASTE.equals(e.getActionCommand())) {
 				pasteFromClipBoard();
-			} else if (PopUpMenuForCropRectangles.ALIGN_SELECTED.equals(e
-					.getActionCommand())) {
+			} else if (PopUpMenuForCropRectangles.ALIGN_SELECTED.equals(e.getActionCommand())) {
 				alignSelected(popUpMenuPoint);
 			}
 		}
@@ -593,57 +574,45 @@ public class MergedPanel extends JPanel {
 				if (cropStartPoint == null) {
 					cropStartPoint = curPoint;
 				}
-				curCrop.x = (curPoint.x < cropStartPoint.x) ? curPoint.x
-						: cropStartPoint.x;
+				curCrop.x = (curPoint.x < cropStartPoint.x) ? curPoint.x : cropStartPoint.x;
 				curCrop.width = Math.abs(curPoint.x - cropStartPoint.x);
-				curCrop.y = (curPoint.y < cropStartPoint.y) ? curPoint.y
-						: cropStartPoint.y;
+				curCrop.y = (curPoint.y < cropStartPoint.y) ? curPoint.y : cropStartPoint.y;
 				curCrop.height = Math.abs(curPoint.y - cropStartPoint.y);
 				break;
 			case MOVE_CROP:
 				if (lastDragPoint == null) {
 					lastDragPoint = curPoint;
 				}
-                                if (mE.isShiftDown()) {
-                                        briss.moveSelectedRects(curPoint.x - lastDragPoint.x,
-                                                curPoint.y - lastDragPoint.y);
-                                }
-                                else {
-                                        curCrop.translate(curPoint.x - lastDragPoint.x,
-                                                curPoint.y - lastDragPoint.y);
-                                }
+				if (mE.isShiftDown()) {
+					briss.moveSelectedRects(curPoint.x - lastDragPoint.x, curPoint.y - lastDragPoint.y);
+				} else {
+					curCrop.translate(curPoint.x - lastDragPoint.x, curPoint.y - lastDragPoint.y);
+				}
 				lastDragPoint = curPoint;
 				break;
 			case RESIZING_HOTCORNER_LR:
 				if (lastDragPoint == null) {
 					lastDragPoint = curPoint;
 				}
-                                if (mE.isShiftDown()) {
-                                        briss.resizeSelRects(curPoint.x - lastDragPoint.x,
-                                               curPoint.y - lastDragPoint.y);
-                                }
-                                else {
-                                        curPoint.translate(relativeHotCornerGrabDistance.x,
-                                                relativeHotCornerGrabDistance.y);
-                                        curCrop.setNewHotCornerLR(curPoint);
-                                }
+				if (mE.isShiftDown()) {
+					briss.resizeSelRects(curPoint.x - lastDragPoint.x, curPoint.y - lastDragPoint.y);
+				} else {
+					curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
+					curCrop.setNewHotCornerLR(curPoint);
+				}
 				lastDragPoint = curPoint;
 				break;
 			case RESIZING_HOTCORNER_UL:
 				if (lastDragPoint == null) {
 					lastDragPoint = curPoint;
 				}
-                                if (mE.isShiftDown()) {
-                                        briss.resizeSelRects(lastDragPoint.x - curPoint.x,
-                                               lastDragPoint.y - curPoint.y);
-                                        briss.moveSelectedRects(curPoint.x - lastDragPoint.x,
-                                               curPoint.y - lastDragPoint.y);
-                                }
-                                else {
-                                        curPoint.translate(relativeHotCornerGrabDistance.x,
-                                                relativeHotCornerGrabDistance.y);
-                                        curCrop.setNewHotCornerUL(curPoint);
-                                }
+				if (mE.isShiftDown()) {
+					briss.resizeSelRects(lastDragPoint.x - curPoint.x, lastDragPoint.y - curPoint.y);
+					briss.moveSelectedRects(curPoint.x - lastDragPoint.x, curPoint.y - lastDragPoint.y);
+				} else {
+					curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
+					curCrop.setNewHotCornerUL(curPoint);
+				}
 				lastDragPoint = curPoint;
 				break;
 			}
@@ -669,8 +638,7 @@ public class MergedPanel extends JPanel {
 				for (DrawableCropRect crop : crops) {
 					if (crop.containsInHotCornerUL(p)) {
 						actionState = ActionState.RESIZING_HOTCORNER_UL;
-						relativeHotCornerGrabDistance = new Point(crop.x - p.x,
-								crop.y - p.y);
+						relativeHotCornerGrabDistance = new Point(crop.x - p.x, crop.y - p.y);
 						curCrop = crop;
 						return;
 					}
@@ -680,8 +648,7 @@ public class MergedPanel extends JPanel {
 				for (DrawableCropRect crop : crops) {
 					if (crop.containsInHotCornerLR(p)) {
 						actionState = ActionState.RESIZING_HOTCORNER_LR;
-						relativeHotCornerGrabDistance = new Point(crop.x
-								+ crop.width - p.x, crop.y + crop.height - p.y);
+						relativeHotCornerGrabDistance = new Point(crop.x + crop.width - p.x, crop.y + crop.height - p.y);
 						curCrop = crop;
 						return;
 					}
@@ -723,8 +690,7 @@ public class MergedPanel extends JPanel {
 
 		private void showPopUpMenu(MouseEvent e) {
 			popUpMenuPoint = e.getPoint();
-			new PopUpMenuForCropRectangles().show(e.getComponent(), e.getX(),
-					e.getY());
+			new PopUpMenuForCropRectangles().show(e.getComponent(), e.getX(), e.getY());
 		}
 
 		private class PopUpMenuForCropRectangles extends JPopupMenu {
@@ -732,7 +698,7 @@ public class MergedPanel extends JPanel {
 			public static final String SELECT_DESELECT = "Select/Deselect rectangle";
 			public static final String COPY = "Copy Selected rectangles";
 			public static final String PASTE = "Paste rectangles";
-                        public static final String ALIGN_SELECTED = "Align selected rectangles";
+			public static final String ALIGN_SELECTED = "Align selected rectangles";
 
 			public PopUpMenuForCropRectangles() {
 
@@ -746,10 +712,8 @@ public class MergedPanel extends JPanel {
 					JMenuItem deleteItem = new JMenuItem(DELETE);
 					deleteItem.addActionListener(MergedPanelMouseAdapter.this);
 					add(deleteItem);
-					JMenuItem selectDeselectItem = new JMenuItem(
-							SELECT_DESELECT);
-					selectDeselectItem
-							.addActionListener(MergedPanelMouseAdapter.this);
+					JMenuItem selectDeselectItem = new JMenuItem(SELECT_DESELECT);
+					selectDeselectItem.addActionListener(MergedPanelMouseAdapter.this);
 					add(selectDeselectItem);
 				}
 				boolean copyPossible = false;
@@ -764,8 +728,7 @@ public class MergedPanel extends JPanel {
 				add(copyItem);
 				JMenuItem pasteItem = new JMenuItem(PASTE);
 				pasteItem.addActionListener(MergedPanelMouseAdapter.this);
-				pasteItem.setEnabled(ClipBoard.getInstance()
-						.getAmountOfCropsInClipBoard() > 0);
+				pasteItem.setEnabled(ClipBoard.getInstance().getAmountOfCropsInClipBoard() > 0);
 				add(pasteItem);
 
 				JMenuItem alignItem = new JMenuItem(ALIGN_SELECTED);

@@ -51,8 +51,7 @@ public class DrawableCropRect extends Rectangle {
 	}
 
 	public final boolean containsInHotCornerUL(final Point p) {
-		return ((p.x > getX() && p.x <= getX() + CORNER_DIMENSION) && (p.y > getY() && p.y <= getY()
-				+ CORNER_DIMENSION));
+		return ((p.x > getX() && p.x <= getX() + CORNER_DIMENSION) && (p.y > getY() && p.y <= getY() + CORNER_DIMENSION));
 	}
 
 	public final boolean containsInHotCornerLR(final Point p) {

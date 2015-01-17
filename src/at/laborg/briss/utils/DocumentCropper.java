@@ -50,12 +50,10 @@ public final class DocumentCropper {
 	private DocumentCropper() {
 	};
 
-	public static File crop(final CropDefinition cropDefinition)
-			throws IOException, DocumentException, CropException {
+	public static File crop(final CropDefinition cropDefinition) throws IOException, DocumentException, CropException {
 
 		// check if everything is ready
-		if (!BrissFileHandling.checkValidStateAndCreate(cropDefinition
-				.getDestinationFile()))
+		if (!BrissFileHandling.checkValidStateAndCreate(cropDefinition.getDestinationFile()))
 			throw new IOException("Destination file not valid");
 
 		// check if file is encrypted and needs a password
@@ -63,32 +61,25 @@ public final class DocumentCropper {
 			throw new CropException("Password required");
 
 		// read out necessary meta information
-		PdfMetaInformation pdfMetaInformation = new PdfMetaInformation(
-				cropDefinition.getSourceFile());
+		PdfMetaInformation pdfMetaInformation = new PdfMetaInformation(cropDefinition.getSourceFile());
 
 		// first make a copy containing the right amount of pages
-		File intermediatePdf = copyToMultiplePages(cropDefinition,
-				pdfMetaInformation);
+		File intermediatePdf = copyToMultiplePages(cropDefinition, pdfMetaInformation);
 
 		// now crop all pages according to their ratios
 		cropMultipliedFile(cropDefinition, intermediatePdf, pdfMetaInformation);
 		return cropDefinition.getDestinationFile();
 	}
 
-	private static File copyToMultiplePages(
-			final CropDefinition cropDefinition,
-			final PdfMetaInformation pdfMetaInformation) throws IOException,
-			DocumentException {
+	private static File copyToMultiplePages(final CropDefinition cropDefinition,
+			final PdfMetaInformation pdfMetaInformation) throws IOException, DocumentException {
 
-		PdfReader reader = new PdfReader(cropDefinition.getSourceFile()
-				.getAbsolutePath());
-		HashMap<String, String> map = SimpleNamedDestination
-				.getNamedDestination(reader, false);
+		PdfReader reader = new PdfReader(cropDefinition.getSourceFile().getAbsolutePath());
+		HashMap<String, String> map = SimpleNamedDestination.getNamedDestination(reader, false);
 		Document document = new Document();
 
 		File resultFile = File.createTempFile("cropped", ".pdf");
-		PdfSmartCopy pdfCopy = new PdfSmartCopy(document, new FileOutputStream(
-				resultFile));
+		PdfSmartCopy pdfCopy = new PdfSmartCopy(document, new FileOutputStream(resultFile));
 		document.open();
 
 		Map<Integer, List<String>> pageNrToDestinations = new HashMap<Integer, List<String>>();
@@ -109,22 +100,18 @@ public final class DocumentCropper {
 		}
 
 		int outputPageNumber = 0;
-		for (int pageNumber = 1; pageNumber <= pdfMetaInformation
-				.getSourcePageCount(); pageNumber++) {
+		for (int pageNumber = 1; pageNumber <= pdfMetaInformation.getSourcePageCount(); pageNumber++) {
 
-			PdfImportedPage pdfPage = pdfCopy.getImportedPage(reader,
-					pageNumber);
+			PdfImportedPage pdfPage = pdfCopy.getImportedPage(reader, pageNumber);
 
 			pdfCopy.addPage(pdfPage);
 			outputPageNumber++;
 			List<String> destinations = pageNrToDestinations.get(pageNumber);
 			if (destinations != null) {
 				for (String destination : destinations)
-					pdfCopy.addNamedDestination(destination, outputPageNumber,
-							new PdfDestination(PdfDestination.FIT));
+					pdfCopy.addNamedDestination(destination, outputPageNumber, new PdfDestination(PdfDestination.FIT));
 			}
-			List<Float[]> rectangles = cropDefinition
-					.getRectanglesForPage(pageNumber);
+			List<Float[]> rectangles = cropDefinition.getRectanglesForPage(pageNumber);
 			for (int j = 1; j < rectangles.size(); j++) {
 				pdfCopy.addPage(pdfPage);
 				outputPageNumber++;
@@ -136,25 +123,20 @@ public final class DocumentCropper {
 		return resultFile;
 	}
 
-	private static void cropMultipliedFile(final CropDefinition cropDefinition,
-			final File multipliedDocument,
-			final PdfMetaInformation pdfMetaInformation)
-			throws DocumentException, IOException {
+	private static void cropMultipliedFile(final CropDefinition cropDefinition, final File multipliedDocument,
+			final PdfMetaInformation pdfMetaInformation) throws DocumentException, IOException {
 
 		PdfReader reader = new PdfReader(multipliedDocument.getAbsolutePath());
 
-		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(
-				cropDefinition.getDestinationFile()));
+		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(cropDefinition.getDestinationFile()));
 		stamper.setMoreInfo(pdfMetaInformation.getSourceMetaInfo());
 
 		PdfDictionary pageDict;
 		int newPageNumber = 1;
 
-		for (int sourcePageNumber = 1; sourcePageNumber <= pdfMetaInformation
-				.getSourcePageCount(); sourcePageNumber++) {
+		for (int sourcePageNumber = 1; sourcePageNumber <= pdfMetaInformation.getSourcePageCount(); sourcePageNumber++) {
 
-			List<Float[]> rectangleList = cropDefinition
-					.getRectanglesForPage(sourcePageNumber);
+			List<Float[]> rectangleList = cropDefinition.getRectanglesForPage(sourcePageNumber);
 
 			// if no crop was selected do nothing
 			if (rectangleList.isEmpty()) {
@@ -171,8 +153,7 @@ public final class DocumentCropper {
 				boxes.add(reader.getBoxSize(newPageNumber, "crop"));
 				int rotation = reader.getPageRotation(newPageNumber);
 
-				Rectangle scaledBox = RectangleHandler
-						.calculateScaledRectangle(boxes, ratios, rotation);
+				Rectangle scaledBox = RectangleHandler.calculateScaledRectangle(boxes, ratios, rotation);
 
 				PdfArray scaleBoxArray = createScaledBoxArray(scaledBox);
 
@@ -183,11 +164,8 @@ public final class DocumentCropper {
 			}
 			int[] range = new int[2];
 			range[0] = newPageNumber - 1;
-			range[1] = pdfMetaInformation.getSourcePageCount()
-					+ (newPageNumber - sourcePageNumber);
-			SimpleBookmark.shiftPageNumbers(
-					pdfMetaInformation.getSourceBookmarks(),
-					rectangleList.size() - 1, range);
+			range[1] = pdfMetaInformation.getSourcePageCount() + (newPageNumber - sourcePageNumber);
+			SimpleBookmark.shiftPageNumbers(pdfMetaInformation.getSourceBookmarks(), rectangleList.size() - 1, range);
 		}
 		stamper.setOutlines(pdfMetaInformation.getSourceBookmarks());
 		stamper.close();
@@ -203,8 +181,7 @@ public final class DocumentCropper {
 		return scaleBoxArray;
 	}
 
-	private static boolean isPasswordRequired(final File file)
-			throws IOException {
+	private static boolean isPasswordRequired(final File file) throws IOException {
 		PdfReader reader = new PdfReader(file.getAbsolutePath());
 		boolean isEncrypted = reader.isEncrypted();
 		reader.close();

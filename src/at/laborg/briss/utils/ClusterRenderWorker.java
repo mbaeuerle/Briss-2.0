@@ -18,8 +18,7 @@ public class ClusterRenderWorker extends Thread {
 	private final File source;
 	private final ClusterDefinition clusters;
 
-	public ClusterRenderWorker(final File source,
-			final ClusterDefinition clusters) {
+	public ClusterRenderWorker(final File source, final ClusterDefinition clusters) {
 		super();
 		this.source = source;
 		this.clusters = clusters;
@@ -41,8 +40,7 @@ public class ClusterRenderWorker extends Thread {
 				// throw it away
 				try {
 					if (cluster.getImageData().isRenderable()) {
-						BufferedImage renderedPage = pdfDecoder
-								.getPageAsImage(pageNumber);
+						BufferedImage renderedPage = pdfDecoder.getPageAsImage(pageNumber);
 						cluster.getImageData().addImageToPreview(renderedPage);
 						workerUnitCounter++;
 					}
