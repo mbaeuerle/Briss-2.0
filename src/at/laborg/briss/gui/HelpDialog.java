@@ -26,9 +26,9 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 
-@SuppressWarnings("serial")
 public class HelpDialog extends JDialog {
 
+	private static final long serialVersionUID = 7185998226653190141L;
 	private static final String HELP_FILE_PATH = "/resources/help.html";
 
 	public HelpDialog(final Frame owner, final String title, final Dialog.ModalityType modalityType) {

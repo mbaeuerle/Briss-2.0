@@ -14,13 +14,8 @@ import javax.swing.SwingUtilities;
  * FlowLayout subclass that fully supports wrapping of components.
  */
 public class WrapLayout extends FlowLayout {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	/**
-	 * 
-	 */
+
+	private static final long serialVersionUID = -4521504101150638641L;
 	private Dimension preferredLayoutSize;
 
 	/**

@@ -49,9 +49,9 @@ import at.laborg.briss.BrissGUI;
 import at.laborg.briss.model.CropFinder;
 import at.laborg.briss.model.PageCluster;
 
-@SuppressWarnings("serial")
 public class MergedPanel extends JPanel {
 
+	private static final long serialVersionUID = -7279998240425762265L;
 	// last drawn rectangle. a "ghosting" rectangle will
 	// help the user to create the two equally sized crop rectangles
 	private static DrawableCropRect curCrop;
@@ -544,6 +544,7 @@ public class MergedPanel extends JPanel {
 			}
 		}
 
+		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (PopUpMenuForCropRectangles.DELETE.equals(e.getActionCommand())) {
 				for (Rectangle crop : crops) {
