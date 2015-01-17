@@ -96,6 +96,7 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 
 	private static final String DONATION_URI = "http://sourceforge.net/project/project_donations.php?group_id=320676"; //$NON-NLS-1$
 	private static final String RES_ICON_PATH = "/resources/Briss_icon_032x032.gif"; //$NON-NLS-1$
+	private static final String PROGRESS = "progress";
 
 	private JMenuBar menuBar;
 	private JPanel previewPanel;
@@ -103,7 +104,7 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 	private JMenuItem loadButton, cropButton, maximizeWidthButton, maximizeHeightButton, showPreviewButton,
 			showHelpButton, openDonationLinkButton, excludePagesButton;
 	private JMenuItem maximizeSizeButton, setSizeButton, setPositionButton, moveLeftButton, moveRightButton,
-			moveUpButton, moveDownButton, selectAllButton, selectNoneButton;
+			moveUpButton, moveDownButton, selectAllButton, selectNoneButton, exitButton;
 	private List<MergedPanel> mergedPanels = null;
 
 	private File lastOpenDir;
@@ -181,9 +182,9 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 
 		fileMenu.addSeparator();
 
-		JMenuItem menuItem = new JMenuItem(Messages.getString("BrissGUI.exit"), KeyEvent.VK_E);
-		menuItem.addActionListener(this);
-		fileMenu.add(menuItem);
+		exitButton = new JMenuItem(Messages.getString("BrissGUI.exit"), KeyEvent.VK_E);
+		exitButton.addActionListener(this);
+		fileMenu.add(exitButton);
 
 		cropButton = new JMenuItem(Messages.getString("BrissGUI.cropPdf"), KeyEvent.VK_C);
 		cropButton.addActionListener(this);
@@ -374,22 +375,22 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 
 	@Override
 	public void actionPerformed(ActionEvent action) {
-		if (action.getActionCommand().equals(Messages.getString("BrissGUI.donate"))) {
+		if (action.getSource().equals(openDonationLinkButton)) {
 			try {
 				DesktopHelper.openDonationLink(DONATION_URI);
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(this, e.getMessage(),
 						Messages.getString("BrissGUI.loadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 			}
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.exit"))) {
+		} else if (action.getSource().equals(exitButton)) {
 			System.exit(0);
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.showHelp"))) {
+		} else if (action.getSource().equals(showHelpButton)) {
 			new HelpDialog(this, Messages.getString("BrissGUI.brissHelp"), Dialog.ModalityType.MODELESS); //$NON-NLS-1$
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.maximizeToHeight"))) {
+		} else if (action.getSource().equals(maximizeHeightButton)) {
 			maximizeHeightInSelectedRects();
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.maximizeToWidth"))) {
+		} else if (action.getSource().equals(maximizeWidthButton)) {
 			maximizeWidthInSelectedRects();
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.excludeOtherPages"))) {
+		} else if (action.getSource().equals(excludePagesButton)) {
 			if (workingSet.getSourceFile() == null)
 				return;
 			setWorkingState(Messages.getString("BrissGUI.excludeOtherPages")); //$NON-NLS-1$
@@ -403,7 +404,7 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 				JOptionPane.showMessageDialog(this, e.getMessage(),
 						Messages.getString("BrissGUI.reloadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 			}
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.loadFile"))) {
+		} else if (action.getSource().equals(loadButton)) {
 			File inputFile = getNewFileToCrop();
 			if (inputFile == null)
 				return;
@@ -417,7 +418,7 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 						Messages.getString("BrissGUI.loadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
 			}
 
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.cropPdf"))) {
+		} else if (action.getSource().equals(cropButton)) {
 			try {
 				setWorkingState(Messages.getString("BrissGUI.loadingPDF")); //$NON-NLS-1$
 				File result = createAndExecuteCropJob(workingSet.getSourceFile());
@@ -438,7 +439,7 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 			} finally {
 				setIdleState(""); //$NON-NLS-1$
 			}
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.preview"))) {
+		} else if (action.getSource().equals(showPreviewButton)) {
 			try {
 				setWorkingState(Messages.getString("BrissGUI.createShowPreview")); //$NON-NLS-1$
 				File result = createAndExecuteCropJobForPreview();
@@ -455,16 +456,16 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 			} finally {
 				setIdleState(""); //$NON-NLS-1$
 			}
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.maximizeToSize"))) {
+		} else if (action.getSource().equals(maximizeSizeButton)) {
 			maximizeSizeInAllRects();
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.setSize"))) {
+		} else if (action.getSource().equals(setSizeButton)) {
 			setDefinedSizeSelRects();
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.setPosition"))) {
+		} else if (action.getSource().equals(setPositionButton)) {
 			setPositionSelRects();
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.selectAll"))) {
+		} else if (action.getSource().equals(selectAllButton)) {
 			for (MergedPanel panel : mergedPanels)
 				panel.selectCrops(true);
-		} else if (action.getActionCommand().equals(Messages.getString("BrissGUI.selectNone"))) {
+		} else if (action.getSource().equals(selectNoneButton)) {
 			for (MergedPanel panel : mergedPanels)
 				panel.selectCrops(false);
 		}
@@ -708,7 +709,7 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		if (Messages.getString("BrissGUI.progress").equals(evt.getPropertyName())) { //$NON-NLS-1$
+		if (PROGRESS.equals(evt.getPropertyName())) { //$NON-NLS-1$
 			progressBar.setValue((Integer) evt.getNewValue());
 		}
 	}

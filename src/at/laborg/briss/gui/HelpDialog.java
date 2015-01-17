@@ -29,7 +29,7 @@ import javax.swing.JScrollPane;
 @SuppressWarnings("serial")
 public class HelpDialog extends JDialog {
 
-	private static final String HELP_FILE_PATH = "/help.html";
+	private static final String HELP_FILE_PATH = "/resources/help.html";
 
 	public HelpDialog(final Frame owner, final String title, final Dialog.ModalityType modalityType) {
 		super(owner, title, modalityType);
