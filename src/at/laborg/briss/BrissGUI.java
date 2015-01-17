@@ -810,7 +810,7 @@ public class BrissGUI extends JFrame implements ActionListener, PropertyChangeLi
 				int percent = (int) ((renderWorker.workerUnitCounter / (float) totalWorkUnits) * 100);
 				setProgress(percent);
 				try {
-					Thread.sleep(500);
+					Thread.sleep(50);
 				} catch (InterruptedException e) {
 				}
 			}
