@@ -7,10 +7,11 @@ Briss 2.0 is based on Briss 0.9 which is located at sourceforge: http://sourcefo
 
 ## Build instructions
 
-To build the project you need two additional libraries:
-* itext from http://itextpdf.com/ (current version is itextpdf-5.5.4.jar)
-* jpedal from http://www.jpedal.org/. jpedal was updated to javaFX. This version no longer works with Swing. Get a working jar from the Briss 0.9 release (jpedal-4.74b27.jar)
-
+* To build the project you need two additional libraries, put them in the "lib" sub directory:
+ * itext from http://itextpdf.com/ (current version is itextpdf-5.5.4.jar)
+ * jpedal from http://www.jpedal.org/. jpedal was updated to javaFX. This version no longer works with Swing. Get a working jar from the Briss 0.9 release (jpedal-4.74b27.jar)
+ 
+* Eclipse is used for development, just import as "Existing Project into Workspace"
 
 # Briss 0.9 Notes
 
