@@ -5,6 +5,11 @@ Briss 2.0 is intended to be a GUI Update for the Briss PDF cropping tool.
 Briss 2.0 is based on Briss 0.9 which is located at sourceforge: http://sourceforge.net/projects/briss/
 
 
+## Build instructions
+
+To build the project you need two additional libraries:
+* itext from http://itextpdf.com/ 
+* jpedal from http://www.jpedal.org/. jpedal was updated to javaFX. This version no longer works with Swing. Get a working jar from the Briss 0.9 release (jpedal-4.74b27.jar)
 
 
 # Briss 0.9 Notes
