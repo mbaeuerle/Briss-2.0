@@ -7,10 +7,15 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import at.laborg.briss.Messages;
 
 public class WizardTest {
 
 	public static void main(String[] args) {
+		setUILook();
 		Wizard wiz = new Wizard();
 		JFrame frame = new JFrame();
 
@@ -57,8 +62,20 @@ public class WizardTest {
 			}
 		});
 
-		wiz.setButtonsInvisibleInsteadOfDisabled(true);
+		// wiz.setButtonsInvisibleInsteadOfDisabled(true);
 		wiz.showWizard();
+
+	}
+
+	private static void setUILook() {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (UnsupportedLookAndFeelException ex) {
+			System.out.println(Messages.getString("BrissGUI.lookAndFeelError")); //$NON-NLS-1$
+		} catch (ClassNotFoundException e) {
+		} catch (InstantiationException e) {
+		} catch (IllegalAccessException e) {
+		}
 	}
 
 }
