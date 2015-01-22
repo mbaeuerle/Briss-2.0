@@ -22,6 +22,7 @@ public class WizardTest {
 		frame.setBounds(300, 300, 800, 600);
 		frame.setPreferredSize(new Dimension(800, 600));
 		frame.setLayout(new BorderLayout());
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.add(wiz, BorderLayout.CENTER);
 		frame.pack();
