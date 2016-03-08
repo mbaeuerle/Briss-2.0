@@ -66,6 +66,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
 
     private static final String DONATION_URI = "http://sourceforge.net/project/project_donations.php?group_id=320676"; //$NON-NLS-1$
     private static final String RES_ICON_PATH = "/resources/Briss_icon_032x032.gif"; //$NON-NLS-1$
+    private static final String RES_DROP_IMG_PATH = "resources/drop.png"; //$NON-NLS-1$
     private static final String PROGRESS = "progress";
 
     private JMenuBar menuBar;
@@ -160,8 +161,15 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         cardLayout = new CardLayout();
         wrapperPanel = new JPanel(cardLayout);
 
-        dndPanel = new DragAndDropPanel(e -> openFileDialog());
-
+        dndPanel = new DragAndDropPanel(loadDropImage(), e -> openFileDialog());
+        new FileDrop(dndPanel, true, files -> {
+            if (files.length == 1) {
+                File file = files[0];
+                if (file.getName().toLowerCase().endsWith(".pdf")) {
+                    loadPDF(file);
+                }
+            }
+        });
 
         previewPanel = new JPanel();
         previewPanel.setLayout(new WrapLayout(FlowLayout.LEFT, 4, 4));
@@ -173,7 +181,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         progressBar = new JProgressBar(0, 100);
         progressBar.setStringPainted(true);
         progressBar.setPreferredSize(new Dimension(400, 30));
-        //progressBar.setVisible(false);
+        progressBar.setVisible(false);
 
         JPanel footer = new JPanel();
 
@@ -243,6 +251,11 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
             setIconImage(new ImageIcon(imgBuf).getImage());
         } catch (IOException e) {
         }
+    }
+
+    private ImageIcon loadDropImage() {
+        ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource(RES_DROP_IMG_PATH));
+        return icon;
     }
 
     private static PageExcludes getExcludedPages() {
@@ -418,6 +431,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         lastOpenDir = loadFile.getParentFile();
         previewPanel.removeAll();
         cardLayout.first(wrapperPanel);
+        progressBar.setVisible(true);
         progressBar.setString(Messages.getString("BrissGUI.loadingNewFile")); //$NON-NLS-1$
         ClusterPagesTask clusterTask = new ClusterPagesTask(loadFile, null);
         clusterTask.addPropertyChangeListener(this);
