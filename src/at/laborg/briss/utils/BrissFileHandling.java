@@ -17,6 +17,10 @@ public final class BrissFileHandling {
 		return new File(recommendedName);
 	}
 
+	public static String getRecommendedFileName(final File sourceFile) {
+		return sourceFile.getName().substring(0, sourceFile.getName().length() - 4) + RECOMMENDED_ENDING;
+	}
+
 	public static boolean checkValidStateAndCreate(File destinationFile) throws IOException, IllegalArgumentException {
 		if (destinationFile == null)
 			throw new IllegalArgumentException("Destination File musst be set!");
