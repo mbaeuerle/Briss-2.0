@@ -405,7 +405,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     }
 
-    private void importNewPdfFile(File loadFile) throws IOException, PdfException {
+    protected void importNewPdfFile(File loadFile) throws IOException, PdfException {
         lastOpenDir = loadFile.getParentFile();
         previewPanel.removeAll();
         cardLayout.first(wrapperPanel);
