@@ -7,6 +7,14 @@ Briss 2.0 is based on Briss 0.9 which is located at sourceforge: http://sourcefo
 ### Things that are done by now
 - Small refinements on gui which improve the workflow
 - Better file chooser than provided by swing
+- Added support for drag and drop
+
+### Images
+
+Startscreen with drag and drop support:
+![Image of BRISS 2.0 Startscreen](img/startscreen.png)
+Cropping view:
+![Image of BRISS 2.0 Cropping View](img/croppingView.png)
 
 
 ## Build instructions
