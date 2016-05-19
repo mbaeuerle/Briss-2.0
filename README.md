@@ -12,7 +12,7 @@ Briss 2.0 is based on Briss 0.9 which is located at sourceforge: http://sourcefo
 ### Images
 
 Startscreen with drag and drop support:
-![Image of BRISS 2.0 Startscreen](img/startscreen.png)
+![Image of BRISS 2.0 Startscreen](img/startScreen.png)
 Cropping view:
 ![Image of BRISS 2.0 Cropping View](img/croppingView.png)
 
