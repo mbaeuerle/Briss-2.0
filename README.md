@@ -76,6 +76,13 @@ Example:
 ```
 the second line will create the cropped pdf into dogeatdog_cropped.pdf
 
+To split according to columns/rows, respectively use the `--split-col` and `--split-row` arguments. For example:
+```
+.\bin\Briss-2.0.bat -s dogeatdog.pdf -d dogcrop.pdf --split-col
+```
+
+Splitting columns will try to split the pdf into two columns. Splitting rows will try to split the pdf into two parts
+by cutting pages in half.
 
 
 ## Instructions

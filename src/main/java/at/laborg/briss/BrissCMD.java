@@ -19,12 +19,10 @@ package at.laborg.briss;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import at.laborg.briss.exception.CropException;
-import at.laborg.briss.model.ClusterDefinition;
-import at.laborg.briss.model.CropDefinition;
-import at.laborg.briss.model.CropFinder;
-import at.laborg.briss.model.PageCluster;
+import at.laborg.briss.model.*;
 import at.laborg.briss.utils.BrissFileHandling;
 import at.laborg.briss.utils.ClusterCreator;
 import at.laborg.briss.utils.ClusterRenderWorker;
@@ -71,7 +69,29 @@ public final class BrissCMD {
 		try {
 			for (PageCluster cluster : clusterDefinition.getClusterList()) {
 				Float[] auto = CropFinder.getAutoCropFloats(cluster.getImageData().getPreviewImage());
-				cluster.addRatios(auto);
+
+				ArrayList<Float[]> ratios = new ArrayList<>();
+				ratios.add(auto);
+
+				if (workDescription.isSplitColumns()) {
+					ArrayList<Float[]> newRatios = new ArrayList<>();
+					for (Float[] crop : ratios) {
+						newRatios.addAll(SplitFinder.splitColumn(cluster.getImageData().getPreviewImage(), crop));
+					}
+					ratios = newRatios;
+				}
+
+				if (workDescription.isSplitRows()) {
+					ArrayList<Float[]> newRatios = new ArrayList<>();
+					for (Float[] crop : ratios) {
+						newRatios.addAll(SplitFinder.splitRow(cluster.getImageData().getPreviewImage(), crop));
+					}
+					ratios = newRatios;
+				}
+
+				for (Float[] ratio : ratios) {
+					cluster.addRatios(ratio);
+				}
 			}
 			CropDefinition cropDefintion = CropDefinition.createCropDefinition(workDescription.getSourceFile(),
 					workDescription.getDestFile(), clusterDefinition);
@@ -94,21 +114,32 @@ public final class BrissCMD {
 		private static final String SOURCE_FILE_CMD = "-s";
 		private static final String DEST_FILE_CMD = "-d";
 
-		private File sourceFile;
-		private File destFile;
+		private static final String SPLIT_COLUMN_CMD = "--split-col";
+		private static final String SPLIT_ROW_CMD = "--split-row";
+
+		private File sourceFile = null;
+		private File destFile = null;
+
+		private boolean splitColumns = false;
+		private boolean splitRows = false;
 
 		static CommandValues parseToWorkDescription(final String[] args) {
 			CommandValues commandValues = new CommandValues();
 			int i = 0;
 			while (i < args.length) {
-				if (args[i].trim().equalsIgnoreCase(SOURCE_FILE_CMD)) {
+				String arg = args[i].trim();
+				if (arg.equalsIgnoreCase(SOURCE_FILE_CMD)) {
 					if (i < (args.length - 1)) {
 						commandValues.setSourceFile(new File(args[i + 1]));
 					}
-				} else if (args[i].trim().equalsIgnoreCase(DEST_FILE_CMD)) {
+				} else if (arg.equalsIgnoreCase(DEST_FILE_CMD)) {
 					if (i < (args.length - 1)) {
 						commandValues.setDestFile(new File(args[i + 1]));
 					}
+				} else if (arg.equalsIgnoreCase(SPLIT_COLUMN_CMD)) {
+					commandValues.setSplitColumns();
+				} else if (arg.equalsIgnoreCase(SPLIT_ROW_CMD)) {
+					commandValues.setSplitRows();
 				}
 				i++;
 			}
@@ -161,5 +192,21 @@ public final class BrissCMD {
 			this.destFile = destFile;
 		}
 
+
+		public void setSplitColumns() {
+			this.splitColumns = true;
+		}
+
+		public boolean isSplitColumns() {
+			return splitColumns;
+		}
+
+		public void setSplitRows() {
+			this.splitRows = true;
+		}
+
+		public boolean isSplitRows() {
+			return splitRows;
+		}
 	}
 }
