@@ -56,8 +56,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     private static final int MIN_WIDTH = 400;
 
     private static final String DONATION_URI = "http://sourceforge.net/project/project_donations.php?group_id=320676"; //$NON-NLS-1$
-    private static final String RES_ICON_PATH = "resources/Briss_icon_032x032.gif"; //$NON-NLS-1$
-    private static final String RES_DROP_IMG_PATH = "resources/drop.png"; //$NON-NLS-1$
+    private static final String RES_ICON_PATH = "Briss_icon_032x032.gif"; //$NON-NLS-1$
+    private static final String RES_DROP_IMG_PATH = "drop.png"; //$NON-NLS-1$
     private static final String PROGRESS = "progress";
 
     private JMenuBar menuBar;
@@ -339,12 +339,12 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
                 DesktopHelper.openDonationLink(DONATION_URI);
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(),
-                        Messages.getString("BrissGUI.loadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                        messages.properties.getString("BrissGUI.loadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         } else if (action.getSource().equals(exitButton)) {
             System.exit(0);
         } else if (action.getSource().equals(showHelpButton)) {
-            new HelpDialog(this, Messages.getString("BrissGUI.brissHelp"), Dialog.ModalityType.MODELESS); //$NON-NLS-1$
+            new HelpDialog(this, messages.properties.getString("BrissGUI.brissHelp"), Dialog.ModalityType.MODELESS); //$NON-NLS-1$
         } else if (action.getSource().equals(maximizeHeightButton)) {
             maximizeHeightInSelectedRects();
         } else if (action.getSource().equals(maximizeWidthButton)) {
@@ -352,16 +352,16 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         } else if (action.getSource().equals(excludePagesButton)) {
             if (workingSet.getSourceFile() == null)
                 return;
-            setWorkingState(Messages.getString("BrissGUI.excludeOtherPages")); //$NON-NLS-1$
+            setWorkingState(messages.properties.getString("BrissGUI.excludeOtherPages")); //$NON-NLS-1$
             try {
                 reloadWithOtherExcludes();
                 setTitle("BRISS - " + workingSet.getSourceFile().getName()); //$NON-NLS-1$
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(),
-                        Messages.getString("BrissGUI.reloadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                        messages.properties.getString("BrissGUI.reloadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             } catch (PdfException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(),
-                        Messages.getString("BrissGUI.reloadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                        messages.properties.getString("BrissGUI.reloadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         } else if (action.getSource().equals(loadButton)) {
 

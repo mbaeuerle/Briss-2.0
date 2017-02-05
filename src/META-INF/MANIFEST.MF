@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: itextpdf-5.5.8.jar jpedal-4.74b27.jar itextpdf-5.5.8.jar j
- pedal-4.74b27.jar
-Main-Class: at.laborg.briss.Briss
-

@@ -19,9 +19,13 @@ Cropping view:
 
 ## Build instructions
 
-* To build the project you need two additional libraries, put them in the "lib" sub directory:
- * itext from http://itextpdf.com/ (current version is itextpdf-5.5.4.jar)
- * jpedal from http://www.jpedal.org/. jpedal was updated to javaFX. This version no longer works with Swing. Get a working jar from the Briss 0.9 release (jpedal-4.74b27.jar)
+To build, run the following command:
+
+```
+./gradlew distZip
+```
+
+You can find the built version in build/distributions
 
 # Briss 0.9 Notes
 
@@ -47,11 +51,11 @@ should be cropped by creating a overlay of similar pages (=>all pages within a p
 You can run the application by executing following command in terminal:
 
 ```
-java -jar briss-0.9.jar
+.\bin\Briss-2.0.bat
 ```
 or
 ```
-java -jar briss-0.9.jar cropthis.pdf
+.\bin\Briss-2.0.bat cropthis.pdf
 ```
 
 (The second line comes in handy if you want shortlinks for pdf editing) 
@@ -63,12 +67,12 @@ If you prefer command line and trust the basic automatic detection algorithm
 use it this way (can be batched!):
 
 ```
-java -jar briss-0.9.jar -s [SOURCEFILE] [-d [DESTINATIONFILE]]
+.\bin\Briss-2.0.bat -s [SOURCEFILE] [-d [DESTINATIONFILE]]
 ```
 Example:
 ```
-java -jar briss-0.9.jar -s dogeatdog.pdf -d dogcrop.pdf
-java -jar briss-0.9.jar -s dogeatdog.pdf 
+.\bin\Briss-2.0.bat -s dogeatdog.pdf -d dogcrop.pdf
+.\bin\Briss-2.0.bat -s dogeatdog.pdf
 ```
 the second line will create the cropped pdf into dogeatdog_cropped.pdf
 
@@ -91,8 +95,10 @@ the second line will create the cropped pdf into dogeatdog_cropped.pdf
 * Select a Rectangle with ctrl + mouse click. Then copy (ctrl-c) and paste it into another cluster.
 * Use hotcorners to make a crop rectangle smaller or bigger
 
+# Dev instructions
 
-## Problems
-* If you want to crop really big files it might be necessary to start briss with 
-an additional parameter: "-Xms128m -Xmx1024m" (complete call would look like: 
-"java -Xms128m -Xmx1024m -jar briss-0.9.jar")
+Run the application with the following command:
+
+```
+./gradlew run
+```

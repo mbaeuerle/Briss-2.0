@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'at.laborg.briss.Briss'
+applicationDefaultJvmArgs = ["-Xms128m", "-Xmx1024m"]
+
+repositories {
+    maven { url "http://clojars.org/repo" } // For jpedal
+    maven { url "http://maven.geotoolkit.org/" } // For jpedal transitive dependencies
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.itextpdf', name: 'itextpdf', version: '5.5.10'
+    compile group: 'org.jpedal', name: 'jpedal-lgpl', version: '4.74b27'
+}
