@@ -332,58 +332,6 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
-    /*@Override
-    public void actionPerformed(ActionEvent action) {
-        if (action.getSource().equals(openDonationLinkButton)) {
-            try {
-                DesktopHelper.openDonationLink(DONATION_URI);
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(),
-                        messages.properties.getString("BrissGUI.loadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            }
-        } else if (action.getSource().equals(exitButton)) {
-            System.exit(0);
-        } else if (action.getSource().equals(showHelpButton)) {
-            new HelpDialog(this, messages.properties.getString("BrissGUI.brissHelp"), Dialog.ModalityType.MODELESS); //$NON-NLS-1$
-        } else if (action.getSource().equals(maximizeHeightButton)) {
-            maximizeHeightInSelectedRects();
-        } else if (action.getSource().equals(maximizeWidthButton)) {
-            maximizeWidthInSelectedRects();
-        } else if (action.getSource().equals(excludePagesButton)) {
-            if (workingSet.getSourceFile() == null)
-                return;
-            setWorkingState(messages.properties.getString("BrissGUI.excludeOtherPages")); //$NON-NLS-1$
-            try {
-                reloadWithOtherExcludes();
-                setTitle("BRISS - " + workingSet.getSourceFile().getName()); //$NON-NLS-1$
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(),
-                        messages.properties.getString("BrissGUI.reloadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            } catch (PdfException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(),
-                        messages.properties.getString("BrissGUI.reloadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            }
-        } else if (action.getSource().equals(loadButton)) {
-
-        } else if (action.getSource().equals(cropButton)) {
-
-        } else if (action.getSource().equals(showPreviewButton)) {
-
-        } else if (action.getSource().equals(maximizeSizeButton)) {
-            maximizeSizeInAllRects();
-        } else if (action.getSource().equals(setSizeButton)) {
-            setDefinedSizeSelRects();
-        } else if (action.getSource().equals(setPositionButton)) {
-            setPositionSelRects();
-        } else if (action.getSource().equals(selectAllButton)) {
-            for (MergedPanel panel : mergedPanels)
-                panel.selectCrops(true);
-        } else if (action.getSource().equals(selectNoneButton)) {
-            for (MergedPanel panel : mergedPanels)
-                panel.selectCrops(false);
-        }
-    }*/
-
     private File createAndExecuteCropJobForPreview() throws IOException, DocumentException, CropException {
         File tmpCropFileDestination = File.createTempFile("briss", ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$
         CropDefinition cropDefinition = CropDefinition.createCropDefinition(workingSet.getSourceFile(),
