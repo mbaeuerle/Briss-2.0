@@ -39,6 +39,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,6 +146,16 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         fileMenu.add(exitButton);
 
         openDonationLinkButton = new JMenuItem(Messages.getString("BrissGUI.donate")); //$NON-NLS-1$
+        openDonationLinkButton.addActionListener(a -> {
+            try {
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().browse(URI.create(DONATION_URI));
+                }
+            } catch (IOException e) {
+                // Ignore error
+                e.printStackTrace();
+            }
+        });
         helpMenu.add(openDonationLinkButton);
 
         showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); //$NON-NLS-1$
