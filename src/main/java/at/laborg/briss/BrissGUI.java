@@ -39,6 +39,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,8 +57,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     private static final int MIN_WIDTH = 400;
 
     private static final String DONATION_URI = "http://sourceforge.net/project/project_donations.php?group_id=320676"; //$NON-NLS-1$
-    private static final String RES_ICON_PATH = "resources/Briss_icon_032x032.gif"; //$NON-NLS-1$
-    private static final String RES_DROP_IMG_PATH = "resources/drop.png"; //$NON-NLS-1$
+    private static final String RES_ICON_PATH = "Briss_icon_032x032.gif"; //$NON-NLS-1$
+    private static final String RES_DROP_IMG_PATH = "drop.png"; //$NON-NLS-1$
     private static final String PROGRESS = "progress";
 
     private JMenuBar menuBar;
@@ -145,6 +146,16 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         fileMenu.add(exitButton);
 
         openDonationLinkButton = new JMenuItem(Messages.getString("BrissGUI.donate")); //$NON-NLS-1$
+        openDonationLinkButton.addActionListener(a -> {
+            try {
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().browse(URI.create(DONATION_URI));
+                }
+            } catch (IOException e) {
+                // Ignore error
+                e.printStackTrace();
+            }
+        });
         helpMenu.add(openDonationLinkButton);
 
         showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); //$NON-NLS-1$
@@ -331,58 +342,6 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
             setIdleState(); //$NON-NLS-1$
         }
     }
-
-    /*@Override
-    public void actionPerformed(ActionEvent action) {
-        if (action.getSource().equals(openDonationLinkButton)) {
-            try {
-                DesktopHelper.openDonationLink(DONATION_URI);
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(),
-                        Messages.getString("BrissGUI.loadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            }
-        } else if (action.getSource().equals(exitButton)) {
-            System.exit(0);
-        } else if (action.getSource().equals(showHelpButton)) {
-            new HelpDialog(this, Messages.getString("BrissGUI.brissHelp"), Dialog.ModalityType.MODELESS); //$NON-NLS-1$
-        } else if (action.getSource().equals(maximizeHeightButton)) {
-            maximizeHeightInSelectedRects();
-        } else if (action.getSource().equals(maximizeWidthButton)) {
-            maximizeWidthInSelectedRects();
-        } else if (action.getSource().equals(excludePagesButton)) {
-            if (workingSet.getSourceFile() == null)
-                return;
-            setWorkingState(Messages.getString("BrissGUI.excludeOtherPages")); //$NON-NLS-1$
-            try {
-                reloadWithOtherExcludes();
-                setTitle("BRISS - " + workingSet.getSourceFile().getName()); //$NON-NLS-1$
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(),
-                        Messages.getString("BrissGUI.reloadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            } catch (PdfException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(),
-                        Messages.getString("BrissGUI.reloadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            }
-        } else if (action.getSource().equals(loadButton)) {
-
-        } else if (action.getSource().equals(cropButton)) {
-
-        } else if (action.getSource().equals(showPreviewButton)) {
-
-        } else if (action.getSource().equals(maximizeSizeButton)) {
-            maximizeSizeInAllRects();
-        } else if (action.getSource().equals(setSizeButton)) {
-            setDefinedSizeSelRects();
-        } else if (action.getSource().equals(setPositionButton)) {
-            setPositionSelRects();
-        } else if (action.getSource().equals(selectAllButton)) {
-            for (MergedPanel panel : mergedPanels)
-                panel.selectCrops(true);
-        } else if (action.getSource().equals(selectNoneButton)) {
-            for (MergedPanel panel : mergedPanels)
-                panel.selectCrops(false);
-        }
-    }*/
 
     private File createAndExecuteCropJobForPreview() throws IOException, DocumentException, CropException {
         File tmpCropFileDestination = File.createTempFile("briss", ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$

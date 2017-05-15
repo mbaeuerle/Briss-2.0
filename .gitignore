@@ -12,3 +12,7 @@ hs_err_pid*
 *.idea
 *.iml
 *.DS_Store
+
+# Gradle
+.gradle/
+build/

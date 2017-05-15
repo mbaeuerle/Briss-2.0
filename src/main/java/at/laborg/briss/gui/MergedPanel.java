@@ -48,6 +48,7 @@ import javax.swing.SwingUtilities;
 import at.laborg.briss.BrissGUI;
 import at.laborg.briss.model.CropFinder;
 import at.laborg.briss.model.PageCluster;
+import at.laborg.briss.model.SplitFinder;
 
 public class MergedPanel extends JPanel {
 
@@ -405,6 +406,42 @@ public class MergedPanel extends JPanel {
 		return BASE_FONT.deriveFont((scaleFactorHeight > scaleFactorWidth) ? scaledWidth : scaledHeight);
 	}
 
+	private void splitIntoColumns() {
+		ArrayList<DrawableCropRect> cropsCopy = new ArrayList<>(crops.size());
+
+		for (DrawableCropRect crop : crops) {
+			if (crop.isSelected()) {
+				for (DrawableCropRect splitCrop : SplitFinder.splitColumn(img, crop)) {
+					cropsCopy.add(splitCrop);
+				}
+			} else {
+				cropsCopy.add(crop);
+			}
+		}
+		crops.clear();
+		crops.addAll(cropsCopy);
+		updateClusterRatios(crops);
+		repaint();
+	}
+
+	private void splitIntoRows() {
+		ArrayList<DrawableCropRect> cropsCopy = new ArrayList<>(crops.size());
+
+		for (DrawableCropRect crop : crops) {
+			if (crop.isSelected()) {
+				for (DrawableCropRect splitCrop : SplitFinder.splitRow(img, crop)) {
+					cropsCopy.add(splitCrop);
+				}
+			} else {
+				cropsCopy.add(crop);
+			}
+		}
+		crops.clear();
+		crops.addAll(cropsCopy);
+		updateClusterRatios(crops);
+		repaint();
+	}
+
 	private void copyToClipBoard() {
 		ClipBoard.getInstance().clear();
 		for (DrawableCropRect crop : crops) {
@@ -557,6 +594,10 @@ public class MergedPanel extends JPanel {
 				repaint();
 			} else if (PopUpMenuForCropRectangles.SELECT_DESELECT.equals(e.getActionCommand())) {
 				changeSelectRectangle(popUpMenuPoint);
+			} else if (PopUpMenuForCropRectangles.SPLIT_INTO_COLUMNS.equals(e.getActionCommand())) {
+				splitIntoColumns();
+			} else if (PopUpMenuForCropRectangles.SPLIT_INTO_ROWS.equals(e.getActionCommand())) {
+				splitIntoRows();
 			} else if (PopUpMenuForCropRectangles.COPY.equals(e.getActionCommand())) {
 				copyToClipBoard();
 			} else if (PopUpMenuForCropRectangles.PASTE.equals(e.getActionCommand())) {
@@ -697,6 +738,8 @@ public class MergedPanel extends JPanel {
 		private class PopUpMenuForCropRectangles extends JPopupMenu {
 			public static final String DELETE = "Delete rectangle";
 			public static final String SELECT_DESELECT = "Select/Deselect rectangle";
+			public static final String SPLIT_INTO_COLUMNS = "Split into columns";
+			public static final String SPLIT_INTO_ROWS = "Split into rows";
 			public static final String COPY = "Copy Selected rectangles";
 			public static final String PASTE = "Paste rectangles";
 			public static final String ALIGN_SELECTED = "Align selected rectangles";
@@ -717,15 +760,23 @@ public class MergedPanel extends JPanel {
 					selectDeselectItem.addActionListener(MergedPanelMouseAdapter.this);
 					add(selectDeselectItem);
 				}
-				boolean copyPossible = false;
+				boolean cropRectIsSelected = false;
 				for (DrawableCropRect crop : crops) {
 					if (crop.isSelected()) {
-						copyPossible = true;
+						cropRectIsSelected = true;
 					}
 				}
+				JMenuItem splitColumns = new JMenuItem(SPLIT_INTO_COLUMNS);
+				splitColumns.addActionListener(MergedPanelMouseAdapter.this);
+				splitColumns.setEnabled(cropRectIsSelected);
+				add(splitColumns);
+				JMenuItem splitRows = new JMenuItem(SPLIT_INTO_ROWS);
+				splitRows.addActionListener(MergedPanelMouseAdapter.this);
+				splitRows.setEnabled(cropRectIsSelected);
+				add(splitRows);
 				JMenuItem copyItem = new JMenuItem(COPY);
 				copyItem.addActionListener(MergedPanelMouseAdapter.this);
-				copyItem.setEnabled(copyPossible);
+				copyItem.setEnabled(cropRectIsSelected);
 				add(copyItem);
 				JMenuItem pasteItem = new JMenuItem(PASTE);
 				pasteItem.addActionListener(MergedPanelMouseAdapter.this);
