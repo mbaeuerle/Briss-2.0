@@ -150,30 +150,15 @@ public class ClusterImageData {
 				for (int k = 0; k < imageCnt; k++) {
 					sum[i][j] += imgdata[i][j][k];
 				}
-			}
-		}
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
 				mean[i][j] = sum[i][j] / imageCnt;
-			}
-		}
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
 				sum[i][j] = 0;
-			}
-		}
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
 				for (int k = 0; k < imageCnt; k++) {
 					sum[i][j] += (imgdata[i][j][k] - mean[i][j]) * (imgdata[i][j][k] - mean[i][j]);
 				}
-			}
-		}
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
 				sd[i][j] = 255 - (int) Math.sqrt(sum[i][j] / imageCnt);
 			}
 		}
+
 		return sd;
 	}
 }
