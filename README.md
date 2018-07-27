@@ -39,7 +39,7 @@ should be cropped by creating a overlay of similar pages (=>all pages within a p
 ## General
  * Homepage : http://sourceforge.net/projects/briss/
  * License: GPLv3
- * Author: Gerhard Aigner (gerhard.aigner@gmail.com
+ * Author: Gerhard Aigner (gerhard.aigner@gmail.com)
  * Requirements: Java 6
  * Operating systems: Windows, Linux, MacOSX
  * This software uses two libraries to render and crop PDF files: 
