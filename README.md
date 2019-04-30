@@ -19,13 +19,17 @@ Cropping view:
 
 ## Build instructions
 
+### Prerequisites
+Make sure you have JDK 8 installed as currently only this JDK version is supported.
+
+### Build
 To build, run the following command:
 
 ```
 ./gradlew distZip
 ```
 
-You can find the built version in build/distributions
+You can find the built version in `build/distributions`
 
 # Briss 0.9 Notes
 
