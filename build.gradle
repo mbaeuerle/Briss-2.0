@@ -1,8 +1,13 @@
-apply plugin: 'java'
-apply plugin: 'application'
+
+plugins {
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'java'
+    id 'application'
+}
 
 mainClassName = 'at.laborg.briss.Briss'
 applicationDefaultJvmArgs = ["-Xms128m", "-Xmx1024m"]
+def javaFxVersion = '11'
 
 repositories {
     maven { url "http://clojars.org/repo" } // For jpedal
@@ -13,4 +18,19 @@ repositories {
 dependencies {
     compile group: 'com.itextpdf', name: 'itextpdf', version: '5.5.10'
     compile group: 'org.jpedal', name: 'jpedal-lgpl', version: '4.74b27'
+
+    runtimeOnly "org.openjfx:javafx-controls:$javaFxVersion:win"
+    runtimeOnly "org.openjfx:javafx-controls:$javaFxVersion:linux"
+    runtimeOnly "org.openjfx:javafx-controls:$javaFxVersion:mac"
+    runtimeOnly "org.openjfx:javafx-base:$javaFxVersion:win"
+    runtimeOnly "org.openjfx:javafx-base:$javaFxVersion:linux"
+    runtimeOnly "org.openjfx:javafx-base:$javaFxVersion:mac"
+    runtimeOnly "org.openjfx:javafx-swing:$javaFxVersion:win"
+    runtimeOnly "org.openjfx:javafx-swing:$javaFxVersion:linux"
+    runtimeOnly "org.openjfx:javafx-swing:$javaFxVersion:mac"
+}
+
+javafx {
+    version = javaFxVersion
+    modules = [ 'javafx.controls', 'javafx.base', 'javafx.swing' ]
 }
