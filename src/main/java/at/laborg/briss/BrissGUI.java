@@ -22,16 +22,52 @@ import at.laborg.briss.exception.CropException;
 import at.laborg.briss.gui.HelpDialog;
 import at.laborg.briss.gui.MergedPanel;
 import at.laborg.briss.gui.WrapLayout;
-import at.laborg.briss.model.*;
-import at.laborg.briss.utils.*;
+import at.laborg.briss.model.ClusterDefinition;
+import at.laborg.briss.model.CropDefinition;
+import at.laborg.briss.model.PageCluster;
+import at.laborg.briss.model.PageExcludes;
+import at.laborg.briss.model.WorkingSet;
+import at.laborg.briss.utils.BrissFileHandling;
+import at.laborg.briss.utils.ClusterCreator;
+import at.laborg.briss.utils.ClusterRenderWorker;
+import at.laborg.briss.utils.DesktopHelper;
+import at.laborg.briss.utils.DocumentCropper;
+import at.laborg.briss.utils.FileDrop;
+import at.laborg.briss.utils.PageNumberParser;
 import com.itextpdf.text.DocumentException;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
 import org.jpedal.exception.PdfException;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -104,10 +140,10 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
                 importNewPdfFile(fileArg);
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(),
-                        Messages.getString("BrissGUI.brissError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                    Messages.getString("BrissGUI.brissError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             } catch (PdfException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(),
-                        Messages.getString("BrissGUI.brissError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                    Messages.getString("BrissGUI.brissError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         }
 
@@ -184,7 +220,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         showPreview.setVisible(false);
 
         scrollPane = new JScrollPane(previewPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVisible(true);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(30);
@@ -267,7 +303,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
                 return pageExcludes;
             } catch (ParseException e) {
                 JOptionPane.showMessageDialog(null, e.getMessage(),
-                        Messages.getString("BrissGUI.inputError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                    Messages.getString("BrissGUI.inputError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
 
         }
@@ -307,7 +343,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
             JOptionPane.showMessageDialog(this, e.getMessage(), Messages.getString("BrissGUI."), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         } catch (PdfException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(),
-                    Messages.getString("BrissGUI.loadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                Messages.getString("BrissGUI.loadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         }
     }
 
@@ -315,7 +351,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         setWorkingState(Messages.getString("BrissGUI.loadingPDF")); //$NON-NLS-1$
         try {
             CropDefinition cropDefinition = CropDefinition.createCropDefinition(workingSet.getSourceFile(),
-                    file, workingSet.getClusterDefinition());
+                file, workingSet.getClusterDefinition());
             File result = DocumentCropper.crop(cropDefinition);
             if (result != null) {
                 DesktopHelper.openFileWithDesktopApp(result);
@@ -324,7 +360,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
 
         } catch (IOException | DocumentException | CropException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(),
-                    Messages.getString("BrissGUI.croppingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                Messages.getString("BrissGUI.croppingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         } finally {
             setIdleState(); //$NON-NLS-1$
         }
@@ -337,7 +373,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
             DesktopHelper.openFileWithDesktopApp(result);
         } catch (IOException | DocumentException | CropException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(),
-                    Messages.getString("BrissGUI.croppingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                Messages.getString("BrissGUI.croppingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         } finally {
             setIdleState(); //$NON-NLS-1$
         }
@@ -346,7 +382,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     private File createAndExecuteCropJobForPreview() throws IOException, DocumentException, CropException {
         File tmpCropFileDestination = File.createTempFile("briss", ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$
         CropDefinition cropDefinition = CropDefinition.createCropDefinition(workingSet.getSourceFile(),
-                tmpCropFileDestination, workingSet.getClusterDefinition());
+            tmpCropFileDestination, workingSet.getClusterDefinition());
         File result = DocumentCropper.crop(cropDefinition);
         return result;
     }
@@ -479,7 +515,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         if ((maxWidth >= 0) && (maxHeight >= 0)) {
             maxWidth = Math.round(25.4f * maxWidth / 72f);
             maxHeight = Math.round(25.4f * maxHeight / 72f);
-            defInput = Integer.toString(maxWidth) + " " + Integer.toString(maxHeight); //$NON-NLS-1$
+            defInput = maxWidth + " " + maxHeight; //$NON-NLS-1$
         }
 
         // get user input
@@ -534,7 +570,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         if ((minX < Integer.MAX_VALUE) && (minY < Integer.MAX_VALUE)) {
             minX = Math.round(25.4f * minX / 72f);
             minY = Math.round(25.4f * minY / 72f);
-            defInput = Integer.toString(minX) + " " + Integer.toString(minY); //$NON-NLS-1$
+            defInput = minX + " " + minY; //$NON-NLS-1$
         }
 
         // get user input

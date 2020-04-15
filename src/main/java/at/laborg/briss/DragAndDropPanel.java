@@ -1,7 +1,13 @@
 package at.laborg.briss;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 
 /**
@@ -24,7 +30,7 @@ public class DragAndDropPanel extends JPanel {
         loadButton = new JButton("Load file");
         loadButton.addActionListener(actionListener);
         loadButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        loadButton.setPreferredSize(new Dimension(100,50));
+        loadButton.setPreferredSize(new Dimension(100, 50));
         add(Box.createVerticalGlue());
         add(dndText);
         add(Box.createRigidArea(new Dimension(0, 40)));

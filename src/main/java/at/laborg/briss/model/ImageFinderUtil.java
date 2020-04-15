@@ -5,7 +5,7 @@ import java.awt.image.WritableRaster;
 public class ImageFinderUtil {
 
     private ImageFinderUtil() {
-    };
+    }
 
     private static final double RATIO_LOOK_AHEAD_SATISFY = 0.85;
     private static final int LOOK_AHEAD_PIXEL_NR = 30;
