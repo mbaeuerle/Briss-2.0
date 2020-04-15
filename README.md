@@ -1,4 +1,5 @@
-# Briss 2.0
+# Briss 2.0 
+![Java CI with Gradle](https://github.com/mbaeuerle/Briss-2.0/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=master)
 
 Briss 2.0 is intended to be a GUI Update for the Briss PDF cropping tool.
 It is based on Briss 0.9 which is located at sourceforge: http://sourceforge.net/projects/briss/
