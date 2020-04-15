@@ -1,8 +1,13 @@
 # Briss 2.0
 
 Briss 2.0 is intended to be a GUI Update for the Briss PDF cropping tool.
+It is based on Briss 0.9 which is located at sourceforge: http://sourceforge.net/projects/briss/
 
-Briss 2.0 is based on Briss 0.9 which is located at sourceforge: http://sourceforge.net/projects/briss/
+### Installation
+
+Currently Briss 2.0 is in alpha therefore some features are still missing (for example the page skip list).
+If you want to give it a try you can download the pre release from https://github.com/mbaeuerle/Briss-2.0/releases.
+You will need Java 11 or newer to run it.
 
 ### Things that are done by now
 - Small refinements on gui which improve the workflow
