@@ -1,10 +1,10 @@
 # Briss 2.0 
 ![Java CI with Gradle](https://github.com/mbaeuerle/Briss-2.0/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=master)
 
-This is a small application to crop PDF files. This is useful for example to crop whitespaces at the edeges so text is rendered bigger on small screens like eInk displays or tablet PCs.
+This is a small application to crop PDF files. It is useful for example to crop whitespaces at the edeges so text is rendered bigger on small screens like eInk displays or tablet PCs.
 
-It helps the user to decide what should be cropped by creating a overlay of similar pages, e.g. all pages within a PDF
- having the same size or orientation. Even and odd pages are separated, too.
+It helps the user to decide what should be cropped by creating an overlay of similar pages, e.g. all pages within a PDF
+ having the same size or orientation. Even and odd pages are separated too.
 
 Version 2.0 is intended to be a GUI Update for the Briss PDF cropping tool.
 It is based on Briss 0.9 which is located at sourceforge: http://sourceforge.net/projects/briss/
