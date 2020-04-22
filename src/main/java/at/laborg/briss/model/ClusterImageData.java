@@ -11,12 +11,13 @@ public class ClusterImageData {
 
     private static final int MAX_PAGE_HEIGHT = 900;
     private static final int MAX_IMAGE_RENDER_SIZE = 2000 * 2000;
+    public static final double IDENTICAL_PIXELS_THRESHOLD = 0.8;
 
     private final boolean renderable;
     private BufferedImage outputImage = null;
     private int outputImageHeight = -1;
     private int outputImageWidth = -1;
-    private short[][][] imgdata;
+    private BufferedImage[] inputImages;
     private int imageCnt = 0;
     private final int totalImages;
 
@@ -42,18 +43,11 @@ public class ClusterImageData {
         outputImageHeight = imageToAdd.getHeight() > MAX_PAGE_HEIGHT ? MAX_PAGE_HEIGHT : imageToAdd.getHeight();
         float scaleFactor = (float) outputImageHeight / imageToAdd.getHeight();
         outputImageWidth = (int) (imageToAdd.getWidth() * scaleFactor);
-        imgdata = new short[outputImageWidth][outputImageHeight][totalImages];
+        inputImages = new BufferedImage[totalImages];
     }
 
     private void add(final BufferedImage image) {
-        int[] tmp = null;
-        int height = image.getHeight();
-        int width = image.getWidth();
-        for (int i = 0; i < width; ++i) {
-            for (int j = 0; j < height; ++j) {
-                imgdata[i][j][imageCnt] = (short) image.getRaster().getPixel(i, j, tmp)[0];
-            }
-        }
+        inputImages[imageCnt] = image;
         imageCnt++;
     }
 
@@ -63,7 +57,7 @@ public class ClusterImageData {
             return getUnrenderableImage();
         if (outputImage == null) {
             outputImage = renderOutputImage();
-            imgdata = null;
+            inputImages = null;
         }
         return outputImage;
     }
@@ -84,19 +78,10 @@ public class ClusterImageData {
         BufferedImage outputImage = new BufferedImage(outputImageWidth, outputImageHeight, BufferedImage.TYPE_BYTE_GRAY);
         WritableRaster raster = outputImage.getRaster().createCompatibleWritableRaster();
 
-        if (totalImages == 1) {
-            for (int i = 0; i < outputImage.getWidth(); ++i) {
-                for (int j = 0; j < outputImage.getHeight(); ++j) {
-                    raster.setSample(i, j, 0, imgdata[i][j][0]);
-                }
-            }
-            outputImage.setData(raster);
-            return outputImage;
-        }
-        int[][] sdvalue = calculateSdOfImages(imgdata, imageCnt);
-        for (int i = 0; i < outputImage.getWidth(); ++i) {
-            for (int j = 0; j < outputImage.getHeight(); ++j) {
-                raster.setSample(i, j, 0, sdvalue[i][j]);
+        int[][] overlay = calculateOverlayOfImages(inputImages, imageCnt);
+        for (int w = 0; w < outputImage.getWidth(); ++w) {
+            for (int h = 0; h < outputImage.getHeight(); ++h) {
+                raster.setSample(w, h, 0, overlay[w][h]);
             }
         }
         outputImage.setData(raster);
@@ -138,25 +123,44 @@ public class ClusterImageData {
         return bimage;
     }
 
-    private static int[][] calculateSdOfImages(final short[][][] imgdata, final int imageCnt) {
-        int width = imgdata.length;
-        int height = imgdata[0].length;
+    private int[][] calculateOverlayOfImages(final BufferedImage[] images, final int imageCnt) {
+        int width = images[0].getWidth();
+        int height = images[0].getHeight();
+
+        int[][] fallbackOverlay = new int[width][height];
         int[][] sum = new int[width][height];
         int[][] mean = new int[width][height];
         int[][] sd = new int[width][height];
 
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
+        int identicalPixels = 0;
+        int whitePixels = 0;
+
+        for (int w = 0; w < width; w++) {
+            for (int h = 0; h < height; h++) {
+                fallbackOverlay[w][h] = 255;
                 for (int k = 0; k < imageCnt; k++) {
-                    sum[i][j] += imgdata[i][j][k];
+                    int currentImagePixel = images[k].getRaster().getPixel(w, h, (int[]) null)[0];
+                    fallbackOverlay[w][h] = Math.min(currentImagePixel, fallbackOverlay[w][h]);
+                    sum[w][h] += currentImagePixel;
                 }
-                mean[i][j] = sum[i][j] / imageCnt;
-                sum[i][j] = 0;
+                mean[w][h] = sum[w][h] / imageCnt;
+                sum[w][h] = 0;
                 for (int k = 0; k < imageCnt; k++) {
-                    sum[i][j] += (imgdata[i][j][k] - mean[i][j]) * (imgdata[i][j][k] - mean[i][j]);
+                    int currentImagePixel = images[k].getRaster().getPixel(w, h, (int[]) null)[0];
+                    sum[w][h] += (currentImagePixel - mean[w][h]) * (currentImagePixel - mean[w][h]);
                 }
-                sd[i][j] = 255 - (int) Math.sqrt(sum[i][j] / imageCnt);
+                sd[w][h] = 255 - (int) Math.sqrt(sum[w][h] / (imageCnt - 1.0));
+                if (mean[w][h] < 255) {
+                    if (sd[w][h] == 255) {
+                        identicalPixels++;
+                    }
+                } else {
+                    whitePixels++;
+                }
             }
+        }
+        if (identicalPixels > width * height * IDENTICAL_PIXELS_THRESHOLD - whitePixels) {
+            return fallbackOverlay;
         }
 
         return sd;
