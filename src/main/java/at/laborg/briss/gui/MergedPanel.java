@@ -72,7 +72,7 @@ public class MergedPanel extends JPanel {
 
     private final PageCluster cluster;
 
-    private final List<DrawableCropRect> crops = new ArrayList<DrawableCropRect>();
+    private final List<DrawableCropRect> crops = new ArrayList<>();
     private final BufferedImage img;
 
     private enum ActionState {
@@ -117,10 +117,10 @@ public class MergedPanel extends JPanel {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>");
         sb.append(cluster.isEvenPage() ? "Even " : "Odd ").append("page<br>");
-        sb.append(cluster.getAllPages().size() + " pages: ");
+        sb.append(cluster.getAllPages().size()).append(" pages: ");
         int pagecounter = 0;
         for (Integer pageNumber : cluster.getAllPages()) {
-            sb.append(pageNumber + " ");
+            sb.append(pageNumber).append(" ");
             if (pagecounter++ > 10) {
                 pagecounter = 0;
                 sb.append("<br>");
@@ -196,7 +196,6 @@ public class MergedPanel extends JPanel {
             }
         }
         repaint();
-        return;
     }
 
     public int getWidestSelectedRect() {
@@ -409,9 +408,7 @@ public class MergedPanel extends JPanel {
 
         for (DrawableCropRect crop : crops) {
             if (crop.isSelected()) {
-                for (DrawableCropRect splitCrop : SplitFinder.splitColumn(img, crop)) {
-                    cropsCopy.add(splitCrop);
-                }
+                cropsCopy.addAll(SplitFinder.splitColumn(img, crop));
             } else {
                 cropsCopy.add(crop);
             }
@@ -427,9 +424,7 @@ public class MergedPanel extends JPanel {
 
         for (DrawableCropRect crop : crops) {
             if (crop.isSelected()) {
-                for (DrawableCropRect splitCrop : SplitFinder.splitRow(img, crop)) {
-                    cropsCopy.add(splitCrop);
-                }
+                cropsCopy.addAll(SplitFinder.splitRow(img, crop));
             } else {
                 cropsCopy.add(crop);
             }
@@ -473,7 +468,7 @@ public class MergedPanel extends JPanel {
     }
 
     private void deleteAllSelected() {
-        List<DrawableCropRect> removeList = new ArrayList<DrawableCropRect>();
+        List<DrawableCropRect> removeList = new ArrayList<>();
         for (DrawableCropRect crop : crops) {
             if (crop.isSelected()) {
                 removeList.add(crop);
@@ -506,8 +501,8 @@ public class MergedPanel extends JPanel {
 
     private void removeToSmallCrops() {
         // throw away all crops which are to small
-        List<Rectangle> cropsToTrash = new ArrayList<Rectangle>();
-        for (Rectangle crop : crops) {
+        List<DrawableCropRect> cropsToTrash = new ArrayList<>();
+        for (DrawableCropRect crop : crops) {
             if (crop.getWidth() < 2 * DrawableCropRect.CORNER_DIMENSION
                 || crop.getHeight() < 2 * DrawableCropRect.CORNER_DIMENSION) {
                 cropsToTrash.add(crop);
@@ -522,12 +517,12 @@ public class MergedPanel extends JPanel {
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_C:
-                    if (e.getModifiers() == InputEvent.CTRL_MASK) {
+                    if (e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                         copyToClipBoard();
                     }
                     break;
                 case KeyEvent.VK_V:
-                    if (e.getModifiers() == InputEvent.CTRL_MASK) {
+                    if (e.getModifiersEx() == InputEvent.CTRL_DOWN_MASK) {
                         pasteFromClipBoard();
                     }
                     break;
@@ -554,11 +549,11 @@ public class MergedPanel extends JPanel {
                             y = 1;
                             break;
                     }
-                    if ((e.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
+                    if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) {
                         x *= 10;
                         y *= 10;
                     }
-                    if ((e.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+                    if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) {
                         briss.resizeSelRects(x, y);
                     } else {
                         briss.moveSelectedRects(x, y);
@@ -582,7 +577,7 @@ public class MergedPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (PopUpMenuForCropRectangles.DELETE.equals(e.getActionCommand())) {
-                for (Rectangle crop : crops) {
+                for (DrawableCropRect crop : crops) {
                     if (crop.contains(popUpMenuPoint)) {
                         crops.remove(crop);
                         break;
