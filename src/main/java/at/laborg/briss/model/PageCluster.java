@@ -119,7 +119,7 @@ public class PageCluster implements Comparable<PageCluster> {
             float stepWidth = (float) allPages.size() / MAX_MERGE_PAGES;
             float totalStepped = 0;
             for (int i = 0; i < MAX_MERGE_PAGES; i++) {
-                pagesToMerge.add(allPages.get(new Double(Math.floor(totalStepped)).intValue()));
+                pagesToMerge.add(allPages.get(Integer.valueOf((int) Math.floor(totalStepped))));
                 totalStepped += stepWidth;
             }
         }

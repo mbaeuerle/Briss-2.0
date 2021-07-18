@@ -14,6 +14,6 @@ public class PageExcludes {
     }
 
     public final boolean containsPage(final int page) {
-        return excludedPageSet.contains(new Integer(page));
+        return excludedPageSet.contains(Integer.valueOf(page));
     }
 }
