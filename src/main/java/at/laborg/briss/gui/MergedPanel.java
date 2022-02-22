@@ -77,7 +77,7 @@ public class MergedPanel extends JPanel {
     private final BufferedImage img;
 
     private enum ActionState {
-        NOTHING, DRAWING_NEW_CROP, RESIZING_HOTCORNER_UL, RESIZING_HOTCORNER_LR, MOVE_CROP
+        NOTHING, DRAWING_NEW_CROP, RESIZING_HOTCORNER_UL, RESIZING_HOTCORNER_LR, MOVE_CROP, RESIZING_HOTCORNER_UR, RESIZING_HOTCORNER_LL
     }
 
     private final BrissGUI briss;
@@ -168,6 +168,8 @@ public class MergedPanel extends JPanel {
         g2.drawString(String.valueOf(cropCnt + 1), crop.x, crop.y + crop.height);
         int cD = DrawableCropRect.CORNER_DIMENSION;
         g2.fillRect(crop.x, crop.y, cD, cD);
+        g2.fillRect(crop.x + crop.width - cD - 1, crop.y, cD, cD);
+        g2.fillRect(crop.x, crop.y + crop.height - cD - 1, cD, cD);
         g2.fillRect(crop.x + crop.width - cD - 1, crop.y + crop.height - cD - 1, cD, cD);
     }
 
@@ -651,6 +653,34 @@ public class MergedPanel extends JPanel {
                     }
                     lastDragPoint = curPoint;
                     break;
+                case RESIZING_HOTCORNER_UR:
+                    if (lastDragPoint == null) {
+                        lastDragPoint = curPoint;
+                    }
+                    if (mE.isShiftDown()) {
+                    	briss.resizeSelRects(- (lastDragPoint.x - curPoint.x), lastDragPoint.y - curPoint.y);
+                    	briss.moveSelectedRects(0, curPoint.y - lastDragPoint.y);
+                    } else {
+                        curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
+                        curCrop.setNewHotCornerUR(curPoint);
+                    }
+                    lastDragPoint = curPoint;
+                    break;
+                case RESIZING_HOTCORNER_LL:
+                    if (lastDragPoint == null) {
+                        lastDragPoint = curPoint;
+                    }
+                    if (mE.isShiftDown()) {
+                    	briss.resizeSelRects(lastDragPoint.x - curPoint.x, -(lastDragPoint.y - curPoint.y));
+                    	briss.moveSelectedRects(curPoint.x - lastDragPoint.x, 0);
+                    } else {
+                        curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
+                        curCrop.setNewHotCornerLL(curPoint);
+                    }
+                    lastDragPoint = curPoint;
+                    break;
+			default:
+				break;
             }
             repaint();
         }
@@ -685,6 +715,24 @@ public class MergedPanel extends JPanel {
                     if (crop.containsInHotCornerLR(p)) {
                         actionState = ActionState.RESIZING_HOTCORNER_LR;
                         relativeHotCornerGrabDistance = new Point(crop.x + crop.width - p.x, crop.y + crop.height - p.y);
+                        curCrop = crop;
+                        return;
+                    }
+                }
+
+                for (DrawableCropRect crop : crops) {
+                    if (crop.containsInHotCornerUR(p)) {
+                        actionState = ActionState.RESIZING_HOTCORNER_UR;
+                        relativeHotCornerGrabDistance = new Point(crop.x + crop.width - p.x, crop.y - p.y);
+                        curCrop = crop;
+                        return;
+                    }
+                }
+
+                for (DrawableCropRect crop : crops) {
+                    if (crop.containsInHotCornerLL(p)) {
+                        actionState = ActionState.RESIZING_HOTCORNER_LL;
+                        relativeHotCornerGrabDistance = new Point(crop.x - p.x, crop.y + crop.height - p.y);
                         curCrop = crop;
                         return;
                     }
