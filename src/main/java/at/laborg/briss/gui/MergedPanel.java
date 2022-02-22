@@ -19,19 +19,11 @@
 
 package at.laborg.briss.gui;
 
-import at.laborg.briss.BrissGUI;
-import at.laborg.briss.model.CropFinder;
-import at.laborg.briss.model.PageCluster;
-import at.laborg.briss.model.SplitFinder;
-
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -48,7 +40,20 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiPredicate;
+
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+
+import at.laborg.briss.BrissGUI;
+import at.laborg.briss.model.CropFinder;
+import at.laborg.briss.model.PageCluster;
+import at.laborg.briss.model.SplitFinder;
 
 public class MergedPanel extends JPanel {
 
@@ -77,7 +82,23 @@ public class MergedPanel extends JPanel {
     private final BufferedImage img;
 
     private enum ActionState {
-        NOTHING, DRAWING_NEW_CROP, RESIZING_HOTCORNER_UL, RESIZING_HOTCORNER_LR, MOVE_CROP, RESIZING_HOTCORNER_UR, RESIZING_HOTCORNER_LL
+        NOTHING, DRAWING_NEW_CROP, RESIZING_HOTCORNER_UL, RESIZING_HOTCORNER_LR, MOVE_CROP,
+        RESIZING_HOTCORNER_UR, RESIZING_HOTCORNER_LL, RESIZING_RIGHT_EDGE, RESIZING_LEFT_EDGE,
+        RESIZING_UPPER_EDGE, RESIZING_LOWER_EDGE;
+    }
+
+    private static final Map<BiPredicate<DrawableCropRect, Point>, Integer> CURSORS_FROM_CROP_AND_POINT = new HashMap<>();
+
+    static {
+    	CURSORS_FROM_CROP_AND_POINT.put(DrawableCropRect::isOverLeftEdge, Cursor.W_RESIZE_CURSOR);
+    	CURSORS_FROM_CROP_AND_POINT.put(DrawableCropRect::isOverRightEdge, Cursor.E_RESIZE_CURSOR);
+    	CURSORS_FROM_CROP_AND_POINT.put(DrawableCropRect::isOverUpperEdge, Cursor.N_RESIZE_CURSOR);
+    	CURSORS_FROM_CROP_AND_POINT.put(DrawableCropRect::isOverLowerEdge, Cursor.S_RESIZE_CURSOR);
+    	CURSORS_FROM_CROP_AND_POINT.put(DrawableCropRect::containsInHotCornerLL, Cursor.SW_RESIZE_CURSOR);
+    	CURSORS_FROM_CROP_AND_POINT.put(DrawableCropRect::containsInHotCornerLR, Cursor.SE_RESIZE_CURSOR);
+    	CURSORS_FROM_CROP_AND_POINT.put(DrawableCropRect::containsInHotCornerUL, Cursor.NW_RESIZE_CURSOR);
+    	CURSORS_FROM_CROP_AND_POINT.put(DrawableCropRect::containsInHotCornerUR, Cursor.NE_RESIZE_CURSOR);
+    	CURSORS_FROM_CROP_AND_POINT.put(DrawableCropRect::contains, Cursor.HAND_CURSOR);
     }
 
     private final BrissGUI briss;
@@ -573,8 +594,22 @@ public class MergedPanel extends JPanel {
         @Override
         public void mouseMoved(MouseEvent e) {
             if (MergedPanel.this.contains(e.getPoint())) {
-                MergedPanel.this.requestFocusInWindow();
+            	MergedPanel.this.requestFocusInWindow();
             }
+
+            Point p = e.getPoint();
+
+            for (DrawableCropRect crop : crops) {
+            	for (Map.Entry<BiPredicate<DrawableCropRect, Point>, Integer> entry : CURSORS_FROM_CROP_AND_POINT.entrySet()) {
+            		if (entry.getKey().test(crop, p)) {
+            			setCursor(Cursor.getPredefinedCursor(entry.getValue()));
+
+            			return;
+            		}
+            	}
+            }
+
+            setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         }
 
         @Override
@@ -679,6 +714,63 @@ public class MergedPanel extends JPanel {
                     }
                     lastDragPoint = curPoint;
                     break;
+                case RESIZING_LEFT_EDGE:
+                    if (lastDragPoint == null) {
+                        lastDragPoint = curPoint;
+                    }
+
+                    if (mE.isShiftDown()) {
+                        briss.resizeSelRects(lastDragPoint.x - curPoint.x, 0);
+                        briss.moveSelectedRects(curPoint.x - lastDragPoint.x, 0);
+                    } else {
+                        curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
+                        curCrop.moveLeftEdge(curPoint);
+                    }
+                    lastDragPoint = curPoint;
+                    break;
+
+                case RESIZING_RIGHT_EDGE:
+                    if (lastDragPoint == null) {
+                        lastDragPoint = curPoint;
+                    }
+
+                    if (mE.isShiftDown()) {
+                    	briss.resizeSelRects(0, curPoint.y - lastDragPoint.y);
+                    } else {
+                        curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
+                        curCrop.moveRightEdge(curPoint);
+                    }
+                    lastDragPoint = curPoint;
+                    break;
+
+                case RESIZING_UPPER_EDGE:
+                    if (lastDragPoint == null) {
+                        lastDragPoint = curPoint;
+                    }
+
+                    if (mE.isShiftDown()) {
+                    	briss.resizeSelRects(0, lastDragPoint.y - curPoint.y);
+                        briss.moveSelectedRects(0, curPoint.y - lastDragPoint.y);
+                    } else {
+                        curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
+                        curCrop.moveUpperEdge(curPoint);
+                    }
+                    lastDragPoint = curPoint;
+                    break;
+
+                case RESIZING_LOWER_EDGE:
+                    if (lastDragPoint == null) {
+                        lastDragPoint = curPoint;
+                    }
+
+                    if (mE.isShiftDown()) {
+                    	briss.resizeSelRects(0, curPoint.y - lastDragPoint.y);
+                    } else {
+                        curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
+                        curCrop.moveLowerEdge(curPoint);
+                    }
+                    lastDragPoint = curPoint;
+                    break;
 			default:
 				break;
             }
@@ -717,10 +809,28 @@ public class MergedPanel extends JPanel {
                         return;
                     }
 
+                    if (_processRightEdge(p, crop)) {
+                    	return;
+                    }
+
+                    if (_processLeftEdge(p, crop)) {
+                    	return;
+                    }
+
+                    if (_processUpperEdge(p, crop)) {
+                    	return;
+                    }
+
+                    if (_processLowerEdge(p, crop)) {
+                    	return;
+                    }
+
                     if (_processMoveCrop(p, crop)) {
                         return;
                     }
                 }
+
+                setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
                 // otherwise draw a new one
                 actionState = ActionState.DRAWING_NEW_CROP;
@@ -732,7 +842,47 @@ public class MergedPanel extends JPanel {
             }
         }
 
-        private boolean _processMoveCrop(Point p, DrawableCropRect crop) {
+        private boolean _processRightEdge(Point p, DrawableCropRect crop) {
+        	if (crop.isOverRightEdge(p)) {
+                actionState = ActionState.RESIZING_RIGHT_EDGE;
+                curCrop = crop;
+                return true;
+            }
+
+            return false;
+		}
+
+        private boolean _processLeftEdge(Point p, DrawableCropRect crop) {
+        	if (crop.isOverLeftEdge(p)) {
+                actionState = ActionState.RESIZING_LEFT_EDGE;
+                curCrop = crop;
+                return true;
+            }
+
+            return false;
+		}
+
+        private boolean _processUpperEdge(Point p, DrawableCropRect crop) {
+        	if (crop.isOverUpperEdge(p)) {
+                actionState = ActionState.RESIZING_UPPER_EDGE;
+                curCrop = crop;
+                return true;
+            }
+
+            return false;
+		}
+
+        private boolean _processLowerEdge(Point p, DrawableCropRect crop) {
+        	if (crop.isOverLowerEdge(p)) {
+                actionState = ActionState.RESIZING_LOWER_EDGE;
+                curCrop = crop;
+                return true;
+            }
+
+            return false;
+		}
+
+		private boolean _processMoveCrop(Point p, DrawableCropRect crop) {
             if (crop.contains(p)) {
                 actionState = ActionState.MOVE_CROP;
                 curCrop = crop;
