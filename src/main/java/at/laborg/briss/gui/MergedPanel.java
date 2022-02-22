@@ -700,49 +700,24 @@ public class MergedPanel extends JPanel {
 
             if (SwingUtilities.isLeftMouseButton(mE)) {
 
-                // check if any of the upper left hotcorners are used
                 for (DrawableCropRect crop : crops) {
-                    if (crop.containsInHotCornerUL(p)) {
-                        actionState = ActionState.RESIZING_HOTCORNER_UL;
-                        relativeHotCornerGrabDistance = new Point(crop.x - p.x, crop.y - p.y);
-                        curCrop = crop;
+                    if (_processUpperLeftHotCorner(p, crop)) {
                         return;
                     }
-                }
 
-                // check if any of the lower right hotcorners are used
-                for (DrawableCropRect crop : crops) {
-                    if (crop.containsInHotCornerLR(p)) {
-                        actionState = ActionState.RESIZING_HOTCORNER_LR;
-                        relativeHotCornerGrabDistance = new Point(crop.x + crop.width - p.x, crop.y + crop.height - p.y);
-                        curCrop = crop;
+                    if (_processLowerRightHotCorner(p, crop)) {
                         return;
                     }
-                }
 
-                for (DrawableCropRect crop : crops) {
-                    if (crop.containsInHotCornerUR(p)) {
-                        actionState = ActionState.RESIZING_HOTCORNER_UR;
-                        relativeHotCornerGrabDistance = new Point(crop.x + crop.width - p.x, crop.y - p.y);
-                        curCrop = crop;
+                    if (_processUpperRightHotCorner(p, crop)) {
                         return;
                     }
-                }
 
-                for (DrawableCropRect crop : crops) {
-                    if (crop.containsInHotCornerLL(p)) {
-                        actionState = ActionState.RESIZING_HOTCORNER_LL;
-                        relativeHotCornerGrabDistance = new Point(crop.x - p.x, crop.y + crop.height - p.y);
-                        curCrop = crop;
+                    if (_processLowerLeftHotCorner(p, crop)) {
                         return;
                     }
-                }
 
-                // check if the crop should be moved
-                for (DrawableCropRect crop : crops) {
-                    if (crop.contains(p)) {
-                        actionState = ActionState.MOVE_CROP;
-                        curCrop = crop;
+                    if (_processMoveCrop(p, crop)) {
                         return;
                     }
                 }
@@ -755,6 +730,60 @@ public class MergedPanel extends JPanel {
                     cropStartPoint = p;
                 }
             }
+        }
+
+        private boolean _processMoveCrop(Point p, DrawableCropRect crop) {
+            if (crop.contains(p)) {
+                actionState = ActionState.MOVE_CROP;
+                curCrop = crop;
+                return true;
+            }
+
+            return false;
+        }
+
+        private boolean _processLowerLeftHotCorner(Point p, DrawableCropRect crop) {
+            if (crop.containsInHotCornerLL(p)) {
+                actionState = ActionState.RESIZING_HOTCORNER_LL;
+                relativeHotCornerGrabDistance = new Point(crop.x - p.x, crop.y + crop.height - p.y);
+                curCrop = crop;
+                return true;
+            }
+
+            return false;
+        }
+
+        private boolean _processUpperRightHotCorner(Point p, DrawableCropRect crop) {
+            if (crop.containsInHotCornerUR(p)) {
+                actionState = ActionState.RESIZING_HOTCORNER_UR;
+                relativeHotCornerGrabDistance = new Point(crop.x + crop.width - p.x, crop.y - p.y);
+                curCrop = crop;
+                return true;
+            }
+
+            return false;
+        }
+
+        private boolean _processLowerRightHotCorner(Point p, DrawableCropRect crop) {
+            if (crop.containsInHotCornerLR(p)) {
+                actionState = ActionState.RESIZING_HOTCORNER_LR;
+                relativeHotCornerGrabDistance = new Point(crop.x + crop.width - p.x, crop.y + crop.height - p.y);
+                curCrop = crop;
+                return true;
+            }
+
+            return false;
+        }
+
+        private boolean _processUpperLeftHotCorner(Point p, DrawableCropRect crop) {
+            if (crop.containsInHotCornerUL(p)) {
+                actionState = ActionState.RESIZING_HOTCORNER_UL;
+                relativeHotCornerGrabDistance = new Point(crop.x - p.x, crop.y - p.y);
+                curCrop = crop;
+                return true;
+            }
+
+            return false;
         }
 
         @Override
