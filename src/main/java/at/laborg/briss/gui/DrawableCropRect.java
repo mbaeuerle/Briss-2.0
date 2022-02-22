@@ -40,19 +40,19 @@ public class DrawableCropRect extends Rectangle {
     }
 
     public final void setNewHotCornerUL(final Point p) {
-    	resizeToCoordinates(p.x, p.y, (int) getMaxX(), (int) getMaxY());
+        resizeToCoordinates(p.x, p.y, (int) getMaxX(), (int) getMaxY());
     }
 
     public final void setNewHotCornerLR(final Point p) {
-    	resizeToCoordinates(x, y, p.x, p.y);
+        resizeToCoordinates(x, y, p.x, p.y);
     }
 
     public final void setNewHotCornerUR(final Point p) {
-    	resizeToCoordinates(x, p.y, p.x, (int) getMaxY());
+        resizeToCoordinates(x, p.y, p.x, (int) getMaxY());
     }
 
     public final void setNewHotCornerLL(final Point p) {
-    	resizeToCoordinates(p.x, y, (int) getMaxX(), p.y);
+        resizeToCoordinates(p.x, y, (int) getMaxX(), p.y);
     }
 
     public final boolean containsInHotCornerUL(final Point p) {
@@ -69,14 +69,14 @@ public class DrawableCropRect extends Rectangle {
     }
 
     public final boolean containsInHotCornerLL(final Point p) {
-    	return ((p.x > getX() && p.x <= getX() + CORNER_DIMENSION) && (p.y < getMaxY() && p.y > getMaxY()
+        return ((p.x > getX() && p.x <= getX() + CORNER_DIMENSION) && (p.y < getMaxY() && p.y > getMaxY()
                 - CORNER_DIMENSION));
     }
 
     public final void resizeToCoordinates(int xUL, int yUL, int xLR, int yLR) {
-    	setSize(xLR - xUL, yLR - yUL);
+        setSize(xLR - xUL, yLR - yUL);
 
-    	x = xUL;
-    	y = yUL;
+        x = xUL;
+        y = yUL;
     }
 }
