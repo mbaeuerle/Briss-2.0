@@ -723,7 +723,6 @@ public class MergedPanel extends JPanel {
                         briss.resizeSelRects(lastDragPoint.x - curPoint.x, 0);
                         briss.moveSelectedRects(curPoint.x - lastDragPoint.x, 0);
                     } else {
-                        curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
                         curCrop.moveLeftEdge(curPoint);
                     }
                     lastDragPoint = curPoint;
@@ -737,7 +736,6 @@ public class MergedPanel extends JPanel {
                     if (mE.isShiftDown()) {
                         briss.resizeSelRects(0, curPoint.y - lastDragPoint.y);
                     } else {
-                        curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
                         curCrop.moveRightEdge(curPoint);
                     }
                     lastDragPoint = curPoint;
@@ -752,7 +750,6 @@ public class MergedPanel extends JPanel {
                         briss.resizeSelRects(0, lastDragPoint.y - curPoint.y);
                         briss.moveSelectedRects(0, curPoint.y - lastDragPoint.y);
                     } else {
-                        curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
                         curCrop.moveUpperEdge(curPoint);
                     }
                     lastDragPoint = curPoint;
@@ -766,7 +763,6 @@ public class MergedPanel extends JPanel {
                     if (mE.isShiftDown()) {
                         briss.resizeSelRects(0, curPoint.y - lastDragPoint.y);
                     } else {
-                        curPoint.translate(relativeHotCornerGrabDistance.x, relativeHotCornerGrabDistance.y);
                         curCrop.moveLowerEdge(curPoint);
                     }
                     lastDragPoint = curPoint;
