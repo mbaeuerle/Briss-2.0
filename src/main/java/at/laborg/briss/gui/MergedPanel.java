@@ -789,39 +789,39 @@ public class MergedPanel extends JPanel {
             if (SwingUtilities.isLeftMouseButton(mE)) {
 
                 for (DrawableCropRect crop : crops) {
-                    if (_processUpperLeftHotCorner(p, crop)) {
+                    if (processUpperLeftHotCorner(p, crop)) {
                         return;
                     }
 
-                    if (_processLowerRightHotCorner(p, crop)) {
+                    if (processLowerRightHotCorner(p, crop)) {
                         return;
                     }
 
-                    if (_processUpperRightHotCorner(p, crop)) {
+                    if (processUpperRightHotCorner(p, crop)) {
                         return;
                     }
 
-                    if (_processLowerLeftHotCorner(p, crop)) {
+                    if (processLowerLeftHotCorner(p, crop)) {
                         return;
                     }
 
-                    if (_processRightEdge(p, crop)) {
+                    if (processRightEdge(p, crop)) {
                         return;
                     }
 
-                    if (_processLeftEdge(p, crop)) {
+                    if (processLeftEdge(p, crop)) {
                         return;
                     }
 
-                    if (_processUpperEdge(p, crop)) {
+                    if (processUpperEdge(p, crop)) {
                         return;
                     }
 
-                    if (_processLowerEdge(p, crop)) {
+                    if (processLowerEdge(p, crop)) {
                         return;
                     }
 
-                    if (_processMoveCrop(p, crop)) {
+                    if (processMoveCrop(p, crop)) {
                         return;
                     }
                 }
@@ -838,7 +838,7 @@ public class MergedPanel extends JPanel {
             }
         }
 
-        private boolean _processRightEdge(Point p, DrawableCropRect crop) {
+        private boolean processRightEdge(Point p, DrawableCropRect crop) {
             if (crop.isOverRightEdge(p)) {
                 actionState = ActionState.RESIZING_RIGHT_EDGE;
                 curCrop = crop;
@@ -848,7 +848,7 @@ public class MergedPanel extends JPanel {
             return false;
         }
 
-        private boolean _processLeftEdge(Point p, DrawableCropRect crop) {
+        private boolean processLeftEdge(Point p, DrawableCropRect crop) {
             if (crop.isOverLeftEdge(p)) {
                 actionState = ActionState.RESIZING_LEFT_EDGE;
                 curCrop = crop;
@@ -858,7 +858,7 @@ public class MergedPanel extends JPanel {
             return false;
         }
 
-        private boolean _processUpperEdge(Point p, DrawableCropRect crop) {
+        private boolean processUpperEdge(Point p, DrawableCropRect crop) {
             if (crop.isOverUpperEdge(p)) {
                 actionState = ActionState.RESIZING_UPPER_EDGE;
                 curCrop = crop;
@@ -868,7 +868,7 @@ public class MergedPanel extends JPanel {
             return false;
         }
 
-        private boolean _processLowerEdge(Point p, DrawableCropRect crop) {
+        private boolean processLowerEdge(Point p, DrawableCropRect crop) {
             if (crop.isOverLowerEdge(p)) {
                 actionState = ActionState.RESIZING_LOWER_EDGE;
                 curCrop = crop;
@@ -878,7 +878,7 @@ public class MergedPanel extends JPanel {
             return false;
         }
 
-        private boolean _processMoveCrop(Point p, DrawableCropRect crop) {
+        private boolean processMoveCrop(Point p, DrawableCropRect crop) {
             if (crop.contains(p)) {
                 actionState = ActionState.MOVE_CROP;
                 curCrop = crop;
@@ -888,7 +888,7 @@ public class MergedPanel extends JPanel {
             return false;
         }
 
-        private boolean _processLowerLeftHotCorner(Point p, DrawableCropRect crop) {
+        private boolean processLowerLeftHotCorner(Point p, DrawableCropRect crop) {
             if (crop.containsInHotCornerLL(p)) {
                 actionState = ActionState.RESIZING_HOTCORNER_LL;
                 relativeHotCornerGrabDistance = new Point(crop.x - p.x, crop.y + crop.height - p.y);
@@ -899,7 +899,7 @@ public class MergedPanel extends JPanel {
             return false;
         }
 
-        private boolean _processUpperRightHotCorner(Point p, DrawableCropRect crop) {
+        private boolean processUpperRightHotCorner(Point p, DrawableCropRect crop) {
             if (crop.containsInHotCornerUR(p)) {
                 actionState = ActionState.RESIZING_HOTCORNER_UR;
                 relativeHotCornerGrabDistance = new Point(crop.x + crop.width - p.x, crop.y - p.y);
@@ -910,7 +910,7 @@ public class MergedPanel extends JPanel {
             return false;
         }
 
-        private boolean _processLowerRightHotCorner(Point p, DrawableCropRect crop) {
+        private boolean processLowerRightHotCorner(Point p, DrawableCropRect crop) {
             if (crop.containsInHotCornerLR(p)) {
                 actionState = ActionState.RESIZING_HOTCORNER_LR;
                 relativeHotCornerGrabDistance = new Point(crop.x + crop.width - p.x, crop.y + crop.height - p.y);
@@ -921,7 +921,7 @@ public class MergedPanel extends JPanel {
             return false;
         }
 
-        private boolean _processUpperLeftHotCorner(Point p, DrawableCropRect crop) {
+        private boolean processUpperLeftHotCorner(Point p, DrawableCropRect crop) {
             if (crop.containsInHotCornerUL(p)) {
                 actionState = ActionState.RESIZING_HOTCORNER_UL;
                 relativeHotCornerGrabDistance = new Point(crop.x - p.x, crop.y - p.y);
