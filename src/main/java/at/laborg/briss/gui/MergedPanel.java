@@ -84,7 +84,7 @@ public class MergedPanel extends JPanel {
     private enum ActionState {
         NOTHING, DRAWING_NEW_CROP, RESIZING_HOTCORNER_UL, RESIZING_HOTCORNER_LR, MOVE_CROP,
         RESIZING_HOTCORNER_UR, RESIZING_HOTCORNER_LL, RESIZING_RIGHT_EDGE, RESIZING_LEFT_EDGE,
-        RESIZING_UPPER_EDGE, RESIZING_LOWER_EDGE;
+        RESIZING_UPPER_EDGE, RESIZING_LOWER_EDGE
     }
 
     private static final Map<BiPredicate<DrawableCropRect, Point>, Integer> CURSORS_FROM_CROP_AND_POINT = new HashMap<>();
