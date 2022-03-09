@@ -734,7 +734,7 @@ public class MergedPanel extends JPanel {
                     }
 
                     if (mE.isShiftDown()) {
-                        briss.resizeSelRects(0, curPoint.y - lastDragPoint.y);
+                        briss.resizeSelRects(curPoint.x - lastDragPoint.x, 0);
                     } else {
                         curCrop.moveRightEdge(curPoint);
                     }
