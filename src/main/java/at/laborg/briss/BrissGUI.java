@@ -138,10 +138,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         if (fileArg.exists() && fileArg.getAbsolutePath().trim().endsWith(".pdf")) { //$NON-NLS-1$
             try {
                 importNewPdfFile(fileArg);
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(),
-                    Messages.getString("BrissGUI.brissError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            } catch (PdfException e) {
+            } catch (IOException | PdfException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(),
                     Messages.getString("BrissGUI.brissError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
@@ -282,8 +279,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     }
 
     private ImageIcon loadDragAndDropLabelImage() {
-        ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource(RES_DROP_IMG_PATH));
-        return icon;
+        return new ImageIcon(getClass().getClassLoader().getResource(RES_DROP_IMG_PATH));
     }
 
     private static PageExcludes getExcludedPages() {
