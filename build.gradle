@@ -1,4 +1,3 @@
-
 plugins {
     id 'org.openjfx.javafxplugin' version '0.0.8'
     id 'java'
@@ -10,14 +9,14 @@ applicationDefaultJvmArgs = ["-Xms128m", "-Xmx1024m"]
 def javaFxVersion = '11'
 
 repositories {
-    maven { url "http://clojars.org/repo" } // For jpedal
-    maven { url "http://maven.geotoolkit.org/" } // For jpedal transitive dependencies
+    maven { url "https://clojars.org/repo" } // For jpedal
+    maven { url "https://maven.geotoolkit.org/" } // For jpedal transitive dependencies
     mavenCentral()
 }
 
 dependencies {
-    compile group: 'com.itextpdf', name: 'itextpdf', version: '5.5.10'
-    compile group: 'org.jpedal', name: 'jpedal-lgpl', version: '4.74b27'
+    implementation 'com.itextpdf:itextpdf:5.5.10'
+    implementation 'org.jpedal:jpedal-lgpl:4.74b27'
 
     runtimeOnly "org.openjfx:javafx-controls:$javaFxVersion:win"
     runtimeOnly "org.openjfx:javafx-controls:$javaFxVersion:linux"
