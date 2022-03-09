@@ -71,6 +71,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -197,11 +199,14 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
 
         setJMenuBar(menuBar);
 
+        MouseAdapter mousePressedAdapter = createMousePressedAdapter();
+
         previewPanel = new JPanel();
         previewPanel.setLayout(new WrapLayout(FlowLayout.LEFT, 4, 4));
         previewPanel.setEnabled(true);
         previewPanel.setBackground(new Color(186, 186, 186));
         previewPanel.addComponentListener(this);
+        previewPanel.addMouseListener(mousePressedAdapter);
 
         progressBar = new JProgressBar(0, 100);
         progressBar.setStringPainted(true);
@@ -245,6 +250,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         footer.add(showPreview);
         footer.add(startCropping);
         add(footer, BorderLayout.PAGE_END);
+
+        addMouseListener(mousePressedAdapter);
 
         setWindowBounds();
         pack();
@@ -489,6 +496,12 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
+    public void deselectAllRects() {
+        for (MergedPanel mp : mergedPanels) {
+            mp.selectCrops(false);
+        }
+    }
+
     public void setDefinedSizeSelRects() {
         // set size of selected rectangles
         // based on user input
@@ -659,6 +672,15 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
                 }
             }
         }
+    }
+
+    private MouseAdapter createMousePressedAdapter() {
+        return new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                deselectAllRects();
+            }
+        };
     }
 
     private class ClusterPagesTask extends SwingWorker<Void, Void> {
