@@ -416,8 +416,8 @@ public class MergedPanel extends JPanel {
     private Font scaleFont(String text, Rectangle rect) {
 
         int size = BASE_FONT.getSize();
-        int width = this.getFontMetrics(BASE_FONT).stringWidth(text);
-        int height = this.getFontMetrics(BASE_FONT).getHeight();
+        float width = this.getFontMetrics(BASE_FONT).stringWidth(text);
+        float height = this.getFontMetrics(BASE_FONT).getHeight();
         if (width == 0 || height == 0)
             return BASE_FONT;
         float scaleFactorWidth = rect.width / width;
@@ -523,8 +523,8 @@ public class MergedPanel extends JPanel {
         }
     }
 
-    private void removeToSmallCrops() {
-        // throw away all crops which are to small
+    private void removeTooSmallCrops() {
+        // throw away all crops which are too small
         List<DrawableCropRect> cropsToTrash = new ArrayList<>();
         for (DrawableCropRect crop : crops) {
             if (crop.getWidth() < 2 * DrawableCropRect.CORNER_DIMENSION
@@ -649,9 +649,9 @@ public class MergedPanel extends JPanel {
                     if (cropStartPoint == null) {
                         cropStartPoint = curPoint;
                     }
-                    curCrop.x = (curPoint.x < cropStartPoint.x) ? curPoint.x : cropStartPoint.x;
+                    curCrop.x = Math.min(curPoint.x, cropStartPoint.x);
                     curCrop.width = Math.abs(curPoint.x - cropStartPoint.x);
-                    curCrop.y = (curPoint.y < cropStartPoint.y) ? curPoint.y : cropStartPoint.y;
+                    curCrop.y = Math.min(curPoint.y, cropStartPoint.y);
                     curCrop.height = Math.abs(curPoint.y - cropStartPoint.y);
                     break;
                 case MOVE_CROP:
@@ -940,7 +940,7 @@ public class MergedPanel extends JPanel {
                 showPopUpMenu(mE);
             }
             clipCropsToVisibleArea();
-            removeToSmallCrops();
+            removeTooSmallCrops();
             updateClusterRatios(crops);
             actionState = ActionState.NOTHING;
             cropStartPoint = null;
