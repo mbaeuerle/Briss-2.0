@@ -169,6 +169,7 @@ public class MergedPanel extends JPanel {
 
         for (DrawableCropRect crop : crops) {
             drawNormalCropRectangle(g2, cropCnt, crop);
+
             if (crop.isSelected()) {
                 drawSelectionOverlay(g2, crop);
             }
@@ -211,7 +212,9 @@ public class MergedPanel extends JPanel {
     }
 
     private void changeSelectRectangle(Point p) {
-        for (DrawableCropRect crop : crops) {
+        for (int i = crops.size() - 1; i >= 0; i--) {
+            DrawableCropRect crop = crops.get(i);
+
             if (crop.contains(p)) {
                 crop.setSelected(!crop.isSelected());
                 break;
@@ -614,7 +617,9 @@ public class MergedPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (PopUpMenuForCropRectangles.DELETE.equals(e.getActionCommand())) {
-                for (DrawableCropRect crop : crops) {
+                for (int i = crops.size() - 1; i >= 0; i--) {
+                    DrawableCropRect crop = crops.get(i);
+
                     if (crop.contains(popUpMenuPoint)) {
                         crops.remove(crop);
                         break;
