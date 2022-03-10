@@ -583,8 +583,6 @@ public class MergedPanel extends JPanel {
                         briss.moveSelectedRects(x, y);
                     }
                     break;
-                case KeyEvent.VK_ESCAPE:
-                    briss.deselectAllRects();
                 default:
             }
         }
