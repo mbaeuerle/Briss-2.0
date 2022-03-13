@@ -27,11 +27,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 * Resize handles on all corners and edges
+* Mouse cursors resembling the actions which can be taken
 * Deselect all crop rectangles on ESC
 
 ### Changed
 * Update to Gradle 7.4
-* Select crop rectangles with single click. Select multiple rectangles with <shift>+click
+* Select crop rectangles with single click. Select multiple rectangles with `<shift>+click`
 
 ## [2.0-alpha 3] - 2020-05-26
 
