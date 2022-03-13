@@ -40,7 +40,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -77,7 +80,7 @@ public class MergedPanel extends JPanel {
 
     private final PageCluster cluster;
 
-    private final List<DrawableCropRect> crops = new ArrayList<>();
+    private final Deque<DrawableCropRect> crops = new LinkedList<>();
     private final BufferedImage img;
 
     private enum ActionState {
@@ -130,7 +133,7 @@ public class MergedPanel extends JPanel {
             rect.y = (int) (img.getHeight() * ratios[3]);
             rect.width = (int) (img.getWidth() * (1 - (ratios[0] + ratios[2])));
             rect.height = (int) (img.getHeight() * (1 - (ratios[1] + ratios[3])));
-            crops.add(rect);
+            crops.push(rect);
         }
     }
 
@@ -165,6 +168,7 @@ public class MergedPanel extends JPanel {
         g2.drawImage(img, null, 0, 0);
 
         // draw previously created rectangles
+
         int cropCnt = 0;
 
         for (DrawableCropRect crop : crops) {
@@ -172,6 +176,7 @@ public class MergedPanel extends JPanel {
             if (crop.isSelected()) {
                 drawSelectionOverlay(g2, crop);
             }
+
             cropCnt++;
         }
 
@@ -211,13 +216,17 @@ public class MergedPanel extends JPanel {
     }
 
     private void changeSelectRectangle(Point p) {
-        for (DrawableCropRect crop : crops) {
+        for (DrawableCropRect crop : reverseCrops()) {
             if (crop.contains(p)) {
                 crop.setSelected(!crop.isSelected());
                 break;
             }
         }
         repaint();
+    }
+
+    private Iterable<DrawableCropRect> reverseCrops() {
+        return crops::descendingIterator;
     }
 
     public int getWidestSelectedRect() {
@@ -362,7 +371,7 @@ public class MergedPanel extends JPanel {
         repaint();
     }
 
-    private void updateClusterRatios(List<DrawableCropRect> tmpCrops) {
+    private void updateClusterRatios(Collection<DrawableCropRect> tmpCrops) {
         cluster.clearRatios();
         for (Rectangle crop : tmpCrops) {
             cluster.addRatios(getCutRatiosForPdf(crop, img.getWidth(), img.getHeight()));
@@ -480,7 +489,7 @@ public class MergedPanel extends JPanel {
     }
 
     private void alignSelected(Point p) {
-        for (DrawableCropRect crop : crops) {
+        for (DrawableCropRect crop : reverseCrops()) {
             if (crop.contains(p)) {
                 briss.alignSelRects(crop.x, crop.y, crop.width, crop.height);
                 break;
@@ -525,7 +534,7 @@ public class MergedPanel extends JPanel {
         List<DrawableCropRect> cropsToTrash = new ArrayList<>();
         for (DrawableCropRect crop : crops) {
             if (crop.getWidth() < 2 * DrawableCropRect.CORNER_DIMENSION
-                || crop.getHeight() < 2 * DrawableCropRect.CORNER_DIMENSION) {
+                    || crop.getHeight() < 2 * DrawableCropRect.CORNER_DIMENSION) {
                 cropsToTrash.add(crop);
             }
         }
@@ -598,7 +607,7 @@ public class MergedPanel extends JPanel {
 
             Point p = e.getPoint();
 
-            for (DrawableCropRect crop : crops) {
+            for (DrawableCropRect crop : reverseCrops()) {
                 for (Map.Entry<BiPredicate<DrawableCropRect, Point>, Integer> entry : CURSORS_FROM_CROP_AND_POINT.entrySet()) {
                     if (entry.getKey().test(crop, p)) {
                         setCursor(Cursor.getPredefinedCursor(entry.getValue()));
@@ -614,7 +623,7 @@ public class MergedPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (PopUpMenuForCropRectangles.DELETE.equals(e.getActionCommand())) {
-                for (DrawableCropRect crop : crops) {
+                for (DrawableCropRect crop : reverseCrops()) {
                     if (crop.contains(popUpMenuPoint)) {
                         crops.remove(crop);
                         break;
@@ -745,7 +754,7 @@ public class MergedPanel extends JPanel {
                 changeSelectRectangle(p);
                 return;
             } else {
-                for (DrawableCropRect crop : crops) {
+                for (DrawableCropRect crop : reverseCrops()) {
                     if (crop.contains(p)) {
                         if (!crop.isSelected()) {
                             briss.deselectAllRects();
@@ -760,7 +769,7 @@ public class MergedPanel extends JPanel {
 
             if (SwingUtilities.isLeftMouseButton(mE)) {
 
-                for (DrawableCropRect crop : crops) {
+                for (DrawableCropRect crop : reverseCrops()) {
                     if (processUpperLeftHotCorner(p, crop)) {
                         return;
                     }
