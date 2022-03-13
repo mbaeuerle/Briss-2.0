@@ -31,8 +31,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Deselect all crop rectangles on ESC
 
 ### Changed
+* [Issue-41](https://github.com/mbaeuerle/Briss-2.0/issues/41) Reverse crop rectangle selection order. Newest rectangle under cursor is selected.
 * Update to Gradle 7.4
-* Select crop rectangles with single click. Select multiple rectangles with `<shift>+click`
+* Select crop rectangles with single click. Select multiple rectangles with `<shift>+click`.
 
 ## [2.0-alpha 3] - 2020-05-26
 
