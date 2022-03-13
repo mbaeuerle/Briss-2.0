@@ -184,7 +184,11 @@ public class MergedPanel extends JPanel {
 
     private void drawNormalCropRectangle(Graphics2D g2, int cropCnt, DrawableCropRect crop) {
         g2.setComposite(SMOOTH_NORMAL);
-        g2.setColor(Color.BLUE);
+        if (!isCropTooSmall(crop)) {
+            g2.setColor(Color.BLUE);
+        } else {
+            g2.setColor(Color.RED);
+        }
         g2.fill(crop);
         g2.setColor(Color.BLACK);
         g2.setFont(scaleFont(String.valueOf(cropCnt + 1), crop));
@@ -193,15 +197,10 @@ public class MergedPanel extends JPanel {
         int cD = DrawableCropRect.CORNER_DIMENSION;
         if (hasEnoughRoomForResizeHandle(crop)) {
             g2.fillRect(crop.x, crop.y, cD, cD);
-            g2.fillRect(crop.x + crop.width - cD - 1, crop.y, cD, cD);
-            g2.fillRect(crop.x, crop.y + crop.height - cD - 1, cD, cD);
-            g2.fillRect(crop.x + crop.width - cD - 1, crop.y + crop.height - cD - 1, cD, cD);
+            g2.fillRect(crop.x + crop.width - cD, crop.y, cD, cD);
+            g2.fillRect(crop.x, crop.y + crop.height - cD, cD, cD);
+            g2.fillRect(crop.x + crop.width - cD, crop.y + crop.height - cD, cD, cD);
         }
-    }
-
-    private boolean hasEnoughRoomForResizeHandle(DrawableCropRect crop) {
-        int cD = DrawableCropRect.CORNER_DIMENSION;
-        return crop.getSize().getWidth() > cD * 2 && crop.getSize().getHeight() > cD * 2;
     }
 
     private void drawSelectionOverlay(Graphics2D g2, DrawableCropRect crop) {
@@ -539,12 +538,20 @@ public class MergedPanel extends JPanel {
         // throw away all crops which are too small
         List<DrawableCropRect> cropsToTrash = new ArrayList<>();
         for (DrawableCropRect crop : crops) {
-            if (crop.getWidth() < 2 * DrawableCropRect.CORNER_DIMENSION
-                    || crop.getHeight() < 2 * DrawableCropRect.CORNER_DIMENSION) {
+            if (isCropTooSmall(crop)) {
                 cropsToTrash.add(crop);
             }
         }
         crops.removeAll(cropsToTrash);
+    }
+
+    private boolean isCropTooSmall(DrawableCropRect crop) {
+        return crop.getWidth() < 2 * DrawableCropRect.CORNER_DIMENSION
+            || crop.getHeight() < 2 * DrawableCropRect.CORNER_DIMENSION;
+    }
+
+    private boolean hasEnoughRoomForResizeHandle(DrawableCropRect crop) {
+        return !isCropTooSmall(crop);
     }
 
     private class MergedPanelKeyAdapter extends KeyAdapter {
