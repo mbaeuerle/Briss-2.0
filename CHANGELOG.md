@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+* Crop rectangle is colored red if it will be removed after releasing mouse
 * Resize handles on all corners and edges
 * Mouse cursors resembling the actions which can be taken
 * Deselect all crop rectangles on ESC
@@ -34,6 +35,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * [Issue-41](https://github.com/mbaeuerle/Briss-2.0/issues/41) Reverse crop rectangle selection order. Newest rectangle under cursor is selected.
 * Update to Gradle 7.4
 * Select crop rectangles with single click. Select multiple rectangles with `<shift>+click`.
+
+### Fixed
+* [Issue-5](https://github.com/mbaeuerle/Briss-2.0/issues/5) Crop rectangles cannot shrink to a value lower than zero any longer
 
 ## [2.0-alpha 3] - 2020-05-26
 

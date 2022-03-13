@@ -342,6 +342,21 @@ public class MergedPanel extends JPanel {
         repaint();
     }
 
+    public void resizeAndMoveSelectedCrops(int width, int height, int x, int y) {
+        for (DrawableCropRect crop : crops) {
+            if (crop.isSelected()) {
+                if (((width < 0) && (crop.width <= -width)) || ((height < 0) && (crop.height <= -height)))
+                    return;
+                crop.setSize(crop.width + width, crop.height + height);
+                int newX = crop.x + x;
+                int newY = crop.y + y;
+                crop.setLocation(newX, newY);
+            }
+        }
+        updateClusterRatios(crops);
+        repaint();
+    }
+
     public void setAllCropSize(int width, int height) {
         for (DrawableCropRect crop : crops) {
             crop.setSize(width, height);
@@ -667,6 +682,9 @@ public class MergedPanel extends JPanel {
                 lastDragPoint = curPoint;
             }
 
+            int deltaX = curPoint.x - lastDragPoint.x;
+            int deltaY = curPoint.y - lastDragPoint.y;
+
             switch (actionState) {
                 case DRAWING_NEW_CROP:
                     if (cropStartPoint == null) {
@@ -679,52 +697,47 @@ public class MergedPanel extends JPanel {
                     break;
 
                 case MOVE_CROP:
-                    briss.moveSelectedRects(curPoint.x - lastDragPoint.x, curPoint.y - lastDragPoint.y);
+                    briss.moveSelectedRects(deltaX, deltaY);
                     lastDragPoint = curPoint;
                     break;
 
                 case RESIZING_HOTCORNER_LR:
-                    briss.resizeSelRects(curPoint.x - lastDragPoint.x, curPoint.y - lastDragPoint.y);
+                    briss.resizeSelRects(deltaX, deltaY);
                     lastDragPoint = curPoint;
                     break;
 
                 case RESIZING_HOTCORNER_UL:
-                    briss.resizeSelRects(lastDragPoint.x - curPoint.x, lastDragPoint.y - curPoint.y);
-                    briss.moveSelectedRects(curPoint.x - lastDragPoint.x, curPoint.y - lastDragPoint.y);
+                    briss.resizeAndMoveSelectedRects(-deltaX, -deltaY, deltaX, deltaY);
                     lastDragPoint = curPoint;
                     break;
 
                 case RESIZING_HOTCORNER_UR:
-                    briss.resizeSelRects(curPoint.x - lastDragPoint.x, lastDragPoint.y - curPoint.y);
-                    briss.moveSelectedRects(0, curPoint.y - lastDragPoint.y);
+                    briss.resizeAndMoveSelectedRects(deltaX, -deltaY, 0, deltaY);
                     lastDragPoint = curPoint;
                     break;
 
                 case RESIZING_HOTCORNER_LL:
-                    briss.resizeSelRects(lastDragPoint.x - curPoint.x, curPoint.y - lastDragPoint.y);
-                    briss.moveSelectedRects(curPoint.x - lastDragPoint.x, 0);
+                    briss.resizeAndMoveSelectedRects(-deltaX, deltaY, deltaX, 0);
                     lastDragPoint = curPoint;
                     break;
 
                 case RESIZING_LEFT_EDGE:
-                    briss.resizeSelRects(lastDragPoint.x - curPoint.x, 0);
-                    briss.moveSelectedRects(curPoint.x - lastDragPoint.x, 0);
+                    briss.resizeAndMoveSelectedRects(-deltaX, 0,deltaX, 0);
                     lastDragPoint = curPoint;
                     break;
 
                 case RESIZING_RIGHT_EDGE:
-                    briss.resizeSelRects(curPoint.x - lastDragPoint.x, 0);
+                    briss.resizeSelRects(deltaX, 0);
                     lastDragPoint = curPoint;
                     break;
 
                 case RESIZING_UPPER_EDGE:
-                    briss.resizeSelRects(0, lastDragPoint.y - curPoint.y);
-                    briss.moveSelectedRects(0, curPoint.y - lastDragPoint.y);
+                    briss.resizeAndMoveSelectedRects(0, -deltaY, 0, deltaY);
                     lastDragPoint = curPoint;
                     break;
 
                 case RESIZING_LOWER_EDGE:
-                    briss.resizeSelRects(0, curPoint.y - lastDragPoint.y);
+                    briss.resizeSelRects(0, deltaY);
                     lastDragPoint = curPoint;
                     break;
                 default:

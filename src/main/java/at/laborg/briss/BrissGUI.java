@@ -488,6 +488,14 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
+    public void resizeAndMoveSelectedRects(int width, int height, int x, int y) {
+        // resize and move selected rectangles
+        // parameters are relative to current position
+        for (MergedPanel mp : mergedPanels) {
+            mp.resizeAndMoveSelectedCrops(width, height, x, y);
+        }
+    }
+
     public void moveSelectedRects(int x, int y) {
         // move selected rectangles
         // parameters are relative to current position
