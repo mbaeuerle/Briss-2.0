@@ -67,7 +67,6 @@ public class MergedPanel extends JPanel {
     private static Point lastDragPoint;
     private static Point cropStartPoint;
     private static Point popUpMenuPoint;
-    private static Point relativeHotCornerGrabDistance;
     private static ActionState actionState = ActionState.NOTHING;
 
     private final static int SELECT_BORDER_WIDTH = 1;
@@ -75,7 +74,6 @@ public class MergedPanel extends JPanel {
     private final static Composite SMOOTH_NORMAL = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f);
     private final static Composite SMOOTH_SELECT = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f);
     private final static Composite XOR_COMPOSITE = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f);
-    private final static float[] DASH_PATTERN = {25f, 25f};
     private final static BasicStroke SELECTED_STROKE = new BasicStroke(SELECT_BORDER_WIDTH);
 
     private final PageCluster cluster;
@@ -874,7 +872,6 @@ public class MergedPanel extends JPanel {
         private boolean processLowerLeftHotCorner(Point p, DrawableCropRect crop) {
             if (crop.containsInHotCornerLL(p)) {
                 actionState = ActionState.RESIZING_HOTCORNER_LL;
-                relativeHotCornerGrabDistance = new Point(crop.x - p.x, crop.y + crop.height - p.y);
                 curCrop = crop;
                 return true;
             }
@@ -885,7 +882,6 @@ public class MergedPanel extends JPanel {
         private boolean processUpperRightHotCorner(Point p, DrawableCropRect crop) {
             if (crop.containsInHotCornerUR(p)) {
                 actionState = ActionState.RESIZING_HOTCORNER_UR;
-                relativeHotCornerGrabDistance = new Point(crop.x + crop.width - p.x, crop.y - p.y);
                 curCrop = crop;
                 return true;
             }
@@ -896,7 +892,6 @@ public class MergedPanel extends JPanel {
         private boolean processLowerRightHotCorner(Point p, DrawableCropRect crop) {
             if (crop.containsInHotCornerLR(p)) {
                 actionState = ActionState.RESIZING_HOTCORNER_LR;
-                relativeHotCornerGrabDistance = new Point(crop.x + crop.width - p.x, crop.y + crop.height - p.y);
                 curCrop = crop;
                 return true;
             }
@@ -907,7 +902,6 @@ public class MergedPanel extends JPanel {
         private boolean processUpperLeftHotCorner(Point p, DrawableCropRect crop) {
             if (crop.containsInHotCornerUL(p)) {
                 actionState = ActionState.RESIZING_HOTCORNER_UL;
-                relativeHotCornerGrabDistance = new Point(crop.x - p.x, crop.y - p.y);
                 curCrop = crop;
                 return true;
             }
