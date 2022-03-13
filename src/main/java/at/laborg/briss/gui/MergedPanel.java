@@ -656,6 +656,10 @@ public class MergedPanel extends JPanel {
         public void mouseDragged(MouseEvent mE) {
             Point curPoint = mE.getPoint();
 
+            if (lastDragPoint == null) {
+                lastDragPoint = curPoint;
+            }
+
             switch (actionState) {
                 case DRAWING_NEW_CROP:
                     if (cropStartPoint == null) {
@@ -666,78 +670,53 @@ public class MergedPanel extends JPanel {
                     curCrop.y = Math.min(curPoint.y, cropStartPoint.y);
                     curCrop.height = Math.abs(curPoint.y - cropStartPoint.y);
                     break;
+
                 case MOVE_CROP:
-                    if (lastDragPoint == null) {
-                        lastDragPoint = curPoint;
-                    }
                     briss.moveSelectedRects(curPoint.x - lastDragPoint.x, curPoint.y - lastDragPoint.y);
                     lastDragPoint = curPoint;
                     break;
+
                 case RESIZING_HOTCORNER_LR:
-                    if (lastDragPoint == null) {
-                        lastDragPoint = curPoint;
-                    }
                     briss.resizeSelRects(curPoint.x - lastDragPoint.x, curPoint.y - lastDragPoint.y);
                     lastDragPoint = curPoint;
                     break;
+
                 case RESIZING_HOTCORNER_UL:
-                    if (lastDragPoint == null) {
-                        lastDragPoint = curPoint;
-                    }
                     briss.resizeSelRects(lastDragPoint.x - curPoint.x, lastDragPoint.y - curPoint.y);
                     briss.moveSelectedRects(curPoint.x - lastDragPoint.x, curPoint.y - lastDragPoint.y);
                     lastDragPoint = curPoint;
                     break;
+
                 case RESIZING_HOTCORNER_UR:
-                    if (lastDragPoint == null) {
-                        lastDragPoint = curPoint;
-                    }
                     briss.resizeSelRects(curPoint.x - lastDragPoint.x, lastDragPoint.y - curPoint.y);
                     briss.moveSelectedRects(0, curPoint.y - lastDragPoint.y);
                     lastDragPoint = curPoint;
                     break;
+
                 case RESIZING_HOTCORNER_LL:
-                    if (lastDragPoint == null) {
-                        lastDragPoint = curPoint;
-                    }
                     briss.resizeSelRects(lastDragPoint.x - curPoint.x, curPoint.y - lastDragPoint.y);
                     briss.moveSelectedRects(curPoint.x - lastDragPoint.x, 0);
                     lastDragPoint = curPoint;
                     break;
-                case RESIZING_LEFT_EDGE:
-                    if (lastDragPoint == null) {
-                        lastDragPoint = curPoint;
-                    }
 
+                case RESIZING_LEFT_EDGE:
                     briss.resizeSelRects(lastDragPoint.x - curPoint.x, 0);
                     briss.moveSelectedRects(curPoint.x - lastDragPoint.x, 0);
                     lastDragPoint = curPoint;
                     break;
 
                 case RESIZING_RIGHT_EDGE:
-                    if (lastDragPoint == null) {
-                        lastDragPoint = curPoint;
-                    }
-
                     briss.resizeSelRects(curPoint.x - lastDragPoint.x, 0);
                     lastDragPoint = curPoint;
                     break;
 
                 case RESIZING_UPPER_EDGE:
-                    if (lastDragPoint == null) {
-                        lastDragPoint = curPoint;
-                    }
-
                     briss.resizeSelRects(0, lastDragPoint.y - curPoint.y);
                     briss.moveSelectedRects(0, curPoint.y - lastDragPoint.y);
                     lastDragPoint = curPoint;
                     break;
 
                 case RESIZING_LOWER_EDGE:
-                    if (lastDragPoint == null) {
-                        lastDragPoint = curPoint;
-                    }
-
                     briss.resizeSelRects(0, curPoint.y - lastDragPoint.y);
                     lastDragPoint = curPoint;
                     break;
