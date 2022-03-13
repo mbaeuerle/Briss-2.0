@@ -929,6 +929,7 @@ public class MergedPanel extends JPanel {
             new PopUpMenuForCropRectangles().show(e.getComponent(), e.getX(), e.getY());
         }
 
+        @SuppressWarnings("serial")
         private class PopUpMenuForCropRectangles extends JPopupMenu {
             public static final String DELETE = "Delete rectangle";
             public static final String SELECT_DESELECT = "Select/Deselect rectangle";
