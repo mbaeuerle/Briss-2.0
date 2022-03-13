@@ -445,7 +445,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         // search for maximum height
         int maxHeight = -1;
         for (MergedPanel panel : mergedPanels) {
-            int panelMaxHeight = panel.getHeighestSelectedRect();
+            int panelMaxHeight = panel.getHighestSelectedRect();
             if (maxHeight < panelMaxHeight) {
                 maxHeight = panelMaxHeight;
             }
@@ -516,7 +516,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
             if (maxWidth < panelMaxWidth) {
                 maxWidth = panelMaxWidth;
             }
-            int panelMaxHeight = panel.getHeighestSelectedRect();
+            int panelMaxHeight = panel.getHighestSelectedRect();
             if (maxHeight < panelMaxHeight) {
                 maxHeight = panelMaxHeight;
             }

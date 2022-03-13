@@ -232,7 +232,7 @@ public class MergedPanel extends JPanel {
         return max;
     }
 
-    public int getHeighestSelectedRect() {
+    public int getHighestSelectedRect() {
         int max = -1;
         for (DrawableCropRect crop : crops) {
             if (crop.isSelected()) {
