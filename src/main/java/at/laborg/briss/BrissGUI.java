@@ -484,7 +484,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         // set position and size of selected rectangles
         for (MergedPanel mp : mergedPanels) {
             mp.setSelCropSize(w, h);
-            mp.moveToSelelectedCrops(x, y);
+            mp.moveToSelectedCrops(x, y);
         }
     }
 
@@ -500,7 +500,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         // move selected rectangles
         // parameters are relative to current position
         for (MergedPanel mp : mergedPanels) {
-            mp.moveSelelectedCrops(x, y);
+            mp.moveSelectedCrops(x, y);
         }
     }
 
@@ -615,7 +615,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         y = Math.round(y * 72f / 25.4f);
 
         for (MergedPanel mp : mergedPanels) {
-            mp.moveToSelelectedCrops(x, y);
+            mp.moveToSelectedCrops(x, y);
         }
     }
 

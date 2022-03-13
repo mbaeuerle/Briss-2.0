@@ -1,4 +1,3 @@
-// $Id: MergedPanel.java 71 2012-05-26 16:21:23Z laborg $
 /**
  * Copyright 2010, 2011 Gerhard Aigner, Rastislav Wartiak
  * <p>
@@ -210,7 +209,7 @@ public class MergedPanel extends JPanel {
         g2.setStroke(SELECTED_STROKE);
         g2.draw(crop);
 
-        // display crop size in milimeters
+        // display crop size in millimeters
         int w = Math.round(25.4f * crop.width / 72f);
         int h = Math.round(25.4f * crop.height / 72f);
         String size = w + "x" + h;
@@ -365,7 +364,7 @@ public class MergedPanel extends JPanel {
         repaint();
     }
 
-    public void moveSelelectedCrops(int x, int y) {
+    public void moveSelectedCrops(int x, int y) {
         for (DrawableCropRect crop : crops) {
             if (crop.isSelected()) {
                 int newX = crop.x + x;
@@ -376,7 +375,7 @@ public class MergedPanel extends JPanel {
         repaint();
     }
 
-    public void moveToSelelectedCrops(int x, int y) {
+    public void moveToSelectedCrops(int x, int y) {
         for (DrawableCropRect crop : crops) {
             if (crop.isSelected()) {
                 crop.setLocation(x, y);
@@ -966,6 +965,7 @@ public class MergedPanel extends JPanel {
                 for (DrawableCropRect crop : crops) {
                     if (crop.isSelected()) {
                         cropRectIsSelected = true;
+                        break;
                     }
                 }
                 JMenuItem splitColumns = new JMenuItem(SPLIT_INTO_COLUMNS);
