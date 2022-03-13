@@ -218,7 +218,7 @@ public class MergedPanel extends JPanel {
         g2.setFont(scaleFont(size, crop));
         g2.setColor(Color.YELLOW);
         g2.setComposite(SMOOTH_SELECT);
-        g2.drawString(size, crop.x + SELECT_BORDER_WIDTH, crop.y + crop.height - SELECT_BORDER_WIDTH);
+        g2.drawString(size, crop.x, crop.y + crop.height);
     }
 
     private void changeSelectRectangle(Point p) {
@@ -433,8 +433,8 @@ public class MergedPanel extends JPanel {
         float height = this.getFontMetrics(BASE_FONT).getHeight();
         if (width == 0 || height == 0)
             return BASE_FONT;
-        float scaleFactorWidth = rect.width / width;
-        float scaleFactorHeight = rect.height / height;
+        float scaleFactorWidth = (float) (rect.width * 0.95 / width);
+        float scaleFactorHeight = (float) (rect.height * 0.95 / height);
         float scaledWidth = (scaleFactorWidth * size);
         float scaledHeight = (scaleFactorHeight * size);
         return BASE_FONT.deriveFont((scaleFactorHeight > scaleFactorWidth) ? scaledWidth : scaledHeight);
