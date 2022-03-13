@@ -105,9 +105,10 @@ public final class SplitFinder {
         float width = image.getWidth();
         float height = image.getHeight();
 
-        DrawableCropRect rect = new DrawableCropRect();
-        rect.setLocation((int) (crop[0] * width), (int) (crop[3] * height));
-        rect.setSize((int) ((1 - crop[0] - crop[2]) * width), (int) ((1 - crop[1] - crop[3]) * height));
-        return rect;
+        int x = (int) (crop[0] * width);
+        int y = (int) (crop[3] * height);
+        int cropWidth = (int) ((1 - crop[0] - crop[2]) * width);
+        int cropHeight = (int) ((1 - crop[1] - crop[3]) * height);
+        return new DrawableCropRect(x, y, cropWidth, cropHeight);
     }
 }

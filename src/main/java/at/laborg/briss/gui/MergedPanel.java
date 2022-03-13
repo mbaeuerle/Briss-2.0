@@ -126,11 +126,11 @@ public class MergedPanel extends JPanel {
 
     private void addRatiosAsCrops(List<Float[]> ratiosList) {
         for (Float[] ratios : cluster.getRatiosList()) {
-            DrawableCropRect rect = new DrawableCropRect();
-            rect.x = (int) (img.getWidth() * ratios[0]);
-            rect.y = (int) (img.getHeight() * ratios[3]);
-            rect.width = (int) (img.getWidth() * (1 - (ratios[0] + ratios[2])));
-            rect.height = (int) (img.getHeight() * (1 - (ratios[1] + ratios[3])));
+            int x = (int) (img.getWidth() * ratios[0]);
+            int y = (int) (img.getHeight() * ratios[3]);
+            int width = (int) (img.getWidth() * (1 - (ratios[0] + ratios[2])));
+            int height = (int) (img.getHeight() * (1 - (ratios[1] + ratios[3])));
+            DrawableCropRect rect = new DrawableCropRect(x, y, width, height);
             crops.push(rect);
         }
     }
@@ -189,11 +189,19 @@ public class MergedPanel extends JPanel {
         g2.setColor(Color.BLACK);
         g2.setFont(scaleFont(String.valueOf(cropCnt + 1), crop));
         g2.drawString(String.valueOf(cropCnt + 1), crop.x, crop.y + crop.height);
+
         int cD = DrawableCropRect.CORNER_DIMENSION;
-        g2.fillRect(crop.x, crop.y, cD, cD);
-        g2.fillRect(crop.x + crop.width - cD - 1, crop.y, cD, cD);
-        g2.fillRect(crop.x, crop.y + crop.height - cD - 1, cD, cD);
-        g2.fillRect(crop.x + crop.width - cD - 1, crop.y + crop.height - cD - 1, cD, cD);
+        if (hasEnoughRoomForResizeHandle(crop)) {
+            g2.fillRect(crop.x, crop.y, cD, cD);
+            g2.fillRect(crop.x + crop.width - cD - 1, crop.y, cD, cD);
+            g2.fillRect(crop.x, crop.y + crop.height - cD - 1, cD, cD);
+            g2.fillRect(crop.x + crop.width - cD - 1, crop.y + crop.height - cD - 1, cD, cD);
+        }
+    }
+
+    private boolean hasEnoughRoomForResizeHandle(DrawableCropRect crop) {
+        int cD = DrawableCropRect.CORNER_DIMENSION;
+        return crop.getSize().getWidth() > cD * 2 && crop.getSize().getHeight() > cD * 2;
     }
 
     private void drawSelectionOverlay(Graphics2D g2, DrawableCropRect crop) {
@@ -811,7 +819,7 @@ public class MergedPanel extends JPanel {
                 // otherwise draw a new one
                 actionState = ActionState.DRAWING_NEW_CROP;
                 if (curCrop == null) {
-                    curCrop = new DrawableCropRect();
+                    curCrop = new DrawableCropRect(p.x, p.y, 0, 0);
                     curCrop.setSelected(true);
                     crops.add(curCrop);
                     cropStartPoint = p;

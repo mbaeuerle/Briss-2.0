@@ -29,8 +29,12 @@ public class DrawableCropRect extends Rectangle {
         this.width = crop.width;
     }
 
-    public DrawableCropRect() {
+    public DrawableCropRect(int x, int y, int width, int height) {
         super();
+        this.x = x;
+        this.y = y;
+        this.height = height;
+        this.width = width;
     }
 
     public final boolean isSelected() {
