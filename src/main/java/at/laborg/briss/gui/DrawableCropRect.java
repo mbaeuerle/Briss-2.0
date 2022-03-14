@@ -19,7 +19,7 @@ public class DrawableCropRect extends Rectangle {
     /**
      * Copy constructor.
      *
-     * @param crop
+     * @param crop Crop rect to copy
      */
     public DrawableCropRect(final DrawableCropRect crop) {
         super();
@@ -45,22 +45,6 @@ public class DrawableCropRect extends Rectangle {
         this.selected = selected;
     }
 
-    public final void setNewHotCornerUL(final Point p) {
-        resizeToCoordinates(p.x, p.y, (int) getMaxX(), (int) getMaxY());
-    }
-
-    public final void setNewHotCornerLR(final Point p) {
-        resizeToCoordinates(x, y, p.x, p.y);
-    }
-
-    public final void setNewHotCornerUR(final Point p) {
-        resizeToCoordinates(x, p.y, p.x, (int) getMaxY());
-    }
-
-    public final void setNewHotCornerLL(final Point p) {
-        resizeToCoordinates(p.x, y, (int) getMaxX(), p.y);
-    }
-
     public final boolean containsInHotCornerUL(final Point p) {
         return ((p.x > getX() && p.x <= getX() + CORNER_DIMENSION) && (p.y > getY() && p.y <= getY() + CORNER_DIMENSION));
     }
@@ -79,13 +63,6 @@ public class DrawableCropRect extends Rectangle {
                 - CORNER_DIMENSION));
     }
 
-    public final void resizeToCoordinates(int xUL, int yUL, int xLR, int yLR) {
-        setSize(xLR - xUL, yLR - yUL);
-
-        x = xUL;
-        y = yUL;
-    }
-
 	public boolean isOverRightEdge(Point p) {
 		return Math.abs(p.x - getMaxX()) < EDGE_THRESHOLD && p.y > y && p.y - y < height;
 	}
@@ -100,21 +77,5 @@ public class DrawableCropRect extends Rectangle {
 
 	public boolean isOverLowerEdge(Point p) {
 		return Math.abs(p.y - getMaxY()) < EDGE_THRESHOLD && p.x > x && p.x - x < width;
-	}
-
-	public void moveLeftEdge(final Point p) {
-		resizeToCoordinates(p.x, y, (int) getMaxX(), (int) getMaxY());
-	}
-
-	public void moveRightEdge(final Point p) {
-		resizeToCoordinates(x, y, p.x, (int) getMaxY());
-	}
-
-	public void moveUpperEdge(final Point p) {
-		resizeToCoordinates(x, p.y, (int) getMaxX(), (int) getMaxY());
-	}
-
-	public void moveLowerEdge(final Point p) {
-		resizeToCoordinates(x, y, (int) getMaxX(), p.y);
 	}
 }
