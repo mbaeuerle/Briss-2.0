@@ -497,10 +497,8 @@ public class MergedPanel extends JPanel {
 
     private void pasteFromClipBoard() {
         for (DrawableCropRect crop : ClipBoard.getInstance().getCrops()) {
-            if (!crops.contains(crop)) {
-                DrawableCropRect newCrop = new DrawableCropRect(crop);
-                crops.add(newCrop);
-            }
+            DrawableCropRect newCrop = new DrawableCropRect(crop);
+            crops.add(newCrop);
         }
         updateClusterRatios(crops);
         repaint();
