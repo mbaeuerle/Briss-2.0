@@ -152,11 +152,6 @@ public class MergedPanel extends JPanel {
 
     @Override
     public void paint(Graphics g) {
-        update(g);
-    }
-
-    @Override
-    public void update(Graphics g) {
         if (!isEnabled())
             return;
 
@@ -168,10 +163,10 @@ public class MergedPanel extends JPanel {
         int cropCnt = 0;
 
         for (DrawableCropRect crop : crops) {
-            drawNormalCropRectangle(g2, cropCnt, crop);
             if (crop.isSelected()) {
                 drawSelectionOverlay(g2, crop);
             }
+            drawNormalCropRectangle(g2, cropCnt, crop);
 
             cropCnt++;
         }
@@ -192,12 +187,8 @@ public class MergedPanel extends JPanel {
         g2.setFont(scaleFont(String.valueOf(cropCnt + 1), crop));
         g2.drawString(String.valueOf(cropCnt + 1), crop.x, crop.y + crop.height);
 
-        int cD = DrawableCropRect.CORNER_DIMENSION;
         if (hasEnoughRoomForResizeHandle(crop)) {
-            g2.fillRect(crop.x, crop.y, cD, cD);
-            g2.fillRect(crop.x + crop.width - cD, crop.y, cD, cD);
-            g2.fillRect(crop.x, crop.y + crop.height - cD, cD, cD);
-            g2.fillRect(crop.x + crop.width - cD, crop.y + crop.height - cD, cD, cD);
+            crop.draw(g2);
         }
     }
 
@@ -685,10 +676,11 @@ public class MergedPanel extends JPanel {
                     if (cropStartPoint == null) {
                         cropStartPoint = curPoint;
                     }
-                    curCrop.x = Math.min(curPoint.x, cropStartPoint.x);
-                    curCrop.width = Math.abs(curPoint.x - cropStartPoint.x);
-                    curCrop.y = Math.min(curPoint.y, cropStartPoint.y);
-                    curCrop.height = Math.abs(curPoint.y - cropStartPoint.y);
+                    int x = Math.min(curPoint.x, cropStartPoint.x);
+                    int y = Math.min(curPoint.y, cropStartPoint.y);
+                    int width = Math.abs(curPoint.x - cropStartPoint.x);
+                    int height = Math.abs(curPoint.y - cropStartPoint.y);
+                    curCrop.setBounds(x, y, width, height);
                     break;
 
                 case MOVE_CROP:
