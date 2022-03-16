@@ -714,7 +714,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
             try {
                 clusterDefinition = ClusterCreator.clusterPages(source, pageExcludes);
 
-            } catch (IOException e1) {
+            } catch (Exception e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
                 return null;
