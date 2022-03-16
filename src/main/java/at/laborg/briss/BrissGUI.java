@@ -40,7 +40,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +83,6 @@ import at.laborg.briss.utils.DesktopHelper;
 import at.laborg.briss.utils.DocumentCropper;
 import at.laborg.briss.utils.FileDrop;
 import at.laborg.briss.utils.PDFReaderUtil;
-import at.laborg.briss.utils.PageNumberParser;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
@@ -296,30 +294,6 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         return new ImageIcon(getClass().getClassLoader().getResource(RES_DROP_IMG_PATH));
     }
 
-    private static PageExcludes getExcludedPages() {
-        boolean inputIsValid = false;
-        String previousInput = ""; //$NON-NLS-1$
-
-        // repeat show_dialog until valid input or canceled
-        while (!inputIsValid) {
-            String input = JOptionPane.showInputDialog(Messages.getString("BrissGUI.excludedPagesInfo"), previousInput);
-            previousInput = input;
-
-            if (input == null || input.equals("")) //$NON-NLS-1$
-                return null;
-
-            try {
-                PageExcludes pageExcludes = new PageExcludes(PageNumberParser.parsePageNumber(input));
-                return pageExcludes;
-            } catch (ParseException e) {
-                JOptionPane.showMessageDialog(null, e.getMessage(),
-                    Messages.getString("BrissGUI.inputError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            }
-
-        }
-        return null;
-    }
-
     private void showSaveFileDialog() {
         Platform.runLater(() -> {
             // Open JavaFX file chooser in FX-thread which is not as ugly as the swing one
@@ -459,72 +433,6 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
 
         return null;
-    }
-
-    private void reloadWithOtherExcludes() throws IOException, PdfException {
-        previewPanel.removeAll();
-        progressBar.setString(Messages.getString("BrissGUI.reloadingFile")); //$NON-NLS-1$
-        ClusterPagesTask clusterTask = new ClusterPagesTask(workingSet.getSourceFile(), workingSet.getSourceFilePassword(), getExcludedPages());
-        clusterTask.addPropertyChangeListener(this);
-        clusterTask.execute();
-    }
-
-    private void maximizeWidthInSelectedRects() {
-        // maximize to width
-        // search for maximum width
-        int maxWidth = -1;
-        for (MergedPanel panel : mergedPanels) {
-            int panelMaxWidth = panel.getWidestSelectedRect();
-            if (maxWidth < panelMaxWidth) {
-                maxWidth = panelMaxWidth;
-            }
-        }
-        // set maximum width to all rectangles
-        if (maxWidth == -1)
-            return;
-        for (MergedPanel mp : mergedPanels) {
-            mp.setSelCropWidth(maxWidth);
-        }
-    }
-
-    private void maximizeHeightInSelectedRects() {
-        // maximize to height
-        // search for maximum height
-        int maxHeight = -1;
-        for (MergedPanel panel : mergedPanels) {
-            int panelMaxHeight = panel.getHighestSelectedRect();
-            if (maxHeight < panelMaxHeight) {
-                maxHeight = panelMaxHeight;
-            }
-        }
-        // set maximum height to all rectangles
-        if (maxHeight == -1)
-            return;
-        for (MergedPanel mp : mergedPanels) {
-            mp.setSelCropHeight(maxHeight);
-        }
-    }
-
-    private void maximizeSizeInAllRects() {
-        // maximize to width and height for all rectangles
-        // search for maximums
-        int maxWidth = -1;
-        int maxHeight = -1;
-        for (MergedPanel panel : mergedPanels) {
-            Dimension panelMaxSize = panel.getLargestRect();
-            if (maxWidth < panelMaxSize.width) {
-                maxWidth = panelMaxSize.width;
-            }
-            if (maxHeight < panelMaxSize.height) {
-                maxHeight = panelMaxSize.height;
-            }
-        }
-        // set maximum size to all rectangles
-        if ((maxWidth == -1) || (maxHeight == -1))
-            return;
-        for (MergedPanel mp : mergedPanels) {
-            mp.setAllCropSize(maxWidth, maxHeight);
-        }
     }
 
     public void alignSelRects(int x, int y, int w, int h) {
