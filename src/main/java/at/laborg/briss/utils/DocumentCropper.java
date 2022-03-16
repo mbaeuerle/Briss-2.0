@@ -110,7 +110,7 @@ public final class DocumentCropper {
                 for (String destination : destinations)
                     pdfCopy.addNamedDestination(destination, outputPageNumber, new PdfDestination(PdfDestination.FIT));
             }
-            List<Float[]> rectangles = cropDefinition.getRectanglesForPage(pageNumber);
+            List<float[]> rectangles = cropDefinition.getRectanglesForPage(pageNumber);
             for (int j = 1; j < rectangles.size(); j++) {
                 pdfCopy.addPage(pdfPage);
                 outputPageNumber++;
@@ -135,7 +135,7 @@ public final class DocumentCropper {
 
         for (int sourcePageNumber = 1; sourcePageNumber <= pdfMetaInformation.getSourcePageCount(); sourcePageNumber++) {
 
-            List<Float[]> rectangleList = cropDefinition.getRectanglesForPage(sourcePageNumber);
+            List<float[]> rectangleList = cropDefinition.getRectanglesForPage(sourcePageNumber);
 
             // if no crop was selected do nothing
             if (rectangleList.isEmpty()) {
@@ -143,7 +143,7 @@ public final class DocumentCropper {
                 continue;
             }
 
-            for (Float[] ratios : rectangleList) {
+            for (float[] ratios : rectangleList) {
 
                 pageDict = reader.getPageN(newPageNumber);
 

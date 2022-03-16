@@ -675,7 +675,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         for (PageCluster newCluster : newClusters.getClusterList()) {
             for (Integer pageNumber : newCluster.getAllPages()) {
                 PageCluster oldCluster = oldClusters.getSingleCluster(pageNumber);
-                for (Float[] ratios : oldCluster.getRatiosList()) {
+                for (float[] ratios : oldCluster.getRatiosList()) {
                     newCluster.addRatios(ratios);
                 }
             }

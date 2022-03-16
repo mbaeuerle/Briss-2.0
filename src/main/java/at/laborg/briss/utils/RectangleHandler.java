@@ -9,7 +9,7 @@ public final class RectangleHandler {
     private RectangleHandler() {
     }
 
-    public static Rectangle calculateScaledRectangle(final List<Rectangle> boxes, final Float[] ratios, final int rotation) {
+    public static Rectangle calculateScaledRectangle(final List<Rectangle> boxes, final float[] ratios, final int rotation) {
         if (ratios == null || boxes.size() == 0)
             return null;
         Rectangle smallestBox = null;
@@ -51,7 +51,7 @@ public final class RectangleHandler {
      * @param rotation
      * @return
      */
-    private static float[] rotateRatios(final Float[] ratios, final int rotation) {
+    private static float[] rotateRatios(final float[] ratios, final int rotation) {
         float[] tmpRatios = new float[4];
         for (int i = 0; i < 4; i++) {
             tmpRatios[i] = ratios[i];
