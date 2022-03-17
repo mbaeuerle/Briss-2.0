@@ -47,8 +47,11 @@ public final class BrissCMD {
 
         System.out.println("Clustering PDF: " + workDescription.getSourceFile());
         ClusterDefinition clusterDefinition = null;
+
+        String password = workDescription.getPassword();
+
         try {
-            clusterDefinition = ClusterCreator.clusterPages(workDescription.getSourceFile(), null);
+            clusterDefinition = ClusterCreator.clusterPages(workDescription.getSourceFile(), password, null);
         } catch (IOException e1) {
             System.out.println("Error occurred while clustering.");
             e1.printStackTrace(System.out);
@@ -56,7 +59,7 @@ public final class BrissCMD {
         }
         System.out.println("Created " + clusterDefinition.getClusterList().size() + " clusters.");
 
-        ClusterRenderWorker cRW = new ClusterRenderWorker(workDescription.getSourceFile(), clusterDefinition);
+        ClusterRenderWorker cRW = new ClusterRenderWorker(workDescription.getSourceFile(), password, clusterDefinition);
         cRW.start();
 
         System.out.print("Starting to render clusters.");
@@ -99,7 +102,7 @@ public final class BrissCMD {
             CropDefinition cropDefintion = CropDefinition.createCropDefinition(workDescription.getSourceFile(),
                 workDescription.getDestFile(), clusterDefinition);
             System.out.println("Starting to crop files.");
-            DocumentCropper.crop(cropDefintion);
+            DocumentCropper.crop(cropDefintion, password);
             System.out.println("Cropping succesful. Cropped to:" + workDescription.getDestFile().getAbsolutePath());
         } catch (IOException | DocumentException | IllegalArgumentException e) {
             e.printStackTrace();
@@ -116,11 +119,15 @@ public final class BrissCMD {
         private static final String SPLIT_COLUMN_CMD = "--split-col";
         private static final String SPLIT_ROW_CMD = "--split-row";
 
+        private static final String FILE_PASSWORD_CMD = "-p";
+
         private File sourceFile = null;
         private File destFile = null;
 
         private boolean splitColumns = false;
         private boolean splitRows = false;
+
+        private String password;
 
         static CommandValues parseToWorkDescription(final String[] args) {
             CommandValues commandValues = new CommandValues();
@@ -140,6 +147,10 @@ public final class BrissCMD {
                 } else if (arg.equalsIgnoreCase(SPLIT_ROW_CMD)) {
                     commandValues.setSplitRows();
                 }
+                else if (arg.equalsIgnoreCase(FILE_PASSWORD_CMD)) {
+                    commandValues.password = args[i + 1];
+                }
+
                 i++;
             }
 
@@ -206,6 +217,10 @@ public final class BrissCMD {
 
         public boolean isSplitRows() {
             return splitRows;
+        }
+
+        public String getPassword() {
+            return password;
         }
     }
 }
