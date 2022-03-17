@@ -21,6 +21,7 @@ import java.io.File;
 
 public class WorkingSet {
     private File sourceFile;
+    private String sourceFilePassword;
     private ClusterDefinition clusters;
     private PageExcludes pageExcludes;
 
@@ -28,8 +29,9 @@ public class WorkingSet {
     private WorkingSet() {
     }
 
-    public WorkingSet(final File sourceFile) {
+    public WorkingSet(final File sourceFile, String password) {
         this.sourceFile = sourceFile;
+        this.sourceFilePassword = password;
         clusters = new ClusterDefinition();
     }
 
@@ -57,4 +59,7 @@ public class WorkingSet {
         this.pageExcludes = pageExcludes;
     }
 
+    public String getSourceFilePassword() {
+        return sourceFilePassword;
+    }
 }

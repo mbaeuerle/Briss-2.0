@@ -49,31 +49,27 @@ public final class DocumentCropper {
     private DocumentCropper() {
     }
 
-    public static File crop(final CropDefinition cropDefinition) throws IOException, DocumentException, CropException {
+    public static File crop(final CropDefinition cropDefinition, String password) throws IOException, DocumentException, CropException {
 
         // check if everything is ready
         if (!BrissFileHandling.checkValidStateAndCreate(cropDefinition.getDestinationFile()))
             throw new IOException("Destination file not valid");
 
-        // check if file is encrypted and needs a password
-        if (isPasswordRequired(cropDefinition.getSourceFile()))
-            throw new CropException("Password required");
-
         // read out necessary meta information
-        PdfMetaInformation pdfMetaInformation = new PdfMetaInformation(cropDefinition.getSourceFile());
+        PdfMetaInformation pdfMetaInformation = new PdfMetaInformation(cropDefinition.getSourceFile(), password);
 
         // first make a copy containing the right amount of pages
-        File intermediatePdf = copyToMultiplePages(cropDefinition, pdfMetaInformation);
+        File intermediatePdf = copyToMultiplePages(cropDefinition, pdfMetaInformation, password);
 
         // now crop all pages according to their ratios
-        cropMultipliedFile(cropDefinition, intermediatePdf, pdfMetaInformation);
+        cropMultipliedFile(cropDefinition, intermediatePdf, pdfMetaInformation, password);
         return cropDefinition.getDestinationFile();
     }
 
     private static File copyToMultiplePages(final CropDefinition cropDefinition,
-                                            final PdfMetaInformation pdfMetaInformation) throws IOException, DocumentException {
+                                            final PdfMetaInformation pdfMetaInformation, String password) throws IOException, DocumentException {
 
-        PdfReader reader = new PdfReader(cropDefinition.getSourceFile().getAbsolutePath());
+        PdfReader reader = PDFReaderUtil.getPdfReader(cropDefinition.getSourceFile().getAbsolutePath(), password);
         HashMap<String, String> map = SimpleNamedDestination.getNamedDestination(reader, false);
         Document document = new Document();
 
@@ -123,9 +119,9 @@ public final class DocumentCropper {
     }
 
     private static void cropMultipliedFile(final CropDefinition cropDefinition, final File multipliedDocument,
-                                           final PdfMetaInformation pdfMetaInformation) throws DocumentException, IOException {
+                                           final PdfMetaInformation pdfMetaInformation, String password) throws DocumentException, IOException {
 
-        PdfReader reader = new PdfReader(multipliedDocument.getAbsolutePath());
+        PdfReader reader = PDFReaderUtil.getPdfReader(multipliedDocument.getAbsolutePath(), password);
 
         PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(cropDefinition.getDestinationFile()));
         stamper.setMoreInfo(pdfMetaInformation.getSourceMetaInfo());
@@ -180,21 +176,14 @@ public final class DocumentCropper {
         return scaleBoxArray;
     }
 
-    private static boolean isPasswordRequired(final File file) throws IOException {
-        PdfReader reader = new PdfReader(file.getAbsolutePath());
-        boolean isEncrypted = reader.isEncrypted();
-        reader.close();
-        return isEncrypted;
-    }
-
     private static class PdfMetaInformation {
 
         private final int sourcePageCount;
         private final HashMap<String, String> sourceMetaInfo;
         private final List<HashMap<String, Object>> sourceBookmarks;
 
-        public PdfMetaInformation(final File source) throws IOException {
-            PdfReader reader = new PdfReader(source.getAbsolutePath());
+        public PdfMetaInformation(final File source, String password) throws IOException {
+            PdfReader reader = new PdfReader(source.getAbsolutePath(), password.getBytes());
             this.sourcePageCount = reader.getNumberOfPages();
             this.sourceMetaInfo = reader.getInfo();
             this.sourceBookmarks = SimpleBookmark.getBookmark(reader);

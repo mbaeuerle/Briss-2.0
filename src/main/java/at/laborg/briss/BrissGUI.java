@@ -33,6 +33,7 @@ import at.laborg.briss.utils.ClusterRenderWorker;
 import at.laborg.briss.utils.DesktopHelper;
 import at.laborg.briss.utils.DocumentCropper;
 import at.laborg.briss.utils.FileDrop;
+import at.laborg.briss.utils.PDFReaderUtil;
 import at.laborg.briss.utils.PageNumberParser;
 import com.itextpdf.text.DocumentException;
 import javafx.application.Platform;
@@ -40,14 +41,17 @@ import javafx.embed.swing.JFXPanel;
 import javafx.stage.FileChooser;
 import org.jpedal.exception.PdfException;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
@@ -355,7 +359,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         try {
             CropDefinition cropDefinition = CropDefinition.createCropDefinition(workingSet.getSourceFile(),
                 file, workingSet.getClusterDefinition());
-            File result = DocumentCropper.crop(cropDefinition);
+            File result = DocumentCropper.crop(cropDefinition, workingSet.getSourceFilePassword());
             if (result != null) {
                 DesktopHelper.openFileWithDesktopApp(result);
                 lastOpenDir = result.getParentFile();
@@ -386,7 +390,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         File tmpCropFileDestination = File.createTempFile("briss", ".pdf"); //$NON-NLS-1$ //$NON-NLS-2$
         CropDefinition cropDefinition = CropDefinition.createCropDefinition(workingSet.getSourceFile(),
             tmpCropFileDestination, workingSet.getClusterDefinition());
-        File result = DocumentCropper.crop(cropDefinition);
+        File result = DocumentCropper.crop(cropDefinition, workingSet.getSourceFilePassword());
         return result;
     }
 
@@ -404,20 +408,60 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     }
 
     protected void importNewPdfFile(File loadFile) throws IOException, PdfException {
+        String password = null;
+
+        if (PDFReaderUtil.isEncrypted(loadFile.getAbsolutePath())) {
+            while (PDFReaderUtil.isInvalidPassword(loadFile.getAbsolutePath(), password)) {
+                password = promptForPassword();
+
+                if (password == null) {
+                    return;
+                }
+            }
+        }
+
         lastOpenDir = loadFile.getParentFile();
         previewPanel.removeAll();
         cardLayout.first(wrapperPanel);
         progressBar.setVisible(true);
         progressBar.setString(Messages.getString("BrissGUI.loadingNewFile")); //$NON-NLS-1$
-        ClusterPagesTask clusterTask = new ClusterPagesTask(loadFile, null);
+
+        ClusterPagesTask clusterTask = new ClusterPagesTask(loadFile, password, null);
         clusterTask.addPropertyChangeListener(this);
         clusterTask.execute();
+    }
+
+    private String promptForPassword() {
+        JPanel panel = new JPanel();
+
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JLabel label = new JLabel(Messages.getString("BrissGUI.passwordPrompt"));
+
+        JPasswordField pass = new JPasswordField();
+
+        panel.add(label);
+        panel.add(pass);
+
+        String[] options = new String[] {"OK", "Cancel"};
+
+        int option = JOptionPane.showOptionDialog(null, panel, "The title",
+                JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[1]);
+
+        if (option == 0) {
+            char[] password = pass.getPassword();
+
+            return new String(password);
+        }
+
+        return null;
     }
 
     private void reloadWithOtherExcludes() throws IOException, PdfException {
         previewPanel.removeAll();
         progressBar.setString(Messages.getString("BrissGUI.reloadingFile")); //$NON-NLS-1$
-        ClusterPagesTask clusterTask = new ClusterPagesTask(workingSet.getSourceFile(), getExcludedPages());
+        ClusterPagesTask clusterTask = new ClusterPagesTask(workingSet.getSourceFile(), workingSet.getSourceFilePassword(), getExcludedPages());
         clusterTask.addPropertyChangeListener(this);
         clusterTask.execute();
     }
@@ -626,8 +670,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     }
 
     private void setStateAfterClusteringFinished(ClusterDefinition newClusters, PageExcludes newPageExcludes,
-                                                 File newSource) {
-        updateWorkingSet(newClusters, newPageExcludes, newSource);
+                                                 File newSource, String password) {
+        updateWorkingSet(newClusters, newPageExcludes, newSource, password);
 
         previewPanel.removeAll();
         mergedPanels = new ArrayList<MergedPanel>();
@@ -649,10 +693,10 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         repaint();
     }
 
-    private void updateWorkingSet(ClusterDefinition newClusters, PageExcludes newPageExcludes, File newSource) {
+    private void updateWorkingSet(ClusterDefinition newClusters, PageExcludes newPageExcludes, File newSource, String password) {
         if (workingSet == null) {
             // completely new
-            workingSet = new WorkingSet(newSource);
+            workingSet = new WorkingSet(newSource, password);
         } else if (workingSet.getSourceFile().equals(newSource)) {
             // just reload with other excludes
             copyCropsToClusters(workingSet.getClusterDefinition(), newClusters);
@@ -688,23 +732,25 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         private final File source;
         private final PageExcludes pageExcludes;
         private ClusterDefinition clusterDefinition = null;
+        private String password;
 
-        public ClusterPagesTask(File source, PageExcludes pageExcludes) {
+        public ClusterPagesTask(File source, String password, PageExcludes pageExcludes) {
             super();
             this.source = source;
             this.pageExcludes = pageExcludes;
+            this.password = password;
         }
 
         @Override
         protected void done() {
-            setStateAfterClusteringFinished(clusterDefinition, pageExcludes, source);
+            setStateAfterClusteringFinished(clusterDefinition, pageExcludes, source, password);
         }
 
         @Override
         protected Void doInBackground() {
 
             try {
-                clusterDefinition = ClusterCreator.clusterPages(source, pageExcludes);
+                clusterDefinition = ClusterCreator.clusterPages(source, password, pageExcludes);
 
             } catch (Exception e1) {
                 // TODO Auto-generated catch block
@@ -713,12 +759,16 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
             }
 
             int totalWorkUnits = clusterDefinition.getNrOfPagesToRender();
-            ClusterRenderWorker renderWorker = new ClusterRenderWorker(source, clusterDefinition);
+
+            ClusterRenderWorker renderWorker = new ClusterRenderWorker(source, password, clusterDefinition);
+
             renderWorker.start();
 
             while (renderWorker.isAlive()) {
-                int percent = (int) ((renderWorker.workerUnitCounter / (float) totalWorkUnits) * 100);
+                int percent = (int) (100.0 * renderWorker.workerUnitCounter / totalWorkUnits);
+
                 setProgress(percent);
+
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
