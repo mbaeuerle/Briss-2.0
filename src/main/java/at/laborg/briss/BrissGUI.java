@@ -44,6 +44,7 @@ import org.jpedal.exception.PdfException;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -60,6 +61,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -102,6 +106,23 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     private static final String RES_ICON_PATH = "Briss_icon_032x032.gif"; //$NON-NLS-1$
     private static final String RES_DROP_IMG_PATH = "drop.png"; //$NON-NLS-1$
     private static final String PROGRESS = "progress";
+    private static final AncestorListener FOCUS_REQUESTING_ANCESTOR_LISTENER = new AncestorListener() {
+
+        @Override
+        public void ancestorRemoved(AncestorEvent event) {}
+
+        @Override
+        public void ancestorMoved(AncestorEvent event) {}
+
+        @Override
+        public void ancestorAdded(AncestorEvent event) {
+            JComponent component = event.getComponent();
+
+            component.requestFocusInWindow();
+
+            component.removeAncestorListener(this);
+        }
+    };
 
     private JMenuBar menuBar;
     private JPanel previewPanel;
@@ -440,8 +461,11 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
 
         JPasswordField pass = new JPasswordField();
 
+        pass.addAncestorListener(FOCUS_REQUESTING_ANCESTOR_LISTENER);
+
         panel.add(label);
         panel.add(pass);
+
 
         String[] options = new String[] {"OK", "Cancel"};
 
