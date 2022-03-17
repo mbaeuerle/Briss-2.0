@@ -445,11 +445,11 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
 
         String[] options = new String[] {"OK", "Cancel"};
 
-        int option = JOptionPane.showOptionDialog(null, panel, "The title",
-                JOptionPane.NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-                null, options, options[1]);
+        int option = JOptionPane.showOptionDialog(null, panel, "Action required",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
 
-        if (option == 0) {
+        if (option == JOptionPane.OK_OPTION) {
             char[] password = pass.getPassword();
 
             return new String(password);
