@@ -116,7 +116,7 @@ public class CropManager {
                 continue;
             }
 
-            for (Float[] ratios : cluster.getRatiosList()) {
+            for (float[] ratios : cluster.getRatiosList()) {
 
                 pageDict = reader.getPageN(newPageNumber);
 
@@ -148,7 +148,7 @@ public class CropManager {
         reader.close();
     }
 
-    private static Rectangle calculateScaledRectangle(List<Rectangle> boxes, Float[] ratios, int rotation) {
+    private static Rectangle calculateScaledRectangle(List<Rectangle> boxes, float[] ratios, int rotation) {
         if (ratios == null || boxes.size() == 0)
             return null;
         Rectangle smallestBox = null;
@@ -190,7 +190,7 @@ public class CropManager {
      * @param rotation
      * @return
      */
-    private static float[] rotateRatios(Float[] ratios, int rotation) {
+    private static float[] rotateRatios(float[] ratios, int rotation) {
         float[] tmpRatios = new float[4];
         for (int i = 0; i < 4; i++) {
             tmpRatios[i] = ratios[i];

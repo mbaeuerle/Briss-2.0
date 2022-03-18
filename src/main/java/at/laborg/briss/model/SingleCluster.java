@@ -28,7 +28,7 @@ public class SingleCluster implements Comparable<SingleCluster> {
 
     private List<Integer> pagesToMerge;
     private List<Integer> allPages;
-    private final List<Float[]> cropRatiosList = new ArrayList<Float[]>();
+    private final List<float[]> cropRatiosList = new ArrayList<float[]>();
 
     private ClusterImageData imageData;
 
@@ -60,7 +60,7 @@ public class SingleCluster implements Comparable<SingleCluster> {
      *
      * @return
      */
-    public List<Float[]> getRatiosList() {
+    public List<float[]> getRatiosList() {
         return cropRatiosList;
     }
 
@@ -68,7 +68,7 @@ public class SingleCluster implements Comparable<SingleCluster> {
         cropRatiosList.clear();
     }
 
-    public void addRatios(Float[] ratios) {
+    public void addRatios(float[] ratios) {
         // check if already in
         if (!cropRatiosList.contains(ratios)) {
             cropRatiosList.add(ratios);

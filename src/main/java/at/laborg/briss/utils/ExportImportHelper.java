@@ -31,9 +31,9 @@ public class ExportImportHelper {
     // return result.toString();
     // }
     //
-    // private static String exportRatios(List<Float[]> ratiosList) {
+    // private static String exportRatios(List<float[]> ratiosList) {
     // StringBuffer result = new StringBuffer();
-    // for (Float[] ratios : ratiosList) {
+    // for (float[] ratios : ratiosList) {
     // result.append(ratios[0] + " " + ratios[1] + " " + ratios[2] + " "
     // + ratios[3] + " ");
     // }

@@ -17,7 +17,7 @@ public final class SplitFinder {
     private SplitFinder() {
     }
 
-    private static Float getSplitRatio(final BufferedImage image, int axis) {
+    private static float getSplitRatio(final BufferedImage image, int axis) {
         WritableRaster raster = image.getRaster();
 
         double[] sdOfDerivationX = ImageFinderUtil.createSdOfDerivation(raster, axis);
@@ -39,7 +39,7 @@ public final class SplitFinder {
         return ((float) minIndex) / width;
     }
 
-    public static List<Float[]> splitColumn(final BufferedImage image, Float[] crop) {
+    public static List<float[]> splitColumn(final BufferedImage image, float[] crop) {
         // TODO: Split within crop rect (currently finds split position on global preview image)
         float columnRatio = SplitFinder.getSplitRatio(image, ImageFinderUtil.X_AXIS);
 
@@ -47,24 +47,24 @@ public final class SplitFinder {
         float divider = crop[0] + columnRatio * width;
 
         return Arrays.asList(
-            new Float[]{crop[0], crop[1], 1 - divider, crop[3]},
-            new Float[]{divider, crop[1], crop[2], crop[3]}
+            new float[]{crop[0], crop[1], 1 - divider, crop[3]},
+            new float[]{divider, crop[1], crop[2], crop[3]}
         );
     }
 
     public static List<DrawableCropRect> splitColumn(final BufferedImage image, DrawableCropRect crop) {
-        Float[] cropFloat = convertToFloatArray(image, crop);
+        float[] cropFloat = convertToFloatArray(image, crop);
 
-        List<Float[]> split = splitColumn(image, cropFloat);
+        List<float[]> split = splitColumn(image, cropFloat);
 
         ArrayList<DrawableCropRect> result = new ArrayList<>(split.size());
-        for (Float[] splitFloat : split) {
+        for (float[] splitFloat : split) {
             result.add(convertToDrawableCropRect(image, splitFloat));
         }
         return result;
     }
 
-    public static List<Float[]> splitRow(final BufferedImage image, Float[] crop) {
+    public static List<float[]> splitRow(final BufferedImage image, float[] crop) {
         // TODO: Split within crop rect (currently finds split position on global preview image)
         float rowRatio = SplitFinder.getSplitRatio(image, ImageFinderUtil.Y_AXIS);
 
@@ -72,28 +72,28 @@ public final class SplitFinder {
         float divider = crop[3] + rowRatio * height;
 
         return Arrays.asList(
-            new Float[]{crop[0], 1 - divider - ROW_OVERLAP_RATIO, crop[2], crop[3]},
-            new Float[]{crop[0], crop[1], crop[2], divider - ROW_OVERLAP_RATIO}
+            new float[]{crop[0], 1 - divider - ROW_OVERLAP_RATIO, crop[2], crop[3]},
+            new float[]{crop[0], crop[1], crop[2], divider - ROW_OVERLAP_RATIO}
         );
     }
 
     public static List<DrawableCropRect> splitRow(final BufferedImage image, DrawableCropRect crop) {
-        Float[] cropFloat = convertToFloatArray(image, crop);
+        float[] cropFloat = convertToFloatArray(image, crop);
 
-        List<Float[]> split = splitRow(image, cropFloat);
+        List<float[]> split = splitRow(image, cropFloat);
 
         ArrayList<DrawableCropRect> result = new ArrayList<>(split.size());
-        for (Float[] splitFloat : split) {
+        for (float[] splitFloat : split) {
             result.add(convertToDrawableCropRect(image, splitFloat));
         }
         return result;
     }
 
-    private static Float[] convertToFloatArray(final BufferedImage image, DrawableCropRect crop) {
+    private static float[] convertToFloatArray(final BufferedImage image, DrawableCropRect crop) {
         float width = image.getWidth();
         float height = image.getHeight();
 
-        return new Float[]{
+        return new float[]{
             crop.x / width,
             1 - (crop.y + crop.height) / height,
             1 - (crop.x + crop.width) / width,
@@ -101,7 +101,7 @@ public final class SplitFinder {
         };
     }
 
-    private static DrawableCropRect convertToDrawableCropRect(final BufferedImage image, Float[] crop) {
+    private static DrawableCropRect convertToDrawableCropRect(final BufferedImage image, float[] crop) {
         float width = image.getWidth();
         float height = image.getHeight();
 

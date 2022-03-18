@@ -97,7 +97,7 @@ public class MergedPanel extends JPanel {
         this.briss = briss;
         this.cluster = cluster;
         this.img = cluster.getImageData().getPreviewImage();
-        Float[] autoRatios = CropFinder.getAutoCropFloats(img);
+        float[] autoRatios = CropFinder.getAutoCropFloats(img);
         cluster.addRatios(autoRatios);
         setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
         setSize(new Dimension(img.getWidth(), img.getHeight()));
@@ -113,8 +113,8 @@ public class MergedPanel extends JPanel {
         repaint();
     }
 
-    private void addRatiosAsCrops(List<Float[]> ratiosList) {
-        for (Float[] ratios : cluster.getRatiosList()) {
+    private void addRatiosAsCrops(List<float[]> ratiosList) {
+        for (float[] ratios : cluster.getRatiosList()) {
             int x = (int) (img.getWidth() * ratios[0]);
             int y = (int) (img.getHeight() * ratios[3]);
             int width = (int) (img.getWidth() * (1 - (ratios[0] + ratios[2])));
@@ -348,7 +348,7 @@ public class MergedPanel extends JPanel {
      * @param crop
      * @return the cropped ratios or null if to small
      */
-    private static Float[] getCutRatiosForPdf(Rectangle crop, int imgWidth, int imgHeight) {
+    private static float[] getCutRatiosForPdf(Rectangle crop, int imgWidth, int imgHeight) {
         int x1, x2, y1, y2;
 
         x1 = crop.x;
@@ -370,7 +370,7 @@ public class MergedPanel extends JPanel {
             y2 = imgHeight;
         }
 
-        Float[] ratios = new Float[4];
+        float[] ratios = new float[4];
         // left
         ratios[0] = (float) x1 / imgWidth;
         // bottom
