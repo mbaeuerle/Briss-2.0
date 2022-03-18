@@ -28,7 +28,7 @@ public class PageCluster implements Comparable<PageCluster> {
 
     private List<Integer> pagesToMerge;
     private final List<Integer> allPages;
-    private final List<Float[]> cropRatiosList = new ArrayList<Float[]>();
+    private final List<float[]> cropRatiosList = new ArrayList<float[]>();
 
     private boolean excluded = false;
 
@@ -67,7 +67,7 @@ public class PageCluster implements Comparable<PageCluster> {
      *
      * @return
      */
-    public final List<Float[]> getRatiosList() {
+    public final List<float[]> getRatiosList() {
         return cropRatiosList;
     }
 
@@ -75,7 +75,7 @@ public class PageCluster implements Comparable<PageCluster> {
         cropRatiosList.clear();
     }
 
-    public final void addRatios(final Float[] ratios) {
+    public final void addRatios(final float[] ratios) {
         // check if already in
         if (!cropRatiosList.contains(ratios)) {
             cropRatiosList.add(ratios);

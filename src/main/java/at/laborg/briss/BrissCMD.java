@@ -74,28 +74,28 @@ public final class BrissCMD {
         System.out.println("Calculating crop rectangles.");
         try {
             for (PageCluster cluster : clusterDefinition.getClusterList()) {
-                Float[] auto = CropFinder.getAutoCropFloats(cluster.getImageData().getPreviewImage());
+                float[] auto = CropFinder.getAutoCropFloats(cluster.getImageData().getPreviewImage());
 
-                ArrayList<Float[]> ratios = new ArrayList<>();
+                ArrayList<float[]> ratios = new ArrayList<>();
                 ratios.add(auto);
 
                 if (workDescription.isSplitColumns()) {
-                    ArrayList<Float[]> newRatios = new ArrayList<>();
-                    for (Float[] crop : ratios) {
+                    ArrayList<float[]> newRatios = new ArrayList<>();
+                    for (float[] crop : ratios) {
                         newRatios.addAll(SplitFinder.splitColumn(cluster.getImageData().getPreviewImage(), crop));
                     }
                     ratios = newRatios;
                 }
 
                 if (workDescription.isSplitRows()) {
-                    ArrayList<Float[]> newRatios = new ArrayList<>();
-                    for (Float[] crop : ratios) {
+                    ArrayList<float[]> newRatios = new ArrayList<>();
+                    for (float[] crop : ratios) {
                         newRatios.addAll(SplitFinder.splitRow(cluster.getImageData().getPreviewImage(), crop));
                     }
                     ratios = newRatios;
                 }
 
-                for (Float[] ratio : ratios) {
+                for (float[] ratio : ratios) {
                     cluster.addRatios(ratio);
                 }
             }
