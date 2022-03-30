@@ -128,7 +128,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     private JPanel previewPanel;
     private JProgressBar progressBar;
     private JMenuItem loadButton, showHelpButton, openDonationLinkButton, exitButton;
-    private List<MergedPanel> mergedPanels = null;
+    private List<MergedPanel> mergedPanels = new ArrayList<>();
 
     private File lastOpenDir;
 
@@ -706,7 +706,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         updateWorkingSet(newClusters, newPageExcludes, newSource, password);
 
         previewPanel.removeAll();
-        mergedPanels = new ArrayList<MergedPanel>();
+        mergedPanels = new ArrayList<>();
 
         for (PageCluster cluster : workingSet.getClusterDefinition().getClusterList()) {
             MergedPanel p = new MergedPanel(cluster, this);
