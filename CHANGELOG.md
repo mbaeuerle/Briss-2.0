@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+* [Issue-34](https://github.com/mbaeuerle/Briss-2.0/issues/34) Support for password-protected PDFs
 * Crop rectangle is colored red if it will be removed after releasing mouse
 * Resize handles on all corners and edges
 * Mouse cursors resembling the actions which can be taken
