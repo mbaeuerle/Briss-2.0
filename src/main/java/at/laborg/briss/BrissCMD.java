@@ -55,7 +55,7 @@ public final class BrissCMD {
         } catch (IOException e1) {
             System.out.println("Error occurred while clustering.");
             e1.printStackTrace(System.out);
-            return;
+            System.exit(-1);
         }
         System.out.println("Created " + clusterDefinition.getClusterList().size() + " clusters.");
 
