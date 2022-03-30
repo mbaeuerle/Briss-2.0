@@ -183,7 +183,7 @@ public final class DocumentCropper {
         private final List<HashMap<String, Object>> sourceBookmarks;
 
         public PdfMetaInformation(final File source, String password) throws IOException {
-            PdfReader reader = new PdfReader(source.getAbsolutePath(), password.getBytes());
+            PdfReader reader = PDFReaderUtil.getPdfReader(source.getAbsolutePath(), password);
             this.sourcePageCount = reader.getNumberOfPages();
             this.sourceMetaInfo = reader.getInfo();
             this.sourceBookmarks = SimpleBookmark.getBookmark(reader);
