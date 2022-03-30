@@ -3,25 +3,42 @@
  */
 package at.laborg.briss.gui;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
 public class DrawableCropRect extends Rectangle {
 
-    private static final int EDGE_THRESHOLD = 3;
+    private final static Composite SMOOTH_NORMAL = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f);
+    private final static Composite SMOOTH_SELECT = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f);
+    private final static Composite XOR_COMPOSITE = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f);
+    private final static int SELECT_BORDER_WIDTH = 1;
+    private final static BasicStroke SELECTED_STROKE = new BasicStroke(SELECT_BORDER_WIDTH);
+
 
 	private static final long serialVersionUID = -8836495805271750636L;
 
-    static final int CORNER_DIMENSION = 15;
+    public static final int CORNER_DIMENSION = 8;
+    private static final int SELECTABLE_CORNER_DIMENSION = 20;
+    private static final int EDGE_THRESHOLD = 5;
+    public static final float FONT_SCALE_FACTOR = 0.95f;
+
+    public static final float INCH_IN_USER_UNIT = 72f;
+    public static final float INCH_IN_MILLIMETERS = 25.4f;
+
 
     private boolean selected = false;
 
-    private Rectangle cornerUpperLeft;
-    private Rectangle cornerUpperRight;
-    private Rectangle cornerLowerLeft;
-    private Rectangle cornerLowerRight;
+    private ResizeHandle cornerUpperLeft;
+    private ResizeHandle cornerUpperRight;
+    private ResizeHandle cornerLowerLeft;
+    private ResizeHandle cornerLowerRight;
 
     /**
      * Copy constructor.
@@ -50,35 +67,84 @@ public class DrawableCropRect extends Rectangle {
     }
 
     private void setupCorners() {
-        cornerUpperLeft = new Rectangle(CORNER_DIMENSION, CORNER_DIMENSION);
-        cornerUpperRight = new Rectangle(CORNER_DIMENSION, CORNER_DIMENSION);
-        cornerLowerLeft = new Rectangle(CORNER_DIMENSION, CORNER_DIMENSION);
-        cornerLowerRight = new Rectangle(CORNER_DIMENSION, CORNER_DIMENSION);
+        cornerUpperLeft = new ResizeHandle();
+        cornerUpperRight = new ResizeHandle();
+        cornerLowerLeft = new ResizeHandle();
+        cornerLowerRight = new ResizeHandle();
     }
 
     private void setCornerLocations(int x, int y) {
-        int halfCornerDimension = CORNER_DIMENSION / 2;
-        cornerUpperLeft.setLocation(x - halfCornerDimension, y - halfCornerDimension);
-        cornerUpperRight.setLocation(x + width - halfCornerDimension, y - halfCornerDimension);
-        cornerLowerLeft.setLocation(x - halfCornerDimension, y + height - halfCornerDimension);
-        cornerLowerRight.setLocation(x + width - halfCornerDimension, y + height - halfCornerDimension);
+        cornerUpperLeft.setLocation(x, y);
+        cornerUpperRight.setLocation(x + width, y);
+        cornerLowerLeft.setLocation(x, y + height);
+        cornerLowerRight.setLocation(x + width, y + height);
     }
 
-    public void draw(Graphics2D g2) {
+    public boolean hasEnoughSpaceForHandles() {
+        return getWidth() >= 2 * DrawableCropRect.CORNER_DIMENSION
+            && getHeight() >= 2 * DrawableCropRect.CORNER_DIMENSION;
+    }
+
+    private Font scaleFont(String text, FontMetrics fontMetrics) {
+
+        int size = MergedPanel.BASE_FONT.getSize();
+        float width = fontMetrics.stringWidth(text);
+        float height = fontMetrics.getHeight();
+        if (width == 0 || height == 0)
+            return MergedPanel.BASE_FONT;
+        float scaleFactorWidth = this.width * FONT_SCALE_FACTOR / width;
+        float scaleFactorHeight = this.height * FONT_SCALE_FACTOR / height;
+        float scaledWidth = (scaleFactorWidth * size);
+        float scaledHeight = (scaleFactorHeight * size);
+        return MergedPanel.BASE_FONT.deriveFont((scaleFactorHeight > scaleFactorWidth) ? scaledWidth : scaledHeight);
+    }
+
+    public void draw(Graphics2D g2, int cropRectNumber, FontMetrics fontMetrics) {
+
+        g2.setComposite(SMOOTH_NORMAL);
+        if (hasEnoughSpaceForHandles()) {
+            g2.setColor(Color.BLUE);
+        } else {
+            g2.setColor(Color.RED);
+        }
+        g2.fill(this);
+        g2.setColor(Color.BLACK);
+        g2.setFont(scaleFont(String.valueOf(cropRectNumber + 1), fontMetrics));
+        g2.drawString(String.valueOf(cropRectNumber + 1), this.x, this.y + this.height);
 
         if (isSelected()) {
-            g2.setPaintMode();
-            g2.setColor(Color.WHITE);
-            g2.fill(cornerUpperLeft);
-            g2.fill(cornerUpperRight);
-            g2.fill(cornerLowerLeft);
-            g2.fill(cornerLowerRight);
-            g2.setColor(Color.BLACK);
-            g2.draw(cornerUpperLeft);
-            g2.draw(cornerUpperRight);
-            g2.draw(cornerLowerLeft);
-            g2.draw(cornerLowerRight);
+            drawSelectionOverlay(g2, fontMetrics);
+
+            if (hasEnoughSpaceForHandles()) {
+                drawResizeHandles(g2);
+            }
         }
+    }
+
+    private void drawResizeHandles(Graphics2D g2) {
+        g2.setPaintMode();
+        cornerUpperLeft.draw(g2);
+        cornerUpperRight.draw(g2);
+        cornerLowerLeft.draw(g2);
+        cornerLowerRight.draw(g2);
+    }
+
+
+    private void drawSelectionOverlay(Graphics2D g2, FontMetrics fontMetrics) {
+        g2.setComposite(XOR_COMPOSITE);
+        g2.setColor(Color.BLACK);
+
+        g2.setStroke(SELECTED_STROKE);
+        g2.draw(this);
+
+        // display crop size in millimeters
+        int w = Math.round(INCH_IN_MILLIMETERS * this.width / INCH_IN_USER_UNIT);
+        int h = Math.round(INCH_IN_MILLIMETERS * this.height / INCH_IN_USER_UNIT);
+        String size = w + "x" + h;
+        g2.setFont(scaleFont(size, fontMetrics));
+        g2.setColor(Color.YELLOW);
+        g2.setComposite(SMOOTH_SELECT);
+        g2.drawString(size, this.x, this.y + this.height);
     }
 
     public final boolean isSelected() {
@@ -141,6 +207,41 @@ public class DrawableCropRect extends Rectangle {
 
     @Override
     public boolean contains(Point p) {
-        return super.contains(p) || isSelected() && (isOverRightEdge(p) || isOverLeftEdge(p) || isOverUpperEdge(p) || isOverLowerEdge(p) || cornerUpperLeft.contains(p) || cornerUpperRight.contains(p) || cornerLowerLeft.contains(p) || cornerLowerRight.contains(p));
+        return super.contains(p) ||
+            isSelected() && (
+                isOverRightEdge(p) || isOverLeftEdge(p) || isOverUpperEdge(p) || isOverLowerEdge(p)
+                    || cornerUpperLeft.contains(p) || cornerUpperRight.contains(p)
+                    || cornerLowerLeft.contains(p) || cornerLowerRight.contains(p)
+            );
+    }
+
+    static class ResizeHandle {
+
+        Point corner;
+
+        public ResizeHandle(int x, int y) {
+            this.corner = new Point(x, y);
+        }
+
+        public ResizeHandle() {
+            this.corner = new Point(0, 0);
+        }
+
+        public void setLocation(int x, int y) {
+            this.corner.setLocation(x, y);
+        }
+
+        public void draw(Graphics2D g2) {
+            int halfCornerDimension = CORNER_DIMENSION / 2;
+            g2.setColor(Color.WHITE);
+            g2.fillRect(corner.x - halfCornerDimension, corner.y - halfCornerDimension, CORNER_DIMENSION, CORNER_DIMENSION);
+            g2.setColor(Color.BLACK);
+            g2.drawRect(corner.x - halfCornerDimension, corner.y - halfCornerDimension, CORNER_DIMENSION, CORNER_DIMENSION);
+        }
+
+        public boolean contains(Point p) {
+            return Math.abs(p.x - corner.x) < SELECTABLE_CORNER_DIMENSION / 2
+                && Math.abs(p.y - corner.y) < SELECTABLE_CORNER_DIMENSION / 2;
+        }
     }
 }

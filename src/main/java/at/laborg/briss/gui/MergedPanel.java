@@ -18,10 +18,6 @@
 
 package at.laborg.briss.gui;
 
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -67,12 +63,7 @@ public class MergedPanel extends JPanel {
     private static Point popUpMenuPoint;
     private static ActionState actionState = ActionState.NOTHING;
 
-    private final static int SELECT_BORDER_WIDTH = 1;
-    private final static Font BASE_FONT = new Font(null, Font.PLAIN, 10);
-    private final static Composite SMOOTH_NORMAL = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .2f);
-    private final static Composite SMOOTH_SELECT = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .5f);
-    private final static Composite XOR_COMPOSITE = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .8f);
-    private final static BasicStroke SELECTED_STROKE = new BasicStroke(SELECT_BORDER_WIDTH);
+    public final static Font BASE_FONT = new Font(null, Font.PLAIN, 10);
 
     private final PageCluster cluster;
 
@@ -163,50 +154,13 @@ public class MergedPanel extends JPanel {
         int cropCnt = 0;
 
         for (DrawableCropRect crop : crops) {
-            if (crop.isSelected()) {
-                drawSelectionOverlay(g2, crop);
-            }
-            drawNormalCropRectangle(g2, cropCnt, crop);
+            crop.draw(g2, cropCnt, this.getFontMetrics(BASE_FONT));
 
             cropCnt++;
         }
 
         g2.dispose();
 
-    }
-
-    private void drawNormalCropRectangle(Graphics2D g2, int cropCnt, DrawableCropRect crop) {
-        g2.setComposite(SMOOTH_NORMAL);
-        if (!isCropTooSmall(crop)) {
-            g2.setColor(Color.BLUE);
-        } else {
-            g2.setColor(Color.RED);
-        }
-        g2.fill(crop);
-        g2.setColor(Color.BLACK);
-        g2.setFont(scaleFont(String.valueOf(cropCnt + 1), crop));
-        g2.drawString(String.valueOf(cropCnt + 1), crop.x, crop.y + crop.height);
-
-        if (hasEnoughRoomForResizeHandle(crop)) {
-            crop.draw(g2);
-        }
-    }
-
-    private void drawSelectionOverlay(Graphics2D g2, DrawableCropRect crop) {
-        g2.setComposite(XOR_COMPOSITE);
-        g2.setColor(Color.BLACK);
-
-        g2.setStroke(SELECTED_STROKE);
-        g2.draw(crop);
-
-        // display crop size in millimeters
-        int w = Math.round(25.4f * crop.width / 72f);
-        int h = Math.round(25.4f * crop.height / 72f);
-        String size = w + "x" + h;
-        g2.setFont(scaleFont(size, crop));
-        g2.setColor(Color.YELLOW);
-        g2.setComposite(SMOOTH_SELECT);
-        g2.drawString(size, crop.x, crop.y + crop.height);
     }
 
     private void changeSelectRectangle(Point p) {
@@ -429,20 +383,6 @@ public class MergedPanel extends JPanel {
         return ratios;
     }
 
-    private Font scaleFont(String text, Rectangle rect) {
-
-        int size = BASE_FONT.getSize();
-        float width = this.getFontMetrics(BASE_FONT).stringWidth(text);
-        float height = this.getFontMetrics(BASE_FONT).getHeight();
-        if (width == 0 || height == 0)
-            return BASE_FONT;
-        float scaleFactorWidth = (float) (rect.width * 0.95 / width);
-        float scaleFactorHeight = (float) (rect.height * 0.95 / height);
-        float scaledWidth = (scaleFactorWidth * size);
-        float scaledHeight = (scaleFactorHeight * size);
-        return BASE_FONT.deriveFont((scaleFactorHeight > scaleFactorWidth) ? scaledWidth : scaledHeight);
-    }
-
     private void splitIntoColumns() {
         ArrayList<DrawableCropRect> cropsCopy = new ArrayList<>(crops.size());
 
@@ -547,13 +487,9 @@ public class MergedPanel extends JPanel {
         crops.removeAll(cropsToTrash);
     }
 
-    private boolean isCropTooSmall(DrawableCropRect crop) {
-        return crop.getWidth() < 2 * DrawableCropRect.CORNER_DIMENSION
-            || crop.getHeight() < 2 * DrawableCropRect.CORNER_DIMENSION;
-    }
 
-    private boolean hasEnoughRoomForResizeHandle(DrawableCropRect crop) {
-        return !isCropTooSmall(crop);
+    private boolean isCropTooSmall(DrawableCropRect crop) {
+        return !crop.hasEnoughSpaceForHandles();
     }
 
     private class MergedPanelKeyAdapter extends KeyAdapter {
