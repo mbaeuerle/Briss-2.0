@@ -59,14 +59,6 @@ public class ImageFinderUtil {
 
         switch (orientation) {
             case ORIENTATION_TOP:
-                for (int i = 0; i < sds.length - LOOK_AHEAD_PIXEL_NR; i++) {
-                    int cnt = diffCounter(sds, i, i + LOOK_AHEAD_PIXEL_NR);
-                    if (cnt > RATIO_LOOK_AHEAD_SATISFY * LOOK_AHEAD_PIXEL_NR) {
-                        position = i;
-                        break;
-                    }
-                }
-                break;
             case ORIENTATION_LEFT:
                 for (int i = 0; i < sds.length - LOOK_AHEAD_PIXEL_NR; i++) {
                     int cnt = diffCounter(sds, i, i + LOOK_AHEAD_PIXEL_NR);
@@ -77,14 +69,6 @@ public class ImageFinderUtil {
                 }
                 break;
             case ORIENTATION_BOTTOM:
-                for (int i = sds.length - 1; i >= 0 + LOOK_AHEAD_PIXEL_NR; i--) {
-                    int cnt = diffCounter(sds, i - LOOK_AHEAD_PIXEL_NR, i);
-                    if (cnt > RATIO_LOOK_AHEAD_SATISFY * LOOK_AHEAD_PIXEL_NR) {
-                        position = i;
-                        break;
-                    }
-                }
-                break;
             case ORIENTATION_RIGHT:
                 for (int i = sds.length - 1; i >= 0 + LOOK_AHEAD_PIXEL_NR; i--) {
                     int cnt = diffCounter(sds, i - LOOK_AHEAD_PIXEL_NR, i);
