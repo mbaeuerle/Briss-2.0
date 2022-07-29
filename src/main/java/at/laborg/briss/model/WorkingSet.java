@@ -20,46 +20,45 @@ package at.laborg.briss.model;
 import java.io.File;
 
 public class WorkingSet {
-	private File sourceFile;
-	private String sourceFilePassword;
-	private ClusterDefinition clusters;
-	private PageExcludes pageExcludes;
+    private File sourceFile;
+    private String sourceFilePassword;
+    private ClusterDefinition clusters;
+    private PageExcludes pageExcludes;
 
-	@SuppressWarnings("unused")
-	private WorkingSet() {
-	}
+    @SuppressWarnings("unused")
+    private WorkingSet() {}
 
-	public WorkingSet(final File sourceFile, String password) {
-		this.sourceFile = sourceFile;
-		this.sourceFilePassword = password;
-		clusters = new ClusterDefinition();
-	}
+    public WorkingSet(final File sourceFile, String password) {
+        this.sourceFile = sourceFile;
+        this.sourceFilePassword = password;
+        clusters = new ClusterDefinition();
+    }
 
-	public final File getSourceFile() {
-		return sourceFile;
-	}
+    public final File getSourceFile() {
+        return sourceFile;
+    }
 
-	public final void setSourceFile(final File sourceFile) {
-		this.sourceFile = sourceFile;
-	}
+    public final void setSourceFile(final File sourceFile) {
+        this.sourceFile = sourceFile;
+    }
 
-	public final ClusterDefinition getClusterDefinition() {
-		return clusters;
-	}
+    public final ClusterDefinition getClusterDefinition() {
+        return clusters;
+    }
 
-	public final void setClusters(final ClusterDefinition clusters) {
-		this.clusters = clusters;
-	}
+    public final void setClusters(final ClusterDefinition clusters) {
+        this.clusters = clusters;
+    }
 
-	public final PageExcludes getPageExcludes() {
-		return pageExcludes;
-	}
+    public final PageExcludes getPageExcludes() {
+        return pageExcludes;
+    }
 
-	public final void setPageExcludes(final PageExcludes pageExcludes) {
-		this.pageExcludes = pageExcludes;
-	}
+    public final void setPageExcludes(final PageExcludes pageExcludes) {
+        this.pageExcludes = pageExcludes;
+    }
 
-	public String getSourceFilePassword() {
-		return sourceFilePassword;
-	}
+    public String getSourceFilePassword() {
+        return sourceFilePassword;
+    }
 }

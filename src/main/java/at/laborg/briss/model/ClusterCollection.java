@@ -23,56 +23,56 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ClusterCollection {
-	private HashMap<Integer, SingleCluster> pageToClustersMapping;
-	private HashMap<SingleCluster, List<Integer>> clusterToPagesMapping;
-	private boolean dirty;
+    private HashMap<Integer, SingleCluster> pageToClustersMapping;
+    private HashMap<SingleCluster, List<Integer>> clusterToPagesMapping;
+    private boolean dirty;
 
-	public ClusterCollection() {
-		this.dirty = true;
-		this.pageToClustersMapping = new HashMap<Integer, SingleCluster>();
-		this.clusterToPagesMapping = new HashMap<SingleCluster, List<Integer>>();
-	}
+    public ClusterCollection() {
+        this.dirty = true;
+        this.pageToClustersMapping = new HashMap<Integer, SingleCluster>();
+        this.clusterToPagesMapping = new HashMap<SingleCluster, List<Integer>>();
+    }
 
-	private <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
-		List<T> list = new ArrayList<T>(c);
-		java.util.Collections.sort(list);
-		return list;
-	}
+    private <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
+        List<T> list = new ArrayList<T>(c);
+        java.util.Collections.sort(list);
+        return list;
+    }
 
-	public List<SingleCluster> getAsList() {
-		return asSortedList(getClusterToPagesMapping().keySet());
-	}
+    public List<SingleCluster> getAsList() {
+        return asSortedList(getClusterToPagesMapping().keySet());
+    }
 
-	public HashMap<SingleCluster, List<Integer>> getClusterToPagesMapping() {
-		return clusterToPagesMapping;
-	}
+    public HashMap<SingleCluster, List<Integer>> getClusterToPagesMapping() {
+        return clusterToPagesMapping;
+    }
 
-	public SingleCluster getSingleCluster(int pageNumber) {
-		if (dirty) {
-			for (SingleCluster cluster : getClusterToPagesMapping().keySet()) {
-				for (Integer page : getClusterToPagesMapping().get(cluster)) {
-					pageToClustersMapping.put(page - 1, cluster);
-				}
-			}
-			dirty = false;
-		}
-		return pageToClustersMapping.get(pageNumber - 1);
-	}
+    public SingleCluster getSingleCluster(int pageNumber) {
+        if (dirty) {
+            for (SingleCluster cluster : getClusterToPagesMapping().keySet()) {
+                for (Integer page : getClusterToPagesMapping().get(cluster)) {
+                    pageToClustersMapping.put(page - 1, cluster);
+                }
+            }
+            dirty = false;
+        }
+        return pageToClustersMapping.get(pageNumber - 1);
+    }
 
-	public void addPageToCluster(SingleCluster tmpCluster, int pageNumber) {
-		if (getClusterToPagesMapping().containsKey(tmpCluster)) {
-			// cluster exists
-			List<Integer> pageNumbers = getClusterToPagesMapping().get(tmpCluster);
-			pageNumbers.add(pageNumber);
+    public void addPageToCluster(SingleCluster tmpCluster, int pageNumber) {
+        if (getClusterToPagesMapping().containsKey(tmpCluster)) {
+            // cluster exists
+            List<Integer> pageNumbers = getClusterToPagesMapping().get(tmpCluster);
+            pageNumbers.add(pageNumber);
 
-		} else {
-			// new Cluster
-			List<Integer> pageNumbers = new ArrayList<Integer>();
-			pageNumbers.add(pageNumber);
-			getClusterToPagesMapping().put(tmpCluster, pageNumbers);
-		}
-		// whenever a page was added the pagesToClustersMapping isn't useful
-		// anymore. This musst be handled when reading the pages
-		dirty = true;
-	}
+        } else {
+            // new Cluster
+            List<Integer> pageNumbers = new ArrayList<Integer>();
+            pageNumbers.add(pageNumber);
+            getClusterToPagesMapping().put(tmpCluster, pageNumbers);
+        }
+        // whenever a page was added the pagesToClustersMapping isn't useful
+        // anymore. This musst be handled when reading the pages
+        dirty = true;
+    }
 }

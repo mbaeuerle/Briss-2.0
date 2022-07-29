@@ -25,24 +25,23 @@ import java.net.URISyntaxException;
 
 public final class DesktopHelper {
 
-	private DesktopHelper() {
-	}
+    private DesktopHelper() {}
 
-	public static void openFileWithDesktopApp(final File cropDestinationFile) throws IOException {
-		if (Desktop.isDesktopSupported()) {
-			Desktop.getDesktop().open(cropDestinationFile);
-		}
-	}
+    public static void openFileWithDesktopApp(final File cropDestinationFile) throws IOException {
+        if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().open(cropDestinationFile);
+        }
+    }
 
-	public static void openDonationLink(final String uri) throws IOException {
-		if (Desktop.isDesktopSupported()) {
-			Desktop desktop = Desktop.getDesktop();
-			URI donationURI;
-			try {
-				donationURI = new URI(uri);
-				desktop.browse(donationURI);
-			} catch (URISyntaxException e) {
-			}
-		}
-	}
+    public static void openDonationLink(final String uri) throws IOException {
+        if (Desktop.isDesktopSupported()) {
+            Desktop desktop = Desktop.getDesktop();
+            URI donationURI;
+            try {
+                donationURI = new URI(uri);
+                desktop.browse(donationURI);
+            } catch (URISyntaxException e) {
+            }
+        }
+    }
 }
