@@ -92,9 +92,9 @@ import java.util.List;
  * @author gerhard, hybridtupel
  */
 
-public class BrissSwingGUI extends JFrame implements PropertyChangeListener, ComponentListener, BrissGUIApp {
+public class BrissSwingGUI implements PropertyChangeListener, ComponentListener, BrissGUIApp {
+	private final JFrame mainWindow;
 
-    private static final long serialVersionUID = 5623134571633965275L;
     private static final int DEFAULT_HEIGHT = 600;
     private static final int DEFAULT_WIDTH = 800;
     private static final int MIN_HEIGHT = 400;
@@ -140,7 +140,7 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
     private JButton startCropping;
 
     public BrissSwingGUI(String[] args) {
-        super(Messages.getString("BrissGUI.windowTitle")); //$NON-NLS-1$
+        mainWindow = new JFrame(Messages.getString("BrissGUI.windowTitle")); //$NON-NLS-1$
         init();
         tryToLoadFileFromArgument(args);
 
@@ -164,7 +164,7 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
             try {
                 importNewPdfFile(fileArg);
             } catch (IOException | PdfException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(),
+                JOptionPane.showMessageDialog(mainWindow, e.getMessage(),
                     Messages.getString("BrissGUI.brissError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         }
@@ -172,10 +172,9 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
     }
 
     private void init() {
+        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        this.setTransferHandler(new BrissTransferHandler(this));
+        mainWindow.setTransferHandler(new BrissTransferHandler(this));
 
         setUILook();
 
@@ -217,10 +216,10 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
         helpMenu.add(openDonationLinkButton);
 
         showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); //$NON-NLS-1$
-        showHelpButton.addActionListener(a -> new HelpDialog(this, Messages.getString("BrissGUI.brissHelp"), Dialog.ModalityType.MODELESS));
+        showHelpButton.addActionListener(a -> new HelpDialog(mainWindow, Messages.getString("BrissGUI.brissHelp"), Dialog.ModalityType.MODELESS));
         helpMenu.add(showHelpButton);
 
-        setJMenuBar(menuBar);
+        mainWindow.setJMenuBar(menuBar);
 
         MouseAdapter mousePressedAdapter = createMousePressedAdapter();
 
@@ -264,7 +263,7 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
         wrapperPanel = new JPanel(cardLayout);
         wrapperPanel.add(scrollPane, "scroll");
         wrapperPanel.add(dndPanel, "dnd");
-        add(wrapperPanel, BorderLayout.CENTER);
+        mainWindow.add(wrapperPanel, BorderLayout.CENTER);
 
         cardLayout.last(wrapperPanel);
 
@@ -272,13 +271,13 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
         footer.add(progressBar);
         footer.add(showPreview);
         footer.add(startCropping);
-        add(footer, BorderLayout.PAGE_END);
+        mainWindow.add(footer, BorderLayout.PAGE_END);
 
-        addMouseListener(mousePressedAdapter);
+        mainWindow.addMouseListener(mousePressedAdapter);
 
         setWindowBounds();
-        pack();
-        setVisible(true);
+        mainWindow.pack();
+        mainWindow.setVisible(true);
     }
 
     private void startCropping() {
@@ -289,9 +288,9 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int screenWidth = gd.getDisplayMode().getWidth();
         int screenHeight = gd.getDisplayMode().getHeight();
-        setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
-        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
-        setLocation(screenWidth / 2 - DEFAULT_WIDTH / 2, screenHeight / 2 - DEFAULT_HEIGHT / 2);
+        mainWindow.setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
+        mainWindow.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        mainWindow.setLocation(screenWidth / 2 - DEFAULT_WIDTH / 2, screenHeight / 2 - DEFAULT_HEIGHT / 2);
     }
 
     private void setUILook() {
@@ -305,7 +304,7 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
 
     private void loadAppIcon() {
         ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource(RES_ICON_PATH));
-        setIconImage(icon.getImage());
+        mainWindow.setIconImage(icon.getImage());
     }
 
     private ImageIcon loadDragAndDropLabelImage() {
@@ -340,11 +339,11 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
     private void loadPDF(File file) {
         try {
             importNewPdfFile(file);
-            setTitle("BRISS - " + file.getName()); //$NON-NLS-1$
+            mainWindow.setTitle("BRISS - " + file.getName()); //$NON-NLS-1$
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), Messages.getString("BrissGUI."), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(), Messages.getString("BrissGUI."), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         } catch (PdfException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(),
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(),
                 Messages.getString("BrissGUI.loadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         }
     }
@@ -361,7 +360,7 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
             }
 
         } catch (IOException | DocumentException | CropException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(),
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(),
                 Messages.getString("BrissGUI.croppingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         } finally {
             setIdleState(); //$NON-NLS-1$
@@ -374,7 +373,7 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
             File result = createAndExecuteCropJobForPreview();
             DesktopHelper.openFileWithDesktopApp(result);
         } catch (IOException | DocumentException | CropException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(),
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(),
                 Messages.getString("BrissGUI.croppingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         } finally {
             setIdleState(); //$NON-NLS-1$
@@ -393,13 +392,13 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
         progressBar.setVisible(false);
         progressBar.setValue(0);
         progressBar.setString("");
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
 
     private void setWorkingState(String stateMessage) {
         progressBar.setVisible(true);
         progressBar.setString(stateMessage);
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     }
 
     public void importNewPdfFile(File loadFile) throws IOException, PdfException {
@@ -631,13 +630,13 @@ public class BrissSwingGUI extends JFrame implements PropertyChangeListener, Com
         progressBar.setString(Messages.getString("BrissGUI.clusteringRenderingFinished")); //$NON-NLS-1$
 
         setIdleState(); //$NON-NLS-1$
-        pack();
-        setExtendedState(Frame.MAXIMIZED_BOTH);
+        mainWindow.pack();
+        mainWindow.setExtendedState(Frame.MAXIMIZED_BOTH);
         previewPanel.repaint();
         showPreview.setVisible(true);
         startCropping.setVisible(true);
         progressBar.setVisible(false);
-        repaint();
+        mainWindow.repaint();
     }
 
     private void updateWorkingSet(ClusterDefinition newClusters, PageExcludes newPageExcludes, File newSource, String password) {
