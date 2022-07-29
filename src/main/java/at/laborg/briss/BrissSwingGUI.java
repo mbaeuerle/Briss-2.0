@@ -75,8 +75,8 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -92,7 +92,7 @@ import java.util.List;
  * @author gerhard, hybridtupel
  */
 
-public class BrissSwingGUI implements PropertyChangeListener, ComponentListener, BrissGUIApp {
+public class BrissSwingGUI implements PropertyChangeListener, BrissGUIApp {
 	private final JFrame mainWindow;
 
     private static final int DEFAULT_HEIGHT = 600;
@@ -227,7 +227,18 @@ public class BrissSwingGUI implements PropertyChangeListener, ComponentListener,
         previewPanel.setLayout(new WrapLayout(FlowLayout.LEFT, 4, 4));
         previewPanel.setEnabled(true);
         previewPanel.setBackground(new Color(186, 186, 186));
-        previewPanel.addComponentListener(this);
+
+        ComponentAdapter previewPanelComponentListener = new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                previewPanel.revalidate();
+                for (Component component : previewPanel.getComponents()) {
+                    component.repaint();
+                }
+            }
+		};
+
+		previewPanel.addComponentListener(previewPanelComponentListener);
+
         previewPanel.addMouseListener(mousePressedAdapter);
 
         progressBar = new JProgressBar(0, 100);
