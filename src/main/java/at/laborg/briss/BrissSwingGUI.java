@@ -75,13 +75,11 @@ import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -92,9 +90,9 @@ import java.util.List;
  * @author gerhard, hybridtupel
  */
 
-public class BrissGUI extends JFrame implements PropertyChangeListener, ComponentListener {
+public class BrissSwingGUI implements BrissGUIApp {
+	private final JFrame mainWindow;
 
-    private static final long serialVersionUID = 5623134571633965275L;
     private static final int DEFAULT_HEIGHT = 600;
     private static final int DEFAULT_WIDTH = 800;
     private static final int MIN_HEIGHT = 400;
@@ -122,10 +120,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     };
 
-    private JMenuBar menuBar;
     private JPanel previewPanel;
     private JProgressBar progressBar;
-    private JMenuItem loadButton, showHelpButton, openDonationLinkButton, exitButton;
     private List<MergedPanel> mergedPanels = new ArrayList<>();
 
     private File lastOpenDir;
@@ -139,8 +135,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     private JButton showPreview;
     private JButton startCropping;
 
-    public BrissGUI(String[] args) {
-        super(Messages.getString("BrissGUI.windowTitle")); //$NON-NLS-1$
+    public BrissSwingGUI(String[] args) {
+        mainWindow = new JFrame(Messages.getString("BrissGUI.windowTitle")); //$NON-NLS-1$
         init();
         tryToLoadFileFromArgument(args);
 
@@ -164,7 +160,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
             try {
                 importNewPdfFile(fileArg);
             } catch (IOException | PdfException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(),
+                JOptionPane.showMessageDialog(mainWindow, e.getMessage(),
                     Messages.getString("BrissGUI.brissError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         }
@@ -172,55 +168,15 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     }
 
     private void init() {
+        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        this.setTransferHandler(new BrissTransferHandler(this));
+        mainWindow.setTransferHandler(new BrissTransferHandler(this));
 
         setUILook();
 
         loadAppIcon();
 
-        // Create the menu bar.
-        menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu(Messages.getString("BrissGUI.file")); //$NON-NLS-1$
-        fileMenu.setMnemonic(KeyEvent.VK_F);
-        JMenu helpMenu = new JMenu("Help");
-        helpMenu.setMnemonic(KeyEvent.VK_H);
-
-        menuBar.add(fileMenu);
-        menuBar.add(helpMenu);
-
-        loadButton = new JMenuItem(Messages.getString("BrissGUI.loadFile"), KeyEvent.VK_L); //$NON-NLS-1$
-        loadButton.setEnabled(true);
-        loadButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
-        loadButton.addActionListener(a -> showOpenFileDialog());
-        fileMenu.add(loadButton);
-
-        fileMenu.addSeparator();
-
-        exitButton = new JMenuItem(Messages.getString("BrissGUI.exit"), KeyEvent.VK_E); //$NON-NLS-1$
-        exitButton.addActionListener(a -> System.exit(0));
-        fileMenu.add(exitButton);
-
-        openDonationLinkButton = new JMenuItem(Messages.getString("BrissGUI.donate")); //$NON-NLS-1$
-        openDonationLinkButton.addActionListener(a -> {
-            try {
-                if (Desktop.isDesktopSupported()) {
-                    Desktop.getDesktop().browse(URI.create(DONATION_URI));
-                }
-            } catch (IOException e) {
-                // Ignore error
-                e.printStackTrace();
-            }
-        });
-        helpMenu.add(openDonationLinkButton);
-
-        showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); //$NON-NLS-1$
-        showHelpButton.addActionListener(a -> new HelpDialog(this, Messages.getString("BrissGUI.brissHelp"), Dialog.ModalityType.MODELESS));
-        helpMenu.add(showHelpButton);
-
-        setJMenuBar(menuBar);
+        createMenuBar();
 
         MouseAdapter mousePressedAdapter = createMousePressedAdapter();
 
@@ -228,7 +184,18 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         previewPanel.setLayout(new WrapLayout(FlowLayout.LEFT, 4, 4));
         previewPanel.setEnabled(true);
         previewPanel.setBackground(new Color(186, 186, 186));
-        previewPanel.addComponentListener(this);
+
+        ComponentAdapter previewPanelComponentListener = new ComponentAdapter() {
+            public void componentResized(ComponentEvent e) {
+                previewPanel.revalidate();
+                for (Component component : previewPanel.getComponents()) {
+                    component.repaint();
+                }
+            }
+		};
+
+		previewPanel.addComponentListener(previewPanelComponentListener);
+
         previewPanel.addMouseListener(mousePressedAdapter);
 
         progressBar = new JProgressBar(0, 100);
@@ -264,7 +231,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         wrapperPanel = new JPanel(cardLayout);
         wrapperPanel.add(scrollPane, "scroll");
         wrapperPanel.add(dndPanel, "dnd");
-        add(wrapperPanel, BorderLayout.CENTER);
+        mainWindow.add(wrapperPanel, BorderLayout.CENTER);
 
         cardLayout.last(wrapperPanel);
 
@@ -272,14 +239,60 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         footer.add(progressBar);
         footer.add(showPreview);
         footer.add(startCropping);
-        add(footer, BorderLayout.PAGE_END);
+        mainWindow.add(footer, BorderLayout.PAGE_END);
 
-        addMouseListener(mousePressedAdapter);
+        mainWindow.addMouseListener(mousePressedAdapter);
 
         setWindowBounds();
-        pack();
-        setVisible(true);
+        mainWindow.pack();
+        mainWindow.setVisible(true);
     }
+
+	private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu(Messages.getString("BrissGUI.file")); //$NON-NLS-1$
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        JMenu helpMenu = new JMenu("Help");
+        helpMenu.setMnemonic(KeyEvent.VK_H);
+
+        menuBar.add(fileMenu);
+        menuBar.add(helpMenu);
+
+        JMenuItem loadButton = new JMenuItem(Messages.getString("BrissGUI.loadFile"), KeyEvent.VK_L); // $NON-NLS-1$
+        loadButton = new JMenuItem(Messages.getString("BrissGUI.loadFile"), KeyEvent.VK_L); //$NON-NLS-1$
+        loadButton.setEnabled(true);
+        loadButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
+        loadButton.addActionListener(a -> showOpenFileDialog());
+        fileMenu.add(loadButton);
+
+        fileMenu.addSeparator();
+
+        JMenuItem exitButton = new JMenuItem(Messages.getString("BrissGUI.exit"), KeyEvent.VK_E); // $NON-NLS-1$
+        exitButton = new JMenuItem(Messages.getString("BrissGUI.exit"), KeyEvent.VK_E); //$NON-NLS-1$
+        exitButton.addActionListener(a -> System.exit(0));
+        fileMenu.add(exitButton);
+
+        JMenuItem openDonationLinkButton = new JMenuItem(Messages.getString("BrissGUI.donate")); // $NON-NLS-1$
+        openDonationLinkButton = new JMenuItem(Messages.getString("BrissGUI.donate")); //$NON-NLS-1$
+        openDonationLinkButton.addActionListener(a -> {
+            try {
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().browse(URI.create(DONATION_URI));
+                }
+            } catch (IOException e) {
+                // Ignore error
+                e.printStackTrace();
+            }
+        });
+        helpMenu.add(openDonationLinkButton);
+
+        JMenuItem showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); // $NON-NLS-1$
+        showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); //$NON-NLS-1$
+        showHelpButton.addActionListener(a -> new HelpDialog(mainWindow, Messages.getString("BrissGUI.brissHelp"), Dialog.ModalityType.MODELESS));
+        helpMenu.add(showHelpButton);
+
+        mainWindow.setJMenuBar(menuBar);
+	}
 
     private void startCropping() {
         showSaveFileDialog();
@@ -289,9 +302,9 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int screenWidth = gd.getDisplayMode().getWidth();
         int screenHeight = gd.getDisplayMode().getHeight();
-        setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
-        setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
-        setLocation(screenWidth / 2 - DEFAULT_WIDTH / 2, screenHeight / 2 - DEFAULT_HEIGHT / 2);
+        mainWindow.setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
+        mainWindow.setPreferredSize(new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT));
+        mainWindow.setLocation(screenWidth / 2 - DEFAULT_WIDTH / 2, screenHeight / 2 - DEFAULT_HEIGHT / 2);
     }
 
     private void setUILook() {
@@ -305,7 +318,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
 
     private void loadAppIcon() {
         ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource(RES_ICON_PATH));
-        setIconImage(icon.getImage());
+        mainWindow.setIconImage(icon.getImage());
     }
 
     private ImageIcon loadDragAndDropLabelImage() {
@@ -340,11 +353,11 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     private void loadPDF(File file) {
         try {
             importNewPdfFile(file);
-            setTitle("BRISS - " + file.getName()); //$NON-NLS-1$
+            mainWindow.setTitle("BRISS - " + file.getName()); //$NON-NLS-1$
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(), Messages.getString("BrissGUI."), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(), Messages.getString("BrissGUI."), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         } catch (PdfException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(),
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(),
                 Messages.getString("BrissGUI.loadingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         }
     }
@@ -361,7 +374,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
             }
 
         } catch (IOException | DocumentException | CropException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(),
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(),
                 Messages.getString("BrissGUI.croppingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         } finally {
             setIdleState(); //$NON-NLS-1$
@@ -374,7 +387,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
             File result = createAndExecuteCropJobForPreview();
             DesktopHelper.openFileWithDesktopApp(result);
         } catch (IOException | DocumentException | CropException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage(),
+            JOptionPane.showMessageDialog(mainWindow, e.getMessage(),
                 Messages.getString("BrissGUI.croppingError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         } finally {
             setIdleState(); //$NON-NLS-1$
@@ -393,16 +406,16 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         progressBar.setVisible(false);
         progressBar.setValue(0);
         progressBar.setString("");
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
 
     private void setWorkingState(String stateMessage) {
         progressBar.setVisible(true);
         progressBar.setString(stateMessage);
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     }
 
-    protected void importNewPdfFile(File loadFile) throws IOException, PdfException {
+    public void importNewPdfFile(File loadFile) throws IOException, PdfException {
         String password = null;
 
         if (PDFReaderUtil.isEncrypted(loadFile.getAbsolutePath())) {
@@ -422,7 +435,13 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         progressBar.setString(Messages.getString("BrissGUI.loadingNewFile")); //$NON-NLS-1$
 
         ClusterPagesTask clusterTask = new ClusterPagesTask(loadFile, password, null);
-        clusterTask.addPropertyChangeListener(this);
+
+        clusterTask.addPropertyChangeListener(event -> {
+            if (PROGRESS.equals(event.getPropertyName())) { //$NON-NLS-1$
+                progressBar.setValue((Integer) event.getNewValue());
+            }
+        });
+
         clusterTask.execute();
     }
 
@@ -456,7 +475,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         return null;
     }
 
-    public void alignSelRects(int x, int y, int w, int h) {
+    @Override
+	public void alignSelRects(int x, int y, int w, int h) {
         // set position and size of selected rectangles
         for (MergedPanel mp : mergedPanels) {
             mp.setSelCropSize(w, h);
@@ -464,7 +484,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
-    public void resizeAndMoveSelectedRects(int width, int height, int x, int y) {
+    @Override
+	public void resizeAndMoveSelectedRects(int width, int height, int x, int y) {
         // resize and move selected rectangles
         // parameters are relative to current position
         for (MergedPanel mp : mergedPanels) {
@@ -472,7 +493,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
-    public void moveSelectedRects(int x, int y) {
+    @Override
+	public void moveSelectedRects(int x, int y) {
         // move selected rectangles
         // parameters are relative to current position
         for (MergedPanel mp : mergedPanels) {
@@ -480,13 +502,15 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
-    public void deselectAllRects() {
+    @Override
+	public void deselectAllRects() {
         for (MergedPanel mp : mergedPanels) {
             mp.selectCrops(false);
         }
     }
 
-    public void setDefinedSizeSelRects() {
+    @Override
+	public void setDefinedSizeSelRects() {
         // set size of selected rectangles
         // based on user input
 
@@ -541,7 +565,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
-    public void setPositionSelRects() {
+    @Override
+	public void setPositionSelRects() {
         // set position of selected rectangles
         // based on user input
 
@@ -595,17 +620,11 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
-    public void resizeSelRects(int w, int h) {
+    @Override
+	public void resizeSelRects(int w, int h) {
         // change size of selected rectangles (relative)
         for (MergedPanel mp : mergedPanels) {
             mp.resizeSelCrop(w, h);
-        }
-    }
-
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (PROGRESS.equals(evt.getPropertyName())) { //$NON-NLS-1$
-            progressBar.setValue((Integer) evt.getNewValue());
         }
     }
 
@@ -624,13 +643,13 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         progressBar.setString(Messages.getString("BrissGUI.clusteringRenderingFinished")); //$NON-NLS-1$
 
         setIdleState(); //$NON-NLS-1$
-        pack();
-        setExtendedState(Frame.MAXIMIZED_BOTH);
+        mainWindow.pack();
+        mainWindow.setExtendedState(Frame.MAXIMIZED_BOTH);
         previewPanel.repaint();
         showPreview.setVisible(true);
         startCropping.setVisible(true);
         progressBar.setVisible(false);
-        repaint();
+        mainWindow.repaint();
     }
 
     private void updateWorkingSet(ClusterDefinition newClusters, PageExcludes newPageExcludes, File newSource, String password) {
@@ -717,25 +736,5 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
 
             return null;
         }
-    }
-
-    @Override
-    public void componentResized(ComponentEvent e) {
-        previewPanel.revalidate();
-        for (Component component : previewPanel.getComponents()) {
-            component.repaint();
-        }
-    }
-
-    @Override
-    public void componentMoved(ComponentEvent e) {
-    }
-
-    @Override
-    public void componentShown(ComponentEvent e) {
-    }
-
-    @Override
-    public void componentHidden(ComponentEvent e) {
     }
 }
