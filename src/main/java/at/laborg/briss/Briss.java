@@ -31,7 +31,7 @@ public final class Briss {
         if (args.length > 1) {
             BrissCMD.autoCrop(args);
         } else {
-            new BrissGUI(args);
+            new BrissSwingGUI(args);
         }
     }
 }
