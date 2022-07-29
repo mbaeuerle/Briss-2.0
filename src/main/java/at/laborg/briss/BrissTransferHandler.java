@@ -30,63 +30,63 @@ import java.net.URISyntaxException;
 
 final class BrissTransferHandler extends TransferHandler {
 
-    private static final long serialVersionUID = 1L;
-    private final BrissGUIApp brissGUI;
+	private static final long serialVersionUID = 1L;
+	private final BrissGUIApp brissGUI;
 
-    BrissTransferHandler(final BrissGUIApp brissGUI) {
-        this.brissGUI = brissGUI;
-    }
+	BrissTransferHandler(final BrissGUIApp brissGUI) {
+		this.brissGUI = brissGUI;
+	}
 
-    @Override
-    public boolean canImport(final TransferSupport support) {
-        return support.isDataFlavorSupported(DataFlavor.stringFlavor);
+	@Override
+	public boolean canImport(final TransferSupport support) {
+		return support.isDataFlavorSupported(DataFlavor.stringFlavor);
 
-    }
+	}
 
-    @Override
-    public boolean importData(final TransferSupport support) {
-        if (!canImport(support))
-            return false;
+	@Override
+	public boolean importData(final TransferSupport support) {
+		if (!canImport(support))
+			return false;
 
-        // Fetch the Transferable and its data
-        Transferable t = support.getTransferable();
-        try {
-            String dropInput = (String) t.getTransferData(DataFlavor.stringFlavor);
+		// Fetch the Transferable and its data
+		Transferable t = support.getTransferable();
+		try {
+			String dropInput = (String) t.getTransferData(DataFlavor.stringFlavor);
 
-            String[] filenames = dropInput.split("\n");
+			String[] filenames = dropInput.split("\n");
 
-            for (String filename : filenames) {
-                filename = filename.replaceAll("\\n", "");
-                filename = filename.replaceAll("\\t", "");
-                filename = filename.replaceAll("\\r", "");
+			for (String filename : filenames) {
+				filename = filename.replaceAll("\\n", "");
+				filename = filename.replaceAll("\\t", "");
+				filename = filename.replaceAll("\\r", "");
 
-                if (filename.trim().endsWith(".pdf")) {
-                    File loadFile = null;
-                    try {
-                        URI uri = new URI(filename);
-                        loadFile = new File(uri);
-                    } catch (URISyntaxException e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
-                    }
-                    try {
-                        this.brissGUI.importNewPdfFile(loadFile);
-                    } catch (PdfException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    break;
-                }
-            }
+				if (filename.trim().endsWith(".pdf")) {
+					File loadFile = null;
+					try {
+						URI uri = new URI(filename);
+						loadFile = new File(uri);
+					} catch (URISyntaxException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try {
+						this.brissGUI.importNewPdfFile(loadFile);
+					} catch (PdfException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					break;
+				}
+			}
 
-        } catch (UnsupportedFlavorException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+		} catch (UnsupportedFlavorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-        return true;
-    }
+		return true;
+	}
 }
