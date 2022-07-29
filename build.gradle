@@ -2,6 +2,7 @@ plugins {
     id 'org.openjfx.javafxplugin' version '0.0.8'
     id 'java'
     id 'application'
+    id 'eclipse'
 }
 
 mainClassName = 'at.laborg.briss.Briss'

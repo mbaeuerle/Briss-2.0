@@ -1,7 +1,5 @@
 package at.laborg.briss;
 
-import java.awt.event.ComponentEvent;
-import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -22,16 +20,6 @@ public interface BrissGUIApp {
 	void setPositionSelRects();
 
 	void resizeSelRects(int w, int h);
-
-	void propertyChange(PropertyChangeEvent evt);
-
-	void componentResized(ComponentEvent e);
-
-	void componentMoved(ComponentEvent e);
-
-	void componentShown(ComponentEvent e);
-
-	void componentHidden(ComponentEvent e);
 
 	void importNewPdfFile(File loadFile) throws IOException, PdfException;
 

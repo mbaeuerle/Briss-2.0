@@ -80,8 +80,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -92,7 +90,7 @@ import java.util.List;
  * @author gerhard, hybridtupel
  */
 
-public class BrissSwingGUI implements PropertyChangeListener, BrissGUIApp {
+public class BrissSwingGUI implements BrissGUIApp {
 	private final JFrame mainWindow;
 
     private static final int DEFAULT_HEIGHT = 600;
@@ -432,7 +430,13 @@ public class BrissSwingGUI implements PropertyChangeListener, BrissGUIApp {
         progressBar.setString(Messages.getString("BrissGUI.loadingNewFile")); //$NON-NLS-1$
 
         ClusterPagesTask clusterTask = new ClusterPagesTask(loadFile, password, null);
-        clusterTask.addPropertyChangeListener(this);
+
+        clusterTask.addPropertyChangeListener(event -> {
+            if (PROGRESS.equals(event.getPropertyName())) { //$NON-NLS-1$
+                progressBar.setValue((Integer) event.getNewValue());
+            }
+        });
+
         clusterTask.execute();
     }
 
@@ -619,13 +623,6 @@ public class BrissSwingGUI implements PropertyChangeListener, BrissGUIApp {
         }
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (PROGRESS.equals(evt.getPropertyName())) { //$NON-NLS-1$
-            progressBar.setValue((Integer) evt.getNewValue());
-        }
-    }
-
     private void setStateAfterClusteringFinished(ClusterDefinition newClusters, PageExcludes newPageExcludes,
                                                  File newSource, String password) {
         updateWorkingSet(newClusters, newPageExcludes, newSource, password);
@@ -734,25 +731,5 @@ public class BrissSwingGUI implements PropertyChangeListener, BrissGUIApp {
 
             return null;
         }
-    }
-
-    @Override
-    public void componentResized(ComponentEvent e) {
-        previewPanel.revalidate();
-        for (Component component : previewPanel.getComponents()) {
-            component.repaint();
-        }
-    }
-
-    @Override
-    public void componentMoved(ComponentEvent e) {
-    }
-
-    @Override
-    public void componentShown(ComponentEvent e) {
-    }
-
-    @Override
-    public void componentHidden(ComponentEvent e) {
     }
 }
