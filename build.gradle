@@ -3,6 +3,7 @@ plugins {
     id 'java'
     id 'application'
     id 'eclipse'
+    id "com.diffplug.spotless" version "5.17.1"
 }
 
 mainClassName = 'at.laborg.briss.Briss'
@@ -35,4 +36,10 @@ dependencies {
 javafx {
     version = javaFxVersion
     modules = [ 'javafx.controls', 'javafx.base', 'javafx.swing' ]
+}
+
+spotless {
+  java {
+    palantirJavaFormat()
+  }
 }
