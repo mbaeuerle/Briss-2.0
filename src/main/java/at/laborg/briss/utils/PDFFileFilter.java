@@ -17,23 +17,23 @@
  */
 package at.laborg.briss.utils;
 
-import javax.swing.filechooser.FileFilter;
 import java.io.File;
+import javax.swing.filechooser.FileFilter;
 
 public class PDFFileFilter extends FileFilter {
-    @Override
-    public boolean accept(File pathname) {
-        // sometimes we get null-ed file
-        if (pathname == null)
-            return false;
+	@Override
+	public boolean accept(File pathname) {
+		// sometimes we get null-ed file
+		if (pathname == null)
+			return false;
 
-        if (pathname.isDirectory())
-            return true;
-        return pathname.toString().toLowerCase().endsWith(".pdf");
-    }
+		if (pathname.isDirectory())
+			return true;
+		return pathname.toString().toLowerCase().endsWith(".pdf");
+	}
 
-    @Override
-    public final String getDescription() {
-        return "PDF (*.pdf)";
-    }
+	@Override
+	public final String getDescription() {
+		return "PDF (*.pdf)";
+	}
 }

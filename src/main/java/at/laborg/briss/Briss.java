@@ -21,19 +21,19 @@ import at.laborg.briss.cli.BrissCMD;
 
 public final class Briss {
 
-    private Briss() {
-    }
+	private Briss() {
+	}
 
-    public static void main(final String[] args) {
+	public static void main(final String[] args) {
 
-        // this needs to be set in order to cope with jp2000 images
-        System.setProperty("org.jpedal.jai", "true");
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        // check if args are present, if so try to start commandline briss
-        if (args.length > 1) {
-            BrissCMD.autoCrop(args);
-        } else {
-            new BrissSwingGUI(args);
-        }
-    }
+		// this needs to be set in order to cope with jp2000 images
+		System.setProperty("org.jpedal.jai", "true");
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+		// check if args are present, if so try to start commandline briss
+		if (args.length > 1) {
+			BrissCMD.autoCrop(args);
+		} else {
+			new BrissSwingGUI(args);
+		}
+	}
 }
