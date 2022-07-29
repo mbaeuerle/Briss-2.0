@@ -46,7 +46,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-import at.laborg.briss.BrissGUI;
+import at.laborg.briss.BrissGUIApp;
 import at.laborg.briss.model.CropFinder;
 import at.laborg.briss.model.PageCluster;
 import at.laborg.briss.model.SplitFinder;
@@ -90,9 +90,9 @@ public class MergedPanel extends JPanel {
         CURSORS_FROM_CROP_AND_POINT.add(new Pair<>(DrawableCropRect::contains, Cursor.HAND_CURSOR));
     }
 
-    private final BrissGUI briss;
+    private final BrissGUIApp briss;
 
-    public MergedPanel(PageCluster cluster, BrissGUI briss) {
+    public MergedPanel(PageCluster cluster, BrissGUIApp briss) {
         super();
         this.briss = briss;
         this.cluster = cluster;

@@ -92,7 +92,7 @@ import java.util.List;
  * @author gerhard, hybridtupel
  */
 
-public class BrissGUI extends JFrame implements PropertyChangeListener, ComponentListener {
+public class BrissSwingGUI extends JFrame implements PropertyChangeListener, ComponentListener, BrissGUIApp {
 
     private static final long serialVersionUID = 5623134571633965275L;
     private static final int DEFAULT_HEIGHT = 600;
@@ -139,7 +139,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
     private JButton showPreview;
     private JButton startCropping;
 
-    public BrissGUI(String[] args) {
+    public BrissSwingGUI(String[] args) {
         super(Messages.getString("BrissGUI.windowTitle")); //$NON-NLS-1$
         init();
         tryToLoadFileFromArgument(args);
@@ -402,7 +402,7 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     }
 
-    protected void importNewPdfFile(File loadFile) throws IOException, PdfException {
+    public void importNewPdfFile(File loadFile) throws IOException, PdfException {
         String password = null;
 
         if (PDFReaderUtil.isEncrypted(loadFile.getAbsolutePath())) {
@@ -456,7 +456,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         return null;
     }
 
-    public void alignSelRects(int x, int y, int w, int h) {
+    @Override
+	public void alignSelRects(int x, int y, int w, int h) {
         // set position and size of selected rectangles
         for (MergedPanel mp : mergedPanels) {
             mp.setSelCropSize(w, h);
@@ -464,7 +465,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
-    public void resizeAndMoveSelectedRects(int width, int height, int x, int y) {
+    @Override
+	public void resizeAndMoveSelectedRects(int width, int height, int x, int y) {
         // resize and move selected rectangles
         // parameters are relative to current position
         for (MergedPanel mp : mergedPanels) {
@@ -472,7 +474,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
-    public void moveSelectedRects(int x, int y) {
+    @Override
+	public void moveSelectedRects(int x, int y) {
         // move selected rectangles
         // parameters are relative to current position
         for (MergedPanel mp : mergedPanels) {
@@ -480,13 +483,15 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
-    public void deselectAllRects() {
+    @Override
+	public void deselectAllRects() {
         for (MergedPanel mp : mergedPanels) {
             mp.selectCrops(false);
         }
     }
 
-    public void setDefinedSizeSelRects() {
+    @Override
+	public void setDefinedSizeSelRects() {
         // set size of selected rectangles
         // based on user input
 
@@ -541,7 +546,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
-    public void setPositionSelRects() {
+    @Override
+	public void setPositionSelRects() {
         // set position of selected rectangles
         // based on user input
 
@@ -595,7 +601,8 @@ public class BrissGUI extends JFrame implements PropertyChangeListener, Componen
         }
     }
 
-    public void resizeSelRects(int w, int h) {
+    @Override
+	public void resizeSelRects(int w, int h) {
         // change size of selected rectangles (relative)
         for (MergedPanel mp : mergedPanels) {
             mp.resizeSelCrop(w, h);

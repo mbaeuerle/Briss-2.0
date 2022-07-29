@@ -31,9 +31,9 @@ import java.net.URISyntaxException;
 final class BrissTransferHandler extends TransferHandler {
 
     private static final long serialVersionUID = 1L;
-    private final BrissGUI brissGUI;
+    private final BrissGUIApp brissGUI;
 
-    BrissTransferHandler(final BrissGUI brissGUI) {
+    BrissTransferHandler(final BrissGUIApp brissGUI) {
         this.brissGUI = brissGUI;
     }
 
