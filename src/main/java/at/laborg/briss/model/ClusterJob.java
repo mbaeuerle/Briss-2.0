@@ -22,37 +22,36 @@ import java.util.Set;
 
 public class ClusterJob {
 
-    private Set<Integer> excludedPageSet;
-    private final File source;
-    private final ClusterCollection clusterCollection;
+	private Set<Integer> excludedPageSet;
+	private final File source;
+	private final ClusterCollection clusterCollection;
 
-    public ClusterJob(File inFile) {
-        clusterCollection = new ClusterCollection();
-        this.source = inFile;
-    }
+	public ClusterJob(File inFile) {
+		clusterCollection = new ClusterCollection();
+		this.source = inFile;
+	}
 
-    public ClusterCollection getClusterCollection() {
-        return clusterCollection;
-    }
+	public ClusterCollection getClusterCollection() {
+		return clusterCollection;
+	}
 
-    public Set<Integer> getExcludedPageSet() {
-        return excludedPageSet;
-    }
+	public Set<Integer> getExcludedPageSet() {
+		return excludedPageSet;
+	}
 
-    public void setExcludedPageSet(Set<Integer> excludedPageSet) {
-        this.excludedPageSet = excludedPageSet;
-    }
+	public void setExcludedPageSet(Set<Integer> excludedPageSet) {
+		this.excludedPageSet = excludedPageSet;
+	}
 
-    public File getSource() {
-        return source;
-    }
+	public File getSource() {
+		return source;
+	}
 
-    public int getTotalWorkUnits() {
-        int size = 0;
-        for (SingleCluster cluster : clusterCollection.getAsList()) {
-            size += cluster.getPagesToMerge().size();
-        }
-        return size;
-    }
-
+	public int getTotalWorkUnits() {
+		int size = 0;
+		for (SingleCluster cluster : clusterCollection.getAsList()) {
+			size += cluster.getPagesToMerge().size();
+		}
+		return size;
+	}
 }

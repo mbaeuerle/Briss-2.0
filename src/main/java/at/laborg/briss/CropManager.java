@@ -32,7 +32,6 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfSmartCopy;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.SimpleBookmark;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,172 +40,172 @@ import java.util.List;
 
 public class CropManager {
 
-    public static CropJob createCropJob(ClusterJob curClusterJob) throws IOException {
-        File source = curClusterJob.getSource();
-        if (source != null && source.exists()) {
-            PdfReader reader = new PdfReader(source.getAbsolutePath());
-            CropJob result = new CropJob(source, reader.getNumberOfPages(), reader.getInfo(),
-                SimpleBookmark.getBookmark(reader));
-            reader.close();
-            result.setClusterCollection(curClusterJob.getClusterCollection());
-            return result;
-        }
-        return null;
-    }
+	public static CropJob createCropJob(ClusterJob curClusterJob) throws IOException {
+		File source = curClusterJob.getSource();
+		if (source != null && source.exists()) {
+			PdfReader reader = new PdfReader(source.getAbsolutePath());
+			CropJob result = new CropJob(source, reader.getNumberOfPages(), reader.getInfo(),
+					SimpleBookmark.getBookmark(reader));
+			reader.close();
+			result.setClusterCollection(curClusterJob.getClusterCollection());
+			return result;
+		}
+		return null;
+	}
 
-    public static CropJob createCropJob(File source) throws IOException {
-        CropJob result = null;
-        if (source != null && source.exists()) {
-            PdfReader reader = new PdfReader(source.getAbsolutePath());
-            result = new CropJob(source, reader.getNumberOfPages(), reader.getInfo(), SimpleBookmark.getBookmark(reader));
-            reader.close();
-            return result;
-        }
-        return result;
-    }
+	public static CropJob createCropJob(File source) throws IOException {
+		CropJob result = null;
+		if (source != null && source.exists()) {
+			PdfReader reader = new PdfReader(source.getAbsolutePath());
+			result = new CropJob(source, reader.getNumberOfPages(), reader.getInfo(),
+					SimpleBookmark.getBookmark(reader));
+			reader.close();
+			return result;
+		}
+		return result;
+	}
 
-    public static void crop(CropJob cropJob) throws IOException, DocumentException {
+	public static void crop(CropJob cropJob) throws IOException, DocumentException {
 
-        // first make a copy containing the right amount of pages
-        File multipliedTmpFile = copyToMultiplePages(cropJob);
+		// first make a copy containing the right amount of pages
+		File multipliedTmpFile = copyToMultiplePages(cropJob);
 
-        // now crop all pages according to their ratios
-        cropMultipliedFile(multipliedTmpFile, cropJob);
-    }
+		// now crop all pages according to their ratios
+		cropMultipliedFile(multipliedTmpFile, cropJob);
+	}
 
-    private static File copyToMultiplePages(CropJob cropJob) throws IOException, DocumentException {
+	private static File copyToMultiplePages(CropJob cropJob) throws IOException, DocumentException {
 
-        PdfReader reader = new PdfReader(cropJob.getSource().getAbsolutePath());
-        Document document = new Document();
+		PdfReader reader = new PdfReader(cropJob.getSource().getAbsolutePath());
+		Document document = new Document();
 
-        File resultFile = File.createTempFile("cropped", ".pdf");
-        PdfSmartCopy pdfCopy = new PdfSmartCopy(document, new FileOutputStream(resultFile));
-        document.open();
-        PdfImportedPage page;
+		File resultFile = File.createTempFile("cropped", ".pdf");
+		PdfSmartCopy pdfCopy = new PdfSmartCopy(document, new FileOutputStream(resultFile));
+		document.open();
+		PdfImportedPage page;
 
-        for (int pageNumber = 1; pageNumber <= cropJob.getSourcePageCount(); pageNumber++) {
-            SingleCluster currentCluster = cropJob.getClusterCollection().getSingleCluster(pageNumber);
-            page = pdfCopy.getImportedPage(reader, pageNumber);
-            pdfCopy.addPage(page);
-            for (int j = 1; j < currentCluster.getRatiosList().size(); j++) {
-                pdfCopy.addPage(page);
-            }
-        }
-        document.close();
-        pdfCopy.close();
-        reader.close();
-        return resultFile;
-    }
+		for (int pageNumber = 1; pageNumber <= cropJob.getSourcePageCount(); pageNumber++) {
+			SingleCluster currentCluster = cropJob.getClusterCollection().getSingleCluster(pageNumber);
+			page = pdfCopy.getImportedPage(reader, pageNumber);
+			pdfCopy.addPage(page);
+			for (int j = 1; j < currentCluster.getRatiosList().size(); j++) {
+				pdfCopy.addPage(page);
+			}
+		}
+		document.close();
+		pdfCopy.close();
+		reader.close();
+		return resultFile;
+	}
 
-    private static void cropMultipliedFile(File source, CropJob cropJob) throws DocumentException,
-        IOException {
+	private static void cropMultipliedFile(File source, CropJob cropJob) throws DocumentException, IOException {
 
-        PdfReader reader = new PdfReader(source.getAbsolutePath());
-        PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(cropJob.getDestinationFile()));
-        stamper.setMoreInfo(cropJob.getSourceMetaInfo());
+		PdfReader reader = new PdfReader(source.getAbsolutePath());
+		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(cropJob.getDestinationFile()));
+		stamper.setMoreInfo(cropJob.getSourceMetaInfo());
 
-        PdfDictionary pageDict;
-        int newPageNumber = 1;
-        for (int origPageNumber = 1; origPageNumber <= cropJob.getSourcePageCount(); origPageNumber++) {
-            SingleCluster cluster = cropJob.getClusterCollection().getSingleCluster(origPageNumber);
+		PdfDictionary pageDict;
+		int newPageNumber = 1;
+		for (int origPageNumber = 1; origPageNumber <= cropJob.getSourcePageCount(); origPageNumber++) {
+			SingleCluster cluster = cropJob.getClusterCollection().getSingleCluster(origPageNumber);
 
-            // if no crop was selected do nothing
-            if (cluster.getRatiosList().size() == 0) {
-                newPageNumber++;
-                continue;
-            }
+			// if no crop was selected do nothing
+			if (cluster.getRatiosList().size() == 0) {
+				newPageNumber++;
+				continue;
+			}
 
-            for (float[] ratios : cluster.getRatiosList()) {
+			for (float[] ratios : cluster.getRatiosList()) {
 
-                pageDict = reader.getPageN(newPageNumber);
+				pageDict = reader.getPageN(newPageNumber);
 
-                List<Rectangle> boxes = new ArrayList<Rectangle>();
-                boxes.add(reader.getBoxSize(newPageNumber, "media"));
-                boxes.add(reader.getBoxSize(newPageNumber, "crop"));
-                int rotation = reader.getPageRotation(newPageNumber);
+				List<Rectangle> boxes = new ArrayList<Rectangle>();
+				boxes.add(reader.getBoxSize(newPageNumber, "media"));
+				boxes.add(reader.getBoxSize(newPageNumber, "crop"));
+				int rotation = reader.getPageRotation(newPageNumber);
 
-                Rectangle scaledBox = calculateScaledRectangle(boxes, ratios, rotation);
+				Rectangle scaledBox = calculateScaledRectangle(boxes, ratios, rotation);
 
-                PdfArray scaleBoxArray = new PdfArray();
-                scaleBoxArray.add(new PdfNumber(scaledBox.getLeft()));
-                scaleBoxArray.add(new PdfNumber(scaledBox.getBottom()));
-                scaleBoxArray.add(new PdfNumber(scaledBox.getRight()));
-                scaleBoxArray.add(new PdfNumber(scaledBox.getTop()));
+				PdfArray scaleBoxArray = new PdfArray();
+				scaleBoxArray.add(new PdfNumber(scaledBox.getLeft()));
+				scaleBoxArray.add(new PdfNumber(scaledBox.getBottom()));
+				scaleBoxArray.add(new PdfNumber(scaledBox.getRight()));
+				scaleBoxArray.add(new PdfNumber(scaledBox.getTop()));
 
-                pageDict.put(PdfName.CROPBOX, scaleBoxArray);
-                pageDict.put(PdfName.MEDIABOX, scaleBoxArray);
-                // increment the pagenumber
-                newPageNumber++;
-            }
-            int[] range = new int[2];
-            range[0] = newPageNumber - 1;
-            range[1] = cropJob.getSourcePageCount() + (newPageNumber - origPageNumber);
-            SimpleBookmark.shiftPageNumbers(cropJob.getSourceBookmarks(), cluster.getRatiosList().size() - 1, range);
-        }
-        stamper.setOutlines(cropJob.getSourceBookmarks());
-        stamper.close();
-        reader.close();
-    }
+				pageDict.put(PdfName.CROPBOX, scaleBoxArray);
+				pageDict.put(PdfName.MEDIABOX, scaleBoxArray);
+				// increment the pagenumber
+				newPageNumber++;
+			}
+			int[] range = new int[2];
+			range[0] = newPageNumber - 1;
+			range[1] = cropJob.getSourcePageCount() + (newPageNumber - origPageNumber);
+			SimpleBookmark.shiftPageNumbers(cropJob.getSourceBookmarks(), cluster.getRatiosList().size() - 1, range);
+		}
+		stamper.setOutlines(cropJob.getSourceBookmarks());
+		stamper.close();
+		reader.close();
+	}
 
-    private static Rectangle calculateScaledRectangle(List<Rectangle> boxes, float[] ratios, int rotation) {
-        if (ratios == null || boxes.size() == 0)
-            return null;
-        Rectangle smallestBox = null;
-        // find smallest box
-        float smallestSquare = Float.MAX_VALUE;
-        for (Rectangle box : boxes) {
-            if (box != null) {
-                if (smallestBox == null) {
-                    smallestBox = box;
-                }
-                if (smallestSquare > box.getWidth() * box.getHeight()) {
-                    // set new smallest box
-                    smallestSquare = box.getWidth() * box.getHeight();
-                    smallestBox = box;
-                }
-            }
-        }
-        if (smallestBox == null)
-            return null; // no useable box was found
+	private static Rectangle calculateScaledRectangle(List<Rectangle> boxes, float[] ratios, int rotation) {
+		if (ratios == null || boxes.size() == 0)
+			return null;
+		Rectangle smallestBox = null;
+		// find smallest box
+		float smallestSquare = Float.MAX_VALUE;
+		for (Rectangle box : boxes) {
+			if (box != null) {
+				if (smallestBox == null) {
+					smallestBox = box;
+				}
+				if (smallestSquare > box.getWidth() * box.getHeight()) {
+					// set new smallest box
+					smallestSquare = box.getWidth() * box.getHeight();
+					smallestBox = box;
+				}
+			}
+		}
+		if (smallestBox == null)
+			return null; // no useable box was found
 
-        // rotate the ratios according to the rotation of the page
-        float[] rotRatios = rotateRatios(ratios, rotation);
+		// rotate the ratios according to the rotation of the page
+		float[] rotRatios = rotateRatios(ratios, rotation);
 
-        // use smallest box as basis for calculation
-        Rectangle scaledBox = new Rectangle(smallestBox);
+		// use smallest box as basis for calculation
+		Rectangle scaledBox = new Rectangle(smallestBox);
 
-        scaledBox.setLeft(smallestBox.getLeft() + (smallestBox.getWidth() * rotRatios[0]));
-        scaledBox.setBottom(smallestBox.getBottom() + (smallestBox.getHeight() * rotRatios[1]));
-        scaledBox.setRight(smallestBox.getLeft() + (smallestBox.getWidth() * (1 - rotRatios[2])));
-        scaledBox.setTop(smallestBox.getBottom() + (smallestBox.getHeight() * (1 - rotRatios[3])));
+		scaledBox.setLeft(smallestBox.getLeft() + (smallestBox.getWidth() * rotRatios[0]));
+		scaledBox.setBottom(smallestBox.getBottom() + (smallestBox.getHeight() * rotRatios[1]));
+		scaledBox.setRight(smallestBox.getLeft() + (smallestBox.getWidth() * (1 - rotRatios[2])));
+		scaledBox.setTop(smallestBox.getBottom() + (smallestBox.getHeight() * (1 - rotRatios[3])));
 
-        return scaledBox;
-    }
+		return scaledBox;
+	}
 
-    /**
-     * Rotates the ratios counter clockwise until its at 0
-     *
-     * @param ratios
-     * @param rotation
-     * @return
-     */
-    private static float[] rotateRatios(float[] ratios, int rotation) {
-        float[] tmpRatios = new float[4];
-        for (int i = 0; i < 4; i++) {
-            tmpRatios[i] = ratios[i];
-        }
-        while (rotation > 0 && rotation < 360) {
-            float tmpValue = tmpRatios[0];
-            // left
-            tmpRatios[0] = tmpRatios[1];
-            // bottom
-            tmpRatios[1] = tmpRatios[2];
-            // right
-            tmpRatios[2] = tmpRatios[3];
-            // top
-            tmpRatios[3] = tmpValue;
-            rotation += 90;
-        }
-        return tmpRatios;
-    }
+	/**
+	 * Rotates the ratios counter clockwise until its at 0
+	 *
+	 * @param ratios
+	 * @param rotation
+	 * @return
+	 */
+	private static float[] rotateRatios(float[] ratios, int rotation) {
+		float[] tmpRatios = new float[4];
+		for (int i = 0; i < 4; i++) {
+			tmpRatios[i] = ratios[i];
+		}
+		while (rotation > 0 && rotation < 360) {
+			float tmpValue = tmpRatios[0];
+			// left
+			tmpRatios[0] = tmpRatios[1];
+			// bottom
+			tmpRatios[1] = tmpRatios[2];
+			// right
+			tmpRatios[2] = tmpRatios[3];
+			// top
+			tmpRatios[3] = tmpValue;
+			rotation += 90;
+		}
+		return tmpRatios;
+	}
 }

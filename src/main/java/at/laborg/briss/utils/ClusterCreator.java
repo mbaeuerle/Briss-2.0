@@ -23,49 +23,49 @@ import at.laborg.briss.model.PageCluster;
 import at.laborg.briss.model.PageExcludes;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfReader;
-
 import java.io.File;
 import java.io.IOException;
 
 public final class ClusterCreator {
-    private ClusterCreator() {
-    }
+	private ClusterCreator() {
+	}
 
-    public static ClusterDefinition clusterPages(final File source, String password, final PageExcludes pageExcludes) throws IOException {
-        PdfReader reader = PDFReaderUtil.getPdfReader(source.getAbsolutePath(), password);
+	public static ClusterDefinition clusterPages(final File source, String password, final PageExcludes pageExcludes)
+			throws IOException {
+		PdfReader reader = PDFReaderUtil.getPdfReader(source.getAbsolutePath(), password);
 
-        ClusterDefinition clusters = new ClusterDefinition();
+		ClusterDefinition clusters = new ClusterDefinition();
 
-        for (int page = 1; page <= reader.getNumberOfPages(); page++) {
+		for (int page = 1; page <= reader.getNumberOfPages(); page++) {
 
-            Rectangle layoutBox = getLayoutBox(reader, page);
+			Rectangle layoutBox = getLayoutBox(reader, page);
 
-            // create Cluster
-            // if the pagenumber should be excluded then use it as a
-            // discriminating parameter, else use default value
+			// create Cluster
+			// if the pagenumber should be excluded then use it as a
+			// discriminating parameter, else use default value
 
-            boolean excluded = checkExclusionAndGetPageNumber(pageExcludes, page);
+			boolean excluded = checkExclusionAndGetPageNumber(pageExcludes, page);
 
-            PageCluster tmpCluster = new PageCluster(page % 2 == 0, (int) layoutBox.getWidth(), (int) layoutBox.getHeight(),
-                excluded, page);
+			PageCluster tmpCluster = new PageCluster(page % 2 == 0, (int) layoutBox.getWidth(),
+					(int) layoutBox.getHeight(), excluded, page);
 
-            clusters.addOrMergeCluster(tmpCluster);
-        }
-        reader.close();
-        clusters.selectAndSetPagesForMerging();
-        return clusters;
-    }
+			clusters.addOrMergeCluster(tmpCluster);
+		}
+		reader.close();
+		clusters.selectAndSetPagesForMerging();
+		return clusters;
+	}
 
-    private static Rectangle getLayoutBox(final PdfReader reader, final int page) {
-        Rectangle layoutBox = reader.getBoxSize(page, "crop");
+	private static Rectangle getLayoutBox(final PdfReader reader, final int page) {
+		Rectangle layoutBox = reader.getBoxSize(page, "crop");
 
-        if (layoutBox == null) {
-            layoutBox = reader.getBoxSize(page, "media");
-        }
-        return layoutBox;
-    }
+		if (layoutBox == null) {
+			layoutBox = reader.getBoxSize(page, "media");
+		}
+		return layoutBox;
+	}
 
-    private static boolean checkExclusionAndGetPageNumber(final PageExcludes pageExcludes, final int page) {
-        return (pageExcludes != null && pageExcludes.containsPage(page));
-    }
+	private static boolean checkExclusionAndGetPageNumber(final PageExcludes pageExcludes, final int page) {
+		return (pageExcludes != null && pageExcludes.containsPage(page));
+	}
 }

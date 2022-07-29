@@ -27,55 +27,54 @@ import java.util.Map;
 
 public final class CropDefinition {
 
-    private final File sourceFile;
-    private final File destinationFile;
-    private final Map<Integer, List<float[]>> pageToCropRectangles;
+	private final File sourceFile;
+	private final File destinationFile;
+	private final Map<Integer, List<float[]>> pageToCropRectangles;
 
-    private CropDefinition(final File source, final File destination,
-                           final HashMap<Integer, List<float[]>> pageToCropRectangles) {
-        this.sourceFile = source;
-        this.destinationFile = destination;
-        this.pageToCropRectangles = pageToCropRectangles;
-    }
+	private CropDefinition(final File source, final File destination,
+			final HashMap<Integer, List<float[]>> pageToCropRectangles) {
+		this.sourceFile = source;
+		this.destinationFile = destination;
+		this.pageToCropRectangles = pageToCropRectangles;
+	}
 
-    public static CropDefinition createCropDefinition(final File source, final File destination,
-                                                      final ClusterDefinition clusters) throws IOException {
-        if (source == null)
-            throw new IllegalArgumentException("Source must be provided");
-        if (!source.exists())
-            throw new IllegalArgumentException("Source(" + source.getAbsolutePath() + ") file doesn't exist");
+	public static CropDefinition createCropDefinition(final File source, final File destination,
+			final ClusterDefinition clusters) throws IOException {
+		if (source == null)
+			throw new IllegalArgumentException("Source must be provided");
+		if (!source.exists())
+			throw new IllegalArgumentException("Source(" + source.getAbsolutePath() + ") file doesn't exist");
 
-        HashMap<Integer, List<float[]>> pagesToCrops = new HashMap<Integer, List<float[]>>();
+		HashMap<Integer, List<float[]>> pagesToCrops = new HashMap<Integer, List<float[]>>();
 
-        for (PageCluster cluster : clusters.getClusterList()) {
-            for (Integer pageNumber : cluster.getAllPages()) {
-                List<float[]> cropRectangles = pagesToCrops.get(pageNumber);
-                if (cropRectangles == null) {
-                    cropRectangles = new ArrayList<float[]>();
-                }
-                cropRectangles.addAll(cluster.getRatiosList());
-                pagesToCrops.put(pageNumber, cropRectangles);
-            }
-        }
+		for (PageCluster cluster : clusters.getClusterList()) {
+			for (Integer pageNumber : cluster.getAllPages()) {
+				List<float[]> cropRectangles = pagesToCrops.get(pageNumber);
+				if (cropRectangles == null) {
+					cropRectangles = new ArrayList<float[]>();
+				}
+				cropRectangles.addAll(cluster.getRatiosList());
+				pagesToCrops.put(pageNumber, cropRectangles);
+			}
+		}
 
-        CropDefinition result = new CropDefinition(source, destination, pagesToCrops);
+		CropDefinition result = new CropDefinition(source, destination, pagesToCrops);
 
-        return result;
-    }
+		return result;
+	}
 
-    public File getSourceFile() {
-        return sourceFile;
-    }
+	public File getSourceFile() {
+		return sourceFile;
+	}
 
-    public File getDestinationFile() {
-        return destinationFile;
-    }
+	public File getDestinationFile() {
+		return destinationFile;
+	}
 
-    public List<float[]> getRectanglesForPage(final Integer page) {
-        if (pageToCropRectangles.containsKey(page))
-            return pageToCropRectangles.get(page);
-        else
-            return Collections.emptyList();
-    }
-
+	public List<float[]> getRectanglesForPage(final Integer page) {
+		if (pageToCropRectangles.containsKey(page))
+			return pageToCropRectangles.get(page);
+		else
+			return Collections.emptyList();
+	}
 }

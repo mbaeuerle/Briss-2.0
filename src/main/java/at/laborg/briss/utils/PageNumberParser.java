@@ -26,56 +26,57 @@ import java.util.regex.Pattern;
 
 public final class PageNumberParser {
 
-    private PageNumberParser() {
-    }
+	private PageNumberParser() {
+	}
 
-    /**
-     * Super simple page-number parser. It handles entries like: "1-2;34;3-16"
-     *
-     * @param input String to be parsed.
-     * @return
-     * @throws ParseException
-     */
-    public static Set<Integer> parsePageNumber(final String input) throws ParseException {
+	/**
+	 * Super simple page-number parser. It handles entries like: "1-2;34;3-16"
+	 *
+	 * @param input
+	 *            String to be parsed.
+	 * @return
+	 * @throws ParseException
+	 */
+	public static Set<Integer> parsePageNumber(final String input) throws ParseException {
 
-        Pattern p = Pattern.compile("[^0-9-;]");
-        Matcher m = p.matcher(input);
+		Pattern p = Pattern.compile("[^0-9-;]");
+		Matcher m = p.matcher(input);
 
-        if (m.find())
-            throw new ParseException("Allowed characters: \"0-9\" \";\" \"-\" ", 0);
+		if (m.find())
+			throw new ParseException("Allowed characters: \"0-9\" \";\" \"-\" ", 0);
 
-        // now tokenize by ;
-        StringTokenizer tokenizer = new StringTokenizer(input, ";");
+		// now tokenize by ;
+		StringTokenizer tokenizer = new StringTokenizer(input, ";");
 
-        Set<Integer> pNS = new HashSet<Integer>();
-        while (tokenizer.hasMoreElements()) {
-            pNS.addAll(extractPageNumbers(tokenizer.nextToken()));
-        }
+		Set<Integer> pNS = new HashSet<Integer>();
+		while (tokenizer.hasMoreElements()) {
+			pNS.addAll(extractPageNumbers(tokenizer.nextToken()));
+		}
 
-        return pNS;
-    }
+		return pNS;
+	}
 
-    private static Set<Integer> extractPageNumbers(final String input) throws ParseException {
+	private static Set<Integer> extractPageNumbers(final String input) throws ParseException {
 
-        StringTokenizer tokenizer = new StringTokenizer(input, "-");
-        Set<Integer> returnSet = new HashSet<Integer>();
-        if (tokenizer.countTokens() == 1) {
-            // it's only a number, lets parse it
-            Integer pageNumber = Integer.parseInt(input);
-            returnSet.add(pageNumber);
-            return returnSet;
-        } else if (tokenizer.countTokens() == 2) {
-            int start = Integer.parseInt(tokenizer.nextToken());
-            int end = Integer.parseInt(tokenizer.nextToken());
-            if (start > end)
-                throw new ParseException("End must be bigger than start in \"" + input + "\"", 0);
-            else {
-                for (int i = start; i <= end; i++) {
-                    returnSet.add(i);
-                }
-                return returnSet;
-            }
-        } else
-            throw new ParseException("\"" + input + "\" has to many - characters!", 0);
-    }
+		StringTokenizer tokenizer = new StringTokenizer(input, "-");
+		Set<Integer> returnSet = new HashSet<Integer>();
+		if (tokenizer.countTokens() == 1) {
+			// it's only a number, lets parse it
+			Integer pageNumber = Integer.parseInt(input);
+			returnSet.add(pageNumber);
+			return returnSet;
+		} else if (tokenizer.countTokens() == 2) {
+			int start = Integer.parseInt(tokenizer.nextToken());
+			int end = Integer.parseInt(tokenizer.nextToken());
+			if (start > end)
+				throw new ParseException("End must be bigger than start in \"" + input + "\"", 0);
+			else {
+				for (int i = start; i <= end; i++) {
+					returnSet.add(i);
+				}
+				return returnSet;
+			}
+		} else
+			throw new ParseException("\"" + input + "\" has to many - characters!", 0);
+	}
 }

@@ -3,6 +3,7 @@ plugins {
     id 'java'
     id 'application'
     id 'eclipse'
+    id "com.diffplug.spotless" version "6.9.0"
 }
 
 mainClassName = 'at.laborg.briss.Briss'
@@ -45,4 +46,10 @@ test {
     testLogging {
         events "passed", "skipped", "failed"
     }
+}
+
+spotless {
+  java {
+    eclipse()
+  }
 }
