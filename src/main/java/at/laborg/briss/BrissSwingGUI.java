@@ -118,10 +118,8 @@ public class BrissSwingGUI implements BrissGUIApp {
         }
     };
 
-    private JMenuBar menuBar;
     private JPanel previewPanel;
     private JProgressBar progressBar;
-    private JMenuItem loadButton, showHelpButton, openDonationLinkButton, exitButton;
     private List<MergedPanel> mergedPanels = new ArrayList<>();
 
     private File lastOpenDir;
@@ -176,47 +174,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 
         loadAppIcon();
 
-        // Create the menu bar.
-        menuBar = new JMenuBar();
-        JMenu fileMenu = new JMenu(Messages.getString("BrissGUI.file")); // $NON-NLS-1$
-        fileMenu.setMnemonic(KeyEvent.VK_F);
-        JMenu helpMenu = new JMenu("Help");
-        helpMenu.setMnemonic(KeyEvent.VK_H);
-
-        menuBar.add(fileMenu);
-        menuBar.add(helpMenu);
-
-        loadButton = new JMenuItem(Messages.getString("BrissGUI.loadFile"), KeyEvent.VK_L); // $NON-NLS-1$
-        loadButton.setEnabled(true);
-        loadButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
-        loadButton.addActionListener(a -> showOpenFileDialog());
-        fileMenu.add(loadButton);
-
-        fileMenu.addSeparator();
-
-        exitButton = new JMenuItem(Messages.getString("BrissGUI.exit"), KeyEvent.VK_E); // $NON-NLS-1$
-        exitButton.addActionListener(a -> System.exit(0));
-        fileMenu.add(exitButton);
-
-        openDonationLinkButton = new JMenuItem(Messages.getString("BrissGUI.donate")); // $NON-NLS-1$
-        openDonationLinkButton.addActionListener(a -> {
-            try {
-                if (Desktop.isDesktopSupported()) {
-                    Desktop.getDesktop().browse(URI.create(DONATION_URI));
-                }
-            } catch (IOException e) {
-                // Ignore error
-                e.printStackTrace();
-            }
-        });
-        helpMenu.add(openDonationLinkButton);
-
-        showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); // $NON-NLS-1$
-        showHelpButton.addActionListener(a ->
-                new HelpDialog(mainWindow, Messages.getString("BrissGUI.brissHelp"), Dialog.ModalityType.MODELESS));
-        helpMenu.add(showHelpButton);
-
-        mainWindow.setJMenuBar(menuBar);
+        createMenuBar();
 
         MouseAdapter mousePressedAdapter = createMousePressedAdapter();
 
@@ -289,6 +247,50 @@ public class BrissSwingGUI implements BrissGUIApp {
         mainWindow.pack();
         mainWindow.setVisible(true);
     }
+
+	private void createMenuBar() {
+		// Create the menu bar.
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu(Messages.getString("BrissGUI.file")); // $NON-NLS-1$
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        JMenu helpMenu = new JMenu("Help");
+        helpMenu.setMnemonic(KeyEvent.VK_H);
+
+        menuBar.add(fileMenu);
+        menuBar.add(helpMenu);
+
+        JMenuItem loadButton = new JMenuItem(Messages.getString("BrissGUI.loadFile"), KeyEvent.VK_L); // $NON-NLS-1$
+        loadButton.setEnabled(true);
+        loadButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
+        loadButton.addActionListener(a -> showOpenFileDialog());
+        fileMenu.add(loadButton);
+
+        fileMenu.addSeparator();
+
+        JMenuItem exitButton = new JMenuItem(Messages.getString("BrissGUI.exit"), KeyEvent.VK_E); // $NON-NLS-1$
+        exitButton.addActionListener(a -> System.exit(0));
+        fileMenu.add(exitButton);
+
+        JMenuItem openDonationLinkButton = new JMenuItem(Messages.getString("BrissGUI.donate")); // $NON-NLS-1$
+        openDonationLinkButton.addActionListener(a -> {
+            try {
+                if (Desktop.isDesktopSupported()) {
+                    Desktop.getDesktop().browse(URI.create(DONATION_URI));
+                }
+            } catch (IOException e) {
+                // Ignore error
+                e.printStackTrace();
+            }
+        });
+        helpMenu.add(openDonationLinkButton);
+
+        JMenuItem showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); // $NON-NLS-1$
+        showHelpButton.addActionListener(a ->
+                new HelpDialog(mainWindow, Messages.getString("BrissGUI.brissHelp"), Dialog.ModalityType.MODELESS));
+        helpMenu.add(showHelpButton);
+
+        mainWindow.setJMenuBar(menuBar);
+	}
 
     private void startCropping() {
         showSaveFileDialog();
