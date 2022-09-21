@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License along with
  * BRISS. If not, see http://www.gnu.org/licenses/.
  */
-package at.laborg.briss;
+package at.laborg.briss.cli;
 
 import at.laborg.briss.exception.CropException;
 import at.laborg.briss.model.ClusterDefinition;

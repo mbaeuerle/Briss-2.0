@@ -30,9 +30,19 @@ dependencies {
     runtimeOnly "org.openjfx:javafx-swing:$javaFxVersion:win"
     runtimeOnly "org.openjfx:javafx-swing:$javaFxVersion:linux"
     runtimeOnly "org.openjfx:javafx-swing:$javaFxVersion:mac"
+
+    testImplementation(platform('org.junit:junit-bom:5.9.1'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
 }
 
 javafx {
     version = javaFxVersion
     modules = [ 'javafx.controls', 'javafx.base', 'javafx.swing' ]
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
