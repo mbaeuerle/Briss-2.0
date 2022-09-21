@@ -1,5 +1,6 @@
 package at.laborg.briss;
 
+import at.laborg.briss.cli.BrissCMD;
 import at.laborg.briss.utils.BrissFileHandling;
 import java.io.File;
 import java.util.Date;
