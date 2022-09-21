@@ -248,8 +248,8 @@ public class BrissSwingGUI implements BrissGUIApp {
         mainWindow.setVisible(true);
     }
 
-	private void createMenuBar() {
-		// Create the menu bar.
+    private void createMenuBar() {
+        // Create the menu bar.
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu(Messages.getString("BrissGUI.file")); // $NON-NLS-1$
         fileMenu.setMnemonic(KeyEvent.VK_F);
@@ -290,7 +290,7 @@ public class BrissSwingGUI implements BrissGUIApp {
         helpMenu.add(showHelpButton);
 
         mainWindow.setJMenuBar(menuBar);
-	}
+    }
 
     private void startCropping() {
         showSaveFileDialog();
