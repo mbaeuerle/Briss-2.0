@@ -15,7 +15,7 @@ public class AutoCropTest {
     public void testAutocrop() throws Exception {
         Path outputDirectory = Files.createTempDirectory(AutoCropTest.class.getCanonicalName());
 
-        Path documentPath = Path.of("src/test/resources//pdfs/CREATIVE_COMMONS.pdf");
+        Path documentPath = Path.of("src/test/resources/pdfs/CREATIVE_COMMONS.pdf");
 
         File recommended = BrissFileHandling.getRecommendedDestination(documentPath.toFile());
 
@@ -25,6 +25,26 @@ public class AutoCropTest {
             "-d",
             outputDirectory.resolve(recommended.getName()).toString()
         };
+
+        assertDoesNotThrow(() -> BrissCMD.autoCrop(jobargs));
+    }
+
+    @Test
+    public void testCrop() throws Exception {
+        Path documentPath = Path.of("src/test/resources/pdfs/example.pdf");
+
+        String[] jobargs = new String[] {
+            "-s", documentPath.toString(),
+        };
+
+        assertDoesNotThrow(() -> BrissCMD.autoCrop(jobargs));
+    }
+
+    @Test
+    public void testCropWithPasswordProtectedFile() throws Exception {
+        Path documentPath = Path.of("src/test/resources/pdfs/example-protected.pdf");
+
+        String[] jobargs = new String[] {"-s", documentPath.toString(), "-p", "secret"};
 
         assertDoesNotThrow(() -> BrissCMD.autoCrop(jobargs));
     }
