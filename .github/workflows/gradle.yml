@@ -33,3 +33,5 @@ jobs:
       run: ./build/install/Briss-2.0/bin/Briss-2.0 -s examples/example.pdf
     - name: Test password protected cropping
       run: ./build/install/Briss-2.0/bin/Briss-2.0 -s examples/example-protected.pdf -p secret
+    - name: Run automated tests
+      run: ./gradlew test
