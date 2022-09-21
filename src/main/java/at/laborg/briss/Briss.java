@@ -17,6 +17,8 @@
  */
 package at.laborg.briss;
 
+import at.laborg.briss.cli.BrissCMD;
+
 public final class Briss {
 
     private Briss() {
