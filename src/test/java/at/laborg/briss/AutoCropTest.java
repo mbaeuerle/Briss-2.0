@@ -1,33 +1,31 @@
 package at.laborg.briss;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import at.laborg.briss.cli.BrissCMD;
 import at.laborg.briss.utils.BrissFileHandling;
 import java.io.File;
-import java.util.Date;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import org.junit.jupiter.api.Test;
 
-public final class AutoCropTest {
+public class AutoCropTest {
 
-    private AutoCropTest() {}
+    @Test
+    public void testAutocrop() throws Exception {
+        Path outputDirectory = Files.createTempDirectory(AutoCropTest.class.getCanonicalName());
 
-    /**
-     * @param args
-     */
-    public static void main(final String[] args) {
-        File wd = new File(System.getProperty("user.dir") + File.separatorChar + "pdftests");
-        File outputDirectory = new File(wd.getAbsolutePath() + File.separatorChar + new Date().toString());
-        outputDirectory.mkdir();
+        Path documentPath = Path.of("src/test/resources//pdfs/CREATIVE_COMMONS.pdf");
 
-        for (File file :
-                wd.listFiles(file -> file.getAbsolutePath().toLowerCase().endsWith(".pdf"))) {
-            String[] jobargs = new String[4];
-            jobargs[0] = "-s";
-            jobargs[1] = file.getAbsolutePath();
-            jobargs[2] = "-d";
-            File recommended = BrissFileHandling.getRecommendedDestination(file);
+        File recommended = BrissFileHandling.getRecommendedDestination(documentPath.toFile());
 
-            String output = outputDirectory.getAbsolutePath() + File.separatorChar + recommended.getName();
-            jobargs[3] = output;
-            BrissCMD.autoCrop(jobargs);
-        }
+        String[] jobargs = new String[] {
+            "-s",
+            documentPath.toString(),
+            "-d",
+            outputDirectory.resolve(recommended.getName()).toString()
+        };
+
+        assertDoesNotThrow(() -> BrissCMD.autoCrop(jobargs));
     }
 }
