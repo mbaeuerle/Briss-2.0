@@ -25,13 +25,5 @@ jobs:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew installDist
-    - name: Test cropping
-      run: ./build/install/Briss-2.0/bin/Briss-2.0 -s examples/example.pdf
-    - name: Test password protected cropping
-      run: ./build/install/Briss-2.0/bin/Briss-2.0 -s examples/example-protected.pdf -p secret
     - name: Run automated tests
       run: ./gradlew test
