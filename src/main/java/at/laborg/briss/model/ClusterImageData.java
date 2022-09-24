@@ -10,10 +10,7 @@ import java.awt.image.WritableRaster;
 public class ClusterImageData {
 
     private static final int MAX_PAGE_HEIGHT = 900;
-    private static final int MAX_IMAGE_RENDER_SIZE = 2000 * 2000;
     public static final double IDENTICAL_PIXELS_THRESHOLD = 0.8;
-
-    private final boolean renderable;
     private BufferedImage outputImage = null;
     private int outputImageHeight = -1;
     private int outputImageWidth = -1;
@@ -21,18 +18,11 @@ public class ClusterImageData {
     private int imageCnt = 0;
     private final int totalImages;
 
-    public ClusterImageData(final int pageWidth, final int pageHeight, final int nrOfImages) {
-        this.renderable = pageWidth * pageHeight < MAX_IMAGE_RENDER_SIZE;
+    public ClusterImageData(final int nrOfImages) {
         totalImages = nrOfImages;
     }
 
-    public final boolean isRenderable() {
-        return renderable;
-    }
-
     public final void addImageToPreview(final BufferedImage imageToAdd) {
-        if (!renderable)
-            return;
         if (outputImageHeight == -1) {
             initializeOutputImage(imageToAdd);
         }
@@ -40,7 +30,7 @@ public class ClusterImageData {
     }
 
     private void initializeOutputImage(final BufferedImage imageToAdd) {
-        outputImageHeight = imageToAdd.getHeight() > MAX_PAGE_HEIGHT ? MAX_PAGE_HEIGHT : imageToAdd.getHeight();
+        outputImageHeight = Math.min(imageToAdd.getHeight(), MAX_PAGE_HEIGHT);
         float scaleFactor = (float) outputImageHeight / imageToAdd.getHeight();
         outputImageWidth = (int) (imageToAdd.getWidth() * scaleFactor);
         inputImages = new BufferedImage[totalImages];
@@ -52,9 +42,6 @@ public class ClusterImageData {
     }
 
     public final BufferedImage getPreviewImage() {
-
-        if (!renderable)
-            return getUnrenderableImage();
         if (outputImage == null) {
             outputImage = renderOutputImage();
             inputImages = null;
@@ -98,29 +85,6 @@ public class ClusterImageData {
         g.dispose();
 
         return bdest;
-    }
-
-    private static BufferedImage getUnrenderableImage() {
-        int width = 200;
-        int height = 200;
-
-        // Create buffered image that does not support transparency
-        BufferedImage bimage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-
-        Graphics2D g2d = bimage.createGraphics();
-
-        // Draw on the image
-        g2d.setColor(Color.WHITE);
-        g2d.drawRect(5, 5, 190, 190);
-
-        Font font = new Font("Sansserif", Font.BOLD | Font.PLAIN, 22);
-        g2d.setFont(font);
-
-        g2d.setColor(Color.WHITE);
-        g2d.drawString("Image to Big!", 10, 110);
-
-        g2d.dispose();
-        return bimage;
     }
 
     private int[][] calculateOverlayOfImages(final BufferedImage[] images, final int imageCnt) {
