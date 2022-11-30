@@ -48,7 +48,7 @@ public class SingleCluster implements Comparable<SingleCluster> {
 
 	public ClusterImageData getImageData() {
 		if (imageData == null)
-			imageData = new ClusterImageData(pageWidth, pageHeight, pagesToMerge.size());
+			imageData = new ClusterImageData(pagesToMerge.size());
 		return imageData;
 	}
 

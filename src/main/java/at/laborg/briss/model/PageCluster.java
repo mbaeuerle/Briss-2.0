@@ -52,7 +52,7 @@ public class PageCluster implements Comparable<PageCluster> {
 
 	public final ClusterImageData getImageData() {
 		if (imageData == null) {
-			imageData = new ClusterImageData(pageWidth, pageHeight, pagesToMerge.size());
+			imageData = new ClusterImageData(pagesToMerge.size());
 		}
 		return imageData;
 	}

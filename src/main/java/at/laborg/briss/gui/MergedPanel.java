@@ -97,11 +97,9 @@ public class MergedPanel extends JPanel {
 		cluster.addRatios(autoRatios);
 		setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
 		setSize(new Dimension(img.getWidth(), img.getHeight()));
-		if (cluster.getImageData().isRenderable()) {
-			MergedPanelMouseAdapter mouseAdapter = new MergedPanelMouseAdapter();
-			addMouseMotionListener(mouseAdapter);
-			addMouseListener(mouseAdapter);
-		}
+		MergedPanelMouseAdapter mouseAdapter = new MergedPanelMouseAdapter();
+		addMouseMotionListener(mouseAdapter);
+		addMouseListener(mouseAdapter);
 		addRatiosAsCrops(cluster.getRatiosList());
 		setToolTipText(createInfoString(cluster));
 		addKeyListener(new MergedPanelKeyAdapter());
