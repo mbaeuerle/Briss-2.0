@@ -92,15 +92,10 @@ public class ClusterManager {
 
 			for (SingleCluster cluster : clusterJob.getClusterCollection().getAsList()) {
 				for (Integer pageNumber : cluster.getPagesToMerge()) {
-					// TODO jpedal isn't able to render big images
-					// correctly, so let's check if the image is big an
-					// throw it away
 					try {
-						if (cluster.getImageData().isRenderable()) {
-							BufferedImage renderedPage = pdfDecoder.getPageAsImage(pageNumber);
-							cluster.getImageData().addImageToPreview(renderedPage);
-							workerUnitCounter++;
-						}
+						BufferedImage renderedPage = pdfDecoder.getPageAsImage(pageNumber);
+						cluster.getImageData().addImageToPreview(renderedPage);
+						workerUnitCounter++;
 					} catch (PdfException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
