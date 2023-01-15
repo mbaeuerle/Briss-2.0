@@ -33,6 +33,7 @@ import at.laborg.briss.utils.ClusterRenderWorker;
 import at.laborg.briss.utils.DesktopHelper;
 import at.laborg.briss.utils.DocumentCropper;
 import at.laborg.briss.utils.FileDrop;
+import at.laborg.briss.utils.PageNumberParser;
 import at.laborg.briss.utils.PDFReaderUtil;
 import com.itextpdf.text.DocumentException;
 import java.awt.BorderLayout;
@@ -55,6 +56,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Platform;
@@ -433,7 +435,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		progressBar.setVisible(true);
 		progressBar.setString(Messages.getString("BrissGUI.loadingNewFile")); // $NON-NLS-1$
 
-		ClusterPagesTask clusterTask = new ClusterPagesTask(loadFile, password, null);
+		ClusterPagesTask clusterTask = new ClusterPagesTask(loadFile, password, getExcludedPages());
 
 		clusterTask.addPropertyChangeListener(event -> {
 			if (PROGRESS.equals(event.getPropertyName())) { // $NON-NLS-1$
@@ -469,6 +471,32 @@ public class BrissSwingGUI implements BrissGUIApp {
 			return new String(password);
 		}
 
+		return null;
+	}
+
+	private static PageExcludes getExcludedPages() {
+		boolean inputIsValid = false;
+		String previousInput = "";
+
+		// repeat show_dialog until valid input or canceled
+		while (!inputIsValid) {
+			String input = JOptionPane.showInputDialog(
+				Messages.getString("BrissGUI.excludedPagesInfo"), previousInput);
+			previousInput = input;
+
+			if (input == null || input.equals(""))
+				return null;
+
+			try {
+				PageExcludes pageExcludes = new PageExcludes(
+						PageNumberParser.parsePageNumber(input));
+				return pageExcludes;
+			} catch (ParseException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage(),
+						"Input Error", JOptionPane.ERROR_MESSAGE);
+			}
+
+		}
 		return null;
 	}
 
