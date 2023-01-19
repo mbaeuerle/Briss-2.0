@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Added
+* [Issue-40](https://github.com/mbaeuerle/Briss-2.0/issues/40) Add file dialog for excluded pages again
+
+## [2.0.-alpha 4]
+
+### Added
 
 * [Issue-34](https://github.com/mbaeuerle/Briss-2.0/issues/34) Support for password-protected PDFs
 * Crop rectangle is colored red if it will be removed after releasing mouse
