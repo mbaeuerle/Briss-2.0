@@ -13,6 +13,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         java-version: [11.0, 19.0]
     runs-on: ubuntu-latest
