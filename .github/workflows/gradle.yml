@@ -12,13 +12,17 @@ on:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        java-version: [1.11, 1.19]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 1.11
+    - name: Set up JDK ${{ matrix.java-version }}
       uses: actions/setup-java@v1
       with:
-        java-version: 1.11
+        java-version: ${{ matrix.java-version }}
+        distribution: 'temurin'
     - name: Cache Gradle packages
       uses: actions/cache@v1
       with:

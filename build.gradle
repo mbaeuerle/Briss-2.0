@@ -8,7 +8,7 @@ plugins {
 
 mainClassName = 'at.laborg.briss.Briss'
 applicationDefaultJvmArgs = ["-Xms128m", "-Xmx1024m"]
-def javaFxVersion = '11'
+def javaFxVersion = '19'
 
 repositories {
     maven { url "https://clojars.org/repo" } // For jpedal
