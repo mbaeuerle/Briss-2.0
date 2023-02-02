@@ -39,6 +39,11 @@ dependencies {
     testImplementation('org.junit.jupiter:junit-jupiter')
 }
 
+java {
+    sourceCompatibility = "1.11"
+    targetCompatibility = "1.11"
+}
+
 javafx {
     version = javaFxVersion
     modules = [ 'javafx.controls', 'javafx.base', 'javafx.swing' ]
