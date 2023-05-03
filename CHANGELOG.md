@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 * [Issue-40](https://github.com/mbaeuerle/Briss-2.0/issues/40) Add file dialog for excluded pages again
 
+### Changed
+* JavaFX dependency removed and replaced by AWT FileDialog to clean up dependencies and increase Java version compatibility
+* Release is now distributed as a single jar file containing all dependencies
+
 ## [2.0.-alpha 4]
 
 ### Added

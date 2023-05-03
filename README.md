@@ -8,17 +8,18 @@ It helps the user to decide what should be cropped by creating an overlay of sim
 
 Version 2.0 is intended to be a GUI Update for the Briss PDF cropping tool.
 It is based on Briss 0.9 which is located at sourceforge: http://sourceforge.net/projects/briss/
+Note that version 2.0 in this repository is developed independently of the original author of 0.9.
 
 Briss is running on Windows, MacOS and Linux and works with Java 8 and above.
 
 ## Installation
 
-Currently Briss 2.0 is in alpha therefore some features are still missing (for example the page skip list).
+Currently Briss 2.0 is in alpha therefore some features are still missing.
 If you want to give it a try you can download the pre release from https://github.com/mbaeuerle/Briss-2.0/releases.
-There is a version of Briss for Java 8 and one version for any newer version of Java.
+Starting with v2.0-alpha-5 the whole application including the dependencies is bundled in one Java jar file.
 
 ## Usage
-You can run the application by executing the following command in terminal (in Windows use `Briss-2.0.bat`):
+You can run the application by double-clicking on `./lib/Briss-2.0-all.jar` or executing the following command in terminal:
 
 ```
 ./bin/Briss-2.0
@@ -73,7 +74,7 @@ Make sure you have JDK 11 or later installed.
 To build, run the following command:
 
 ```
-./gradlew distZip
+./gradlew shadowDistZip
 ```
 
 You can find the built version in `build/distributions`
