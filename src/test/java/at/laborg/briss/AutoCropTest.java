@@ -7,6 +7,8 @@ import at.laborg.briss.utils.BrissFileHandling;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.jupiter.api.Test;
 
 public class AutoCropTest {
@@ -15,7 +17,7 @@ public class AutoCropTest {
 	public void testAutocrop() throws Exception {
 		Path outputDirectory = Files.createTempDirectory(AutoCropTest.class.getCanonicalName());
 
-		Path documentPath = Path.of("src/test/resources/pdfs/CREATIVE_COMMONS.pdf");
+		Path documentPath = Paths.get("src/test/resources/pdfs/CREATIVE_COMMONS.pdf");
 
 		File recommended = BrissFileHandling.getRecommendedDestination(documentPath.toFile());
 
@@ -29,7 +31,7 @@ public class AutoCropTest {
 	public void testCrop() throws Exception {
 		Path outputDirectory = Files.createTempDirectory(AutoCropTest.class.getCanonicalName());
 
-		Path documentPath = Path.of("src/test/resources/pdfs/example.pdf");
+		Path documentPath = Paths.get("src/test/resources/pdfs/example.pdf");
 
 		String[] jobargs = new String[]{"-s", documentPath.toString(), "-d", outputDirectory.toString()};
 
@@ -40,7 +42,7 @@ public class AutoCropTest {
 	public void testCropWithPasswordProtectedFile() throws Exception {
 		Path outputDirectory = Files.createTempDirectory(AutoCropTest.class.getCanonicalName());
 
-		Path documentPath = Path.of("src/test/resources/pdfs/example-protected.pdf");
+		Path documentPath = Paths.get("src/test/resources/pdfs/example-protected.pdf");
 
 		String[] jobargs = new String[]{"-s", documentPath.toString(), "-p", "secret", "-d",
 				outputDirectory.toString()};

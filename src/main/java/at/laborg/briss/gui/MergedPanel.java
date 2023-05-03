@@ -510,12 +510,12 @@ public class MergedPanel extends JPanel {
 		public void keyPressed(KeyEvent e) {
 			switch (e.getKeyCode()) {
 				case KeyEvent.VK_C :
-					if (e.getModifiersEx() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()) {
+					if (e.getModifiersEx() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) {
 						copyToClipBoard();
 					}
 					break;
 				case KeyEvent.VK_V :
-					if (e.getModifiersEx() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()) {
+					if (e.getModifiersEx() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) {
 						pasteFromClipBoard();
 					}
 					break;
