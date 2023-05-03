@@ -43,7 +43,6 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiPredicate;
-import javafx.util.Pair;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -71,19 +70,40 @@ public class MergedPanel extends JPanel {
 		NOTHING, DRAWING_NEW_CROP, RESIZING_HOTCORNER_UL, RESIZING_HOTCORNER_LR, MOVE_CROP, RESIZING_HOTCORNER_UR, RESIZING_HOTCORNER_LL, RESIZING_RIGHT_EDGE, RESIZING_LEFT_EDGE, RESIZING_UPPER_EDGE, RESIZING_LOWER_EDGE
 	}
 
-	private static final List<Pair<BiPredicate<DrawableCropRect, Point>, Integer>> CURSORS_FROM_CROP_AND_POINT = new ArrayList<>(
-			9);
+	static private class CornerCursor {
+		BiPredicate<DrawableCropRect, Point> contains;
+		int cursor;
+
+		public CornerCursor(BiPredicate<DrawableCropRect, Point> contains, int cursor) {
+			this.contains = contains;
+			this.cursor = cursor;
+		}
+
+		public int getCursor() {
+			return cursor;
+		}
+
+		public boolean contains(DrawableCropRect rect, Point p) {
+			return contains.test(rect, p);
+		}
+	}
+
+	private static final List<CornerCursor> CURSORS_FROM_CROP_AND_POINT = new ArrayList<>(9);
 
 	static {
-		CURSORS_FROM_CROP_AND_POINT.add(new Pair<>(DrawableCropRect::containsInHotCornerLL, Cursor.SW_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new Pair<>(DrawableCropRect::containsInHotCornerLR, Cursor.SE_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new Pair<>(DrawableCropRect::containsInHotCornerUL, Cursor.NW_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new Pair<>(DrawableCropRect::containsInHotCornerUR, Cursor.NE_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new Pair<>(DrawableCropRect::isOverLeftEdge, Cursor.W_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new Pair<>(DrawableCropRect::isOverRightEdge, Cursor.E_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new Pair<>(DrawableCropRect::isOverUpperEdge, Cursor.N_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new Pair<>(DrawableCropRect::isOverLowerEdge, Cursor.S_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new Pair<>(DrawableCropRect::contains, Cursor.HAND_CURSOR));
+		CURSORS_FROM_CROP_AND_POINT
+				.add(new CornerCursor(DrawableCropRect::containsInHotCornerLL, Cursor.SW_RESIZE_CURSOR));
+		CURSORS_FROM_CROP_AND_POINT
+				.add(new CornerCursor(DrawableCropRect::containsInHotCornerLR, Cursor.SE_RESIZE_CURSOR));
+		CURSORS_FROM_CROP_AND_POINT
+				.add(new CornerCursor(DrawableCropRect::containsInHotCornerUL, Cursor.NW_RESIZE_CURSOR));
+		CURSORS_FROM_CROP_AND_POINT
+				.add(new CornerCursor(DrawableCropRect::containsInHotCornerUR, Cursor.NE_RESIZE_CURSOR));
+		CURSORS_FROM_CROP_AND_POINT.add(new CornerCursor(DrawableCropRect::isOverLeftEdge, Cursor.W_RESIZE_CURSOR));
+		CURSORS_FROM_CROP_AND_POINT.add(new CornerCursor(DrawableCropRect::isOverRightEdge, Cursor.E_RESIZE_CURSOR));
+		CURSORS_FROM_CROP_AND_POINT.add(new CornerCursor(DrawableCropRect::isOverUpperEdge, Cursor.N_RESIZE_CURSOR));
+		CURSORS_FROM_CROP_AND_POINT.add(new CornerCursor(DrawableCropRect::isOverLowerEdge, Cursor.S_RESIZE_CURSOR));
+		CURSORS_FROM_CROP_AND_POINT.add(new CornerCursor(DrawableCropRect::contains, Cursor.HAND_CURSOR));
 	}
 
 	private final BrissGUIApp briss;
@@ -550,9 +570,9 @@ public class MergedPanel extends JPanel {
 			Point p = e.getPoint();
 
 			for (DrawableCropRect crop : reverseCrops()) {
-				for (Pair<BiPredicate<DrawableCropRect, Point>, Integer> entry : CURSORS_FROM_CROP_AND_POINT) {
-					if (entry.getKey().test(crop, p)) {
-						setCursor(Cursor.getPredefinedCursor(entry.getValue()));
+				for (CornerCursor entry : CURSORS_FROM_CROP_AND_POINT) {
+					if (entry.contains(crop, p)) {
+						setCursor(Cursor.getPredefinedCursor(entry.getCursor()));
 						return;
 					}
 				}
