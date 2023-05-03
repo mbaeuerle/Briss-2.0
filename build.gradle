@@ -1,5 +1,4 @@
 plugins {
-    id 'org.openjfx.javafxplugin' version '0.0.13'
     id 'java'
     id 'application'
     id 'eclipse'
@@ -8,7 +7,6 @@ plugins {
 
 mainClassName = 'at.laborg.briss.Briss'
 applicationDefaultJvmArgs = ["-Xms128m", "-Xmx1024m"]
-def javaFxVersion = '11'
 
 repositories {
     maven { url "https://clojars.org/repo" } // For jpedal
@@ -22,26 +20,19 @@ dependencies {
     implementation 'org.bouncycastle:bcprov-jdk15on:1.49'
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.49'
 
-    runtimeOnly "org.openjfx:javafx-controls:$javaFxVersion:win"
-    runtimeOnly "org.openjfx:javafx-controls:$javaFxVersion:linux"
-    runtimeOnly "org.openjfx:javafx-controls:$javaFxVersion:mac"
-    runtimeOnly "org.openjfx:javafx-base:$javaFxVersion:win"
-    runtimeOnly "org.openjfx:javafx-base:$javaFxVersion:linux"
-    runtimeOnly "org.openjfx:javafx-base:$javaFxVersion:mac"
-    runtimeOnly "org.openjfx:javafx-swing:$javaFxVersion:win"
-    runtimeOnly "org.openjfx:javafx-swing:$javaFxVersion:linux"
-    runtimeOnly "org.openjfx:javafx-swing:$javaFxVersion:mac"
-    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:win"
-    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:linux"
-    runtimeOnly "org.openjfx:javafx-graphics:$javafx.version:mac"
-
     testImplementation(platform('org.junit:junit-bom:5.9.1'))
     testImplementation('org.junit.jupiter:junit-jupiter')
 }
 
-javafx {
-    version = javaFxVersion
-    modules = [ 'javafx.controls', 'javafx.base', 'javafx.swing' ]
+java {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
 }
 
 test {

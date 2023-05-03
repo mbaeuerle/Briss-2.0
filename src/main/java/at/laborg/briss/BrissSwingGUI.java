@@ -44,6 +44,7 @@ import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
@@ -59,9 +60,6 @@ import java.net.URI;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.application.Platform;
-import javafx.embed.swing.JFXPanel;
-import javafx.stage.FileChooser;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -125,10 +123,12 @@ public class BrissSwingGUI implements BrissGUIApp {
 	private JProgressBar progressBar;
 	private List<MergedPanel> mergedPanels = new ArrayList<>();
 
-	private File lastOpenDir;
+	private File lastOpenDir = new File(System.getProperty("user.home"));
 
 	private WorkingSet workingSet;
-	private final FileChooser fileChooser;
+
+	// Use AWT FileDialog for native file chooser
+	private final FileDialog fileChooser;
 	private DragAndDropPanel dndPanel;
 	private JScrollPane scrollPane;
 	private CardLayout cardLayout;
@@ -141,15 +141,13 @@ public class BrissSwingGUI implements BrissGUIApp {
 		init();
 		tryToLoadFileFromArgument(args);
 
-		new JFXPanel(); // used for initializing javafx thread
-		fileChooser = new FileChooser();
+		fileChooser = new FileDialog(mainWindow, "Open", FileDialog.LOAD);
 		initFileChooser();
 	}
 
 	private void initFileChooser() {
-		fileChooser.setInitialDirectory(lastOpenDir);
-		FileChooser.ExtensionFilter pdfFilter = new FileChooser.ExtensionFilter("PDF files (*.pdf)", "*.pdf");
-		fileChooser.getExtensionFilters().add(pdfFilter);
+		fileChooser.setDirectory(lastOpenDir.getAbsolutePath());
+		fileChooser.setFilenameFilter(((dir, name) -> name.endsWith(".pdf")));
 	}
 
 	private void tryToLoadFileFromArgument(String[] args) {
@@ -326,28 +324,29 @@ public class BrissSwingGUI implements BrissGUIApp {
 	}
 
 	private void showSaveFileDialog() {
-		Platform.runLater(() -> {
-			// Open JavaFX file chooser in FX-thread which is not as ugly as the swing one
-			initFileChooser();
-			fileChooser.setTitle("Save cropped PDF File");
-			fileChooser.setInitialFileName(BrissFileHandling.getRecommendedFileName(workingSet.getSourceFile()));
-			File file = fileChooser.showSaveDialog(null);
-			if (file != null) {
-				SwingUtilities.invokeLater(() -> savePDF(file));
-			}
-		});
+		initFileChooser();
+		fileChooser.setTitle("Save cropped PDF File");
+		fileChooser.setMode(FileDialog.SAVE);
+		fileChooser.setFile(BrissFileHandling.getRecommendedFileName(workingSet.getSourceFile()));
+		fileChooser.setVisible(true);
+		String filename = fileChooser.getFile();
+		String directory = fileChooser.getDirectory();
+		if (filename != null && directory != null) {
+			SwingUtilities.invokeLater(() -> savePDF(new File(directory + filename)));
+		}
 	}
 
 	private void showOpenFileDialog() {
-		Platform.runLater(() -> {
-			initFileChooser();
-			// Open JavaFX file chooser in FX-thread which is not as ugly as the swing one
-			fileChooser.setTitle("Open PDF File");
-			File file = fileChooser.showOpenDialog(null);
-			if (file != null) {
-				SwingUtilities.invokeLater(() -> loadPDF(file));
-			}
-		});
+		initFileChooser();
+		fileChooser.setTitle("Open PDF File");
+		fileChooser.setMode(FileDialog.LOAD);
+        fileChooser.setFile("*.pdf");
+		fileChooser.setVisible(true);
+		String filename = fileChooser.getFile();
+		String directory = fileChooser.getDirectory();
+		if (filename != null && directory != null) {
+			SwingUtilities.invokeLater(() -> loadPDF(new File(directory + filename)));
+		}
 	}
 
 	private void loadPDF(File file) {
@@ -480,20 +479,17 @@ public class BrissSwingGUI implements BrissGUIApp {
 
 		// repeat show_dialog until valid input or canceled
 		while (!inputIsValid) {
-			String input = JOptionPane.showInputDialog(
-				Messages.getString("BrissGUI.excludedPagesInfo"), previousInput);
+			String input = JOptionPane.showInputDialog(Messages.getString("BrissGUI.excludedPagesInfo"), previousInput);
 			previousInput = input;
 
 			if (input == null || input.equals(""))
 				return null;
 
 			try {
-				PageExcludes pageExcludes = new PageExcludes(
-						PageNumberParser.parsePageNumber(input));
+				PageExcludes pageExcludes = new PageExcludes(PageNumberParser.parsePageNumber(input));
 				return pageExcludes;
 			} catch (ParseException e) {
-				JOptionPane.showMessageDialog(null, e.getMessage(),
-						"Input Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
 			}
 
 		}
