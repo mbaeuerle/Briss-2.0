@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [2.0-alpha 5]
 
 ### Added
 * [Issue-40](https://github.com/mbaeuerle/Briss-2.0/issues/40) Add file dialog for excluded pages again
@@ -31,7 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * JavaFX dependency removed and replaced by AWT FileDialog to clean up dependencies and increase Java version compatibility
 * Release is now distributed as a single jar file containing all dependencies
 
-## [2.0.-alpha 4]
+## [2.0-alpha 4]
 
 ### Added
 
