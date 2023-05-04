@@ -30,5 +30,12 @@ jobs:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
+    - name: Create bundle
+      run: ./gradlew shadowDistZip
     - name: Run automated tests
       run: ./gradlew test
+    - name: Archive package
+      uses: actions/upload-artifact@v3
+      with:
+        name: Briss-2.0-${{ matrix.java-version }}
+        path: build/distributions/*.zip
