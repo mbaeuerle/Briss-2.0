@@ -340,7 +340,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		initFileChooser();
 		fileChooser.setTitle("Open PDF File");
 		fileChooser.setMode(FileDialog.LOAD);
-        fileChooser.setFile("*.pdf");
+		fileChooser.setFile("*.pdf");
 		fileChooser.setVisible(true);
 		String filename = fileChooser.getFile();
 		String directory = fileChooser.getDirectory();
