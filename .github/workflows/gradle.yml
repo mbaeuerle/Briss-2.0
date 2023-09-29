@@ -30,6 +30,8 @@ jobs:
         path: ~/.gradle/caches
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
         restore-keys: ${{ runner.os }}-gradle
+    - name: Verify formatting
+      run: ./gradlew spotlessCheck
     - name: Create bundle
       run: ./gradlew shadowDistZip
     - name: Run automated tests
