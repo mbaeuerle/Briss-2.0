@@ -311,6 +311,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		} catch (UnsupportedLookAndFeelException ex) {
 			System.out.println(Messages.getString("BrissGUI.lookAndFeelError")); // $NON-NLS-1$
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			System.out.println("Exception Occurred !! " + e.getMessage());
 		}
 	}
 
@@ -398,8 +399,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		File tmpCropFileDestination = File.createTempFile("briss", ".pdf"); // $NON-NLS-1$ //$NON-NLS-2$
 		CropDefinition cropDefinition = CropDefinition.createCropDefinition(workingSet.getSourceFile(),
 				tmpCropFileDestination, workingSet.getClusterDefinition());
-		File result = DocumentCropper.crop(cropDefinition, workingSet.getSourceFilePassword());
-		return result;
+		return DocumentCropper.crop(cropDefinition, workingSet.getSourceFilePassword());
 	}
 
 	private void setIdleState() {
@@ -486,8 +486,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 				return null;
 
 			try {
-				PageExcludes pageExcludes = new PageExcludes(PageNumberParser.parsePageNumber(input));
-				return pageExcludes;
+				return new PageExcludes(PageNumberParser.parsePageNumber(input));
 			} catch (ParseException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
 			}
@@ -753,6 +752,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
+					System.out.println("Exception Occurred !! " + e.getMessage());
 				}
 			}
 

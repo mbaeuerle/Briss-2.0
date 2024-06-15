@@ -48,10 +48,6 @@ public class ClusterJob {
 	}
 
 	public int getTotalWorkUnits() {
-		int size = 0;
-		for (SingleCluster cluster : clusterCollection.getAsList()) {
-			size += cluster.getPagesToMerge().size();
-		}
-		return size;
+		return clusterCollection.getAsList().stream().mapToInt(e -> e.getPagesToMerge().size()).sum();
 	}
 }

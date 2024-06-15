@@ -67,6 +67,7 @@ public final class BrissCMD {
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
+				System.out.println("Thread was interrupted!!");
 			}
 		}
 		System.out.println("finished!");

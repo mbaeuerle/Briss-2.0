@@ -77,7 +77,7 @@ public class ClusterImageData {
 
 	private static BufferedImage scaleImage(final BufferedImage bsrc, final int width, final int height) {
 
-		BufferedImage bdest = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+		var bdest = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
 		Graphics2D g = bdest.createGraphics();
 		AffineTransform at = AffineTransform.getScaleInstance((double) bdest.getWidth() / bsrc.getWidth(),
 				(double) bdest.getHeight() / bsrc.getHeight());

@@ -25,10 +25,6 @@ public class WorkingSet {
 	private ClusterDefinition clusters;
 	private PageExcludes pageExcludes;
 
-	@SuppressWarnings("unused")
-	private WorkingSet() {
-	}
-
 	public WorkingSet(final File sourceFile, String password) {
 		this.sourceFile = sourceFile;
 		this.sourceFilePassword = password;

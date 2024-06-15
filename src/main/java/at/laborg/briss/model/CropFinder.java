@@ -5,9 +5,6 @@ import java.awt.image.WritableRaster;
 
 public final class CropFinder {
 
-	private CropFinder() {
-	}
-
 	public static float[] getAutoCropFloats(final BufferedImage image) {
 
 		WritableRaster raster = image.getRaster();
