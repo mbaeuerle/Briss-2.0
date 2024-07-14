@@ -102,7 +102,7 @@ public final class BrissCMD {
 					workDescription.getDestFile(), clusterDefinition);
 			System.out.println("Starting to crop files.");
 			DocumentCropper.crop(cropDefintion, password);
-			System.out.println("Cropping succesful. Cropped to:" + workDescription.getDestFile().getAbsolutePath());
+			System.out.println("Cropping successful. Cropped to: " + workDescription.getDestFile().getAbsolutePath());
 		} catch (IOException | DocumentException | IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (CropException e) {
