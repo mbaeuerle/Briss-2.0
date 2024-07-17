@@ -37,7 +37,7 @@ public class HelpDialog extends JDialog {
 		String helpText = "";
 
 		InputStream is = getClass().getResourceAsStream(HELP_FILE_PATH);
-		byte[] buf = new byte[1024 * 100];
+		var buf = new byte[1024 * 100];
 		try {
 			int cnt = is.read(buf);
 			helpText = new String(buf, 0, cnt);
@@ -45,11 +45,11 @@ public class HelpDialog extends JDialog {
 			helpText = "Couldn't read the help file... Please contact gerhard.aigner@gmail.com";
 		}
 
-		JEditorPane jEditorPane = new JEditorPane("text/html", helpText);
+		var jEditorPane = new JEditorPane("text/html", helpText);
 		jEditorPane.setEditable(false);
 		jEditorPane.setVisible(true);
 
-		JScrollPane scroller = new JScrollPane(jEditorPane);
+		var scroller = new JScrollPane(jEditorPane);
 		getContentPane().add(scroller);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);

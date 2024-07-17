@@ -3,19 +3,13 @@ package at.laborg.briss.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class ClipBoard {
+public enum ClipBoard {
 
-	private static ClipBoard instance;
-	private final List<DrawableCropRect> cropRectsClipBoard = new ArrayList<DrawableCropRect>();
-
-	private ClipBoard() {
-	}
+	INSTANCE;
+	private final List<DrawableCropRect> cropRectsClipBoard = new ArrayList<>();
 
 	public static ClipBoard getInstance() {
-		if (instance == null) {
-			instance = new ClipBoard();
-		}
-		return instance;
+		return INSTANCE;
 	}
 
 	public void clear() {
