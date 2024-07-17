@@ -33,6 +33,7 @@ import at.laborg.briss.utils.ClusterRenderWorker;
 import at.laborg.briss.utils.DesktopHelper;
 import at.laborg.briss.utils.DocumentCropper;
 import at.laborg.briss.utils.FileDrop;
+import at.laborg.briss.utils.OSDetector;
 import at.laborg.briss.utils.PageNumberParser;
 import at.laborg.briss.utils.PDFReaderUtil;
 import com.itextpdf.text.DocumentException;
@@ -138,11 +139,36 @@ public class BrissSwingGUI implements BrissGUIApp {
 
 	public BrissSwingGUI(String[] args) {
 		mainWindow = new JFrame(Messages.getString("BrissGUI.windowTitle")); // $NON-NLS-1$
-		init();
+
+		final FileAppStateStorage appStateStorage = getAppStateStorage();
+
+		AppState restoredAppState = null;
+
+		try {
+			restoredAppState = appStateStorage.restore();
+		} catch (IOException e) {
+			// TODO log warn
+			e.printStackTrace();
+		}
+
+		init(restoredAppState);
+
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				appStateStorage.save(getAppState());
+			} catch (IOException e) {
+				throw new Error("Error while saving application state", e);
+			}
+		}));
+
 		tryToLoadFileFromArgument(args);
 
 		fileChooser = new FileDialog(mainWindow, "Open", FileDialog.LOAD);
 		initFileChooser();
+	}
+
+	private AppState getAppState() {
+		return new AppState(mainWindow.getBounds(), lastOpenDir);
 	}
 
 	private void initFileChooser() {
@@ -164,7 +190,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		}
 	}
 
-	private void init() {
+	private void init(AppState appState) {
 		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		mainWindow.setTransferHandler(new BrissTransferHandler(this));
@@ -241,6 +267,17 @@ public class BrissSwingGUI implements BrissGUIApp {
 		mainWindow.addMouseListener(mousePressedAdapter);
 
 		setWindowBounds();
+
+		if (appState != null) {
+			final File latestOpenedDirectory = appState.getLatestOpenedDirectory();
+
+			if (latestOpenedDirectory != null) {
+				lastOpenDir = latestOpenedDirectory;
+			}
+
+			mainWindow.setBounds(appState.getWindowRectangle());
+		}
+
 		mainWindow.pack();
 		mainWindow.setVisible(true);
 	}
@@ -758,5 +795,15 @@ public class BrissSwingGUI implements BrissGUIApp {
 
 			return null;
 		}
+	}
+
+	private static FileAppStateStorage getAppStateStorage() {
+		File appStateDestinationFile = new File(System.getProperty("user.home"), ".briss");
+
+		if (OSDetector.isWindows()) {
+			appStateDestinationFile = new File(System.getenv("LOCALAPPDATA"), ".briss");
+		}
+
+		return new FileAppStateStorage(appStateDestinationFile);
 	}
 }
