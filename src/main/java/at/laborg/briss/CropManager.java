@@ -23,15 +23,8 @@ import at.laborg.briss.model.SingleCluster;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfImportedPage;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfNumber;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfSmartCopy;
-import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.SimpleBookmark;
+import com.itextpdf.text.pdf.*;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -119,7 +112,7 @@ public class CropManager {
 
 				pageDict = reader.getPageN(newPageNumber);
 
-				List<Rectangle> boxes = new ArrayList<Rectangle>();
+				List<Rectangle> boxes = new ArrayList<>();
 				boxes.add(reader.getBoxSize(newPageNumber, "media"));
 				boxes.add(reader.getBoxSize(newPageNumber, "crop"));
 				int rotation = reader.getPageRotation(newPageNumber);
@@ -191,9 +184,7 @@ public class CropManager {
 	 */
 	private static float[] rotateRatios(float[] ratios, int rotation) {
 		float[] tmpRatios = new float[4];
-		for (int i = 0; i < 4; i++) {
-			tmpRatios[i] = ratios[i];
-		}
+		System.arraycopy(ratios, 0, tmpRatios, 0, 4);
 		while (rotation > 0 && rotation < 360) {
 			float tmpValue = tmpRatios[0];
 			// left

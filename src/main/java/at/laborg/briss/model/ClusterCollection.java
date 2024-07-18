@@ -17,10 +17,7 @@
  */
 package at.laborg.briss.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ClusterCollection {
 	private HashMap<Integer, SingleCluster> pageToClustersMapping;
@@ -29,8 +26,8 @@ public class ClusterCollection {
 
 	public ClusterCollection() {
 		this.dirty = true;
-		this.pageToClustersMapping = new HashMap<Integer, SingleCluster>();
-		this.clusterToPagesMapping = new HashMap<SingleCluster, List<Integer>>();
+		this.pageToClustersMapping = new HashMap<>();
+		this.clusterToPagesMapping = new HashMap<>();
 	}
 
 	private <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
@@ -49,10 +46,10 @@ public class ClusterCollection {
 
 	public SingleCluster getSingleCluster(int pageNumber) {
 		if (dirty) {
-			for (SingleCluster cluster : getClusterToPagesMapping().keySet()) {
-				for (Integer page : getClusterToPagesMapping().get(cluster)) {
-					pageToClustersMapping.put(page - 1, cluster);
-				}
+			for (Map.Entry<SingleCluster, List<Integer>> singleClusterListEntry : getClusterToPagesMapping()
+					.entrySet()) {
+				singleClusterListEntry.getValue()
+						.forEach(e -> pageToClustersMapping.put(e - 1, singleClusterListEntry.getKey()));
 			}
 			dirty = false;
 		}
@@ -60,19 +57,11 @@ public class ClusterCollection {
 	}
 
 	public void addPageToCluster(SingleCluster tmpCluster, int pageNumber) {
-		if (getClusterToPagesMapping().containsKey(tmpCluster)) {
-			// cluster exists
-			List<Integer> pageNumbers = getClusterToPagesMapping().get(tmpCluster);
-			pageNumbers.add(pageNumber);
-
-		} else {
-			// new Cluster
-			List<Integer> pageNumbers = new ArrayList<Integer>();
-			pageNumbers.add(pageNumber);
-			getClusterToPagesMapping().put(tmpCluster, pageNumbers);
-		}
+		List<Integer> pages = Optional.ofNullable(getClusterToPagesMapping().get(tmpCluster))
+				.orElseGet(() -> getClusterToPagesMapping().put(tmpCluster, new ArrayList<>()));
+		pages.add(pageNumber);
 		// whenever a page was added the pagesToClustersMapping isn't useful
-		// anymore. This musst be handled when reading the pages
+		// anymore. This must be handled when reading the pages
 		dirty = true;
 	}
 }

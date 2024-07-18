@@ -21,32 +21,14 @@ import at.laborg.briss.BrissGUIApp;
 import at.laborg.briss.model.CropFinder;
 import at.laborg.briss.model.PageCluster;
 import at.laborg.briss.model.SplitFinder;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.*;
 import java.util.function.BiPredicate;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
 
 public class MergedPanel extends JPanel {
 
@@ -88,22 +70,19 @@ public class MergedPanel extends JPanel {
 		}
 	}
 
-	private static final List<CornerCursor> CURSORS_FROM_CROP_AND_POINT = new ArrayList<>(9);
+	private static final List<CornerCursor> CURSORS_FROM_CROP_AND_POINT;
 
 	static {
-		CURSORS_FROM_CROP_AND_POINT
-				.add(new CornerCursor(DrawableCropRect::containsInHotCornerLL, Cursor.SW_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT
-				.add(new CornerCursor(DrawableCropRect::containsInHotCornerLR, Cursor.SE_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT
-				.add(new CornerCursor(DrawableCropRect::containsInHotCornerUL, Cursor.NW_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT
-				.add(new CornerCursor(DrawableCropRect::containsInHotCornerUR, Cursor.NE_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new CornerCursor(DrawableCropRect::isOverLeftEdge, Cursor.W_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new CornerCursor(DrawableCropRect::isOverRightEdge, Cursor.E_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new CornerCursor(DrawableCropRect::isOverUpperEdge, Cursor.N_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new CornerCursor(DrawableCropRect::isOverLowerEdge, Cursor.S_RESIZE_CURSOR));
-		CURSORS_FROM_CROP_AND_POINT.add(new CornerCursor(DrawableCropRect::contains, Cursor.HAND_CURSOR));
+		CURSORS_FROM_CROP_AND_POINT = List.of(
+				new CornerCursor(DrawableCropRect::containsInHotCornerLL, Cursor.SW_RESIZE_CURSOR),
+				new CornerCursor(DrawableCropRect::containsInHotCornerLR, Cursor.SE_RESIZE_CURSOR),
+				new CornerCursor(DrawableCropRect::containsInHotCornerUL, Cursor.NW_RESIZE_CURSOR),
+				new CornerCursor(DrawableCropRect::containsInHotCornerUR, Cursor.NE_RESIZE_CURSOR),
+				new CornerCursor(DrawableCropRect::isOverLeftEdge, Cursor.W_RESIZE_CURSOR),
+				new CornerCursor(DrawableCropRect::isOverRightEdge, Cursor.E_RESIZE_CURSOR),
+				new CornerCursor(DrawableCropRect::isOverUpperEdge, Cursor.N_RESIZE_CURSOR),
+				new CornerCursor(DrawableCropRect::isOverLowerEdge, Cursor.S_RESIZE_CURSOR),
+				new CornerCursor(DrawableCropRect::contains, Cursor.HAND_CURSOR));
 	}
 
 	private final BrissGUIApp briss;
@@ -430,20 +409,13 @@ public class MergedPanel extends JPanel {
 
 	private void copyToClipBoard() {
 		ClipBoard.getInstance().clear();
-		for (DrawableCropRect crop : crops) {
-			if (crop.isSelected()) {
-				ClipBoard.getInstance().addCrop(crop);
-			}
-		}
+		crops.stream().filter(e -> e.isSelected()).forEach(e -> ClipBoard.INSTANCE.addCrop(e));
 		updateClusterRatios(crops);
 		repaint();
 	}
 
 	private void pasteFromClipBoard() {
-		for (DrawableCropRect crop : ClipBoard.getInstance().getCrops()) {
-			DrawableCropRect newCrop = new DrawableCropRect(crop);
-			crops.add(newCrop);
-		}
+		ClipBoard.INSTANCE.getCrops().stream().map(DrawableCropRect::new).forEach(e -> crops.add(e));
 		updateClusterRatios(crops);
 		repaint();
 	}
@@ -458,13 +430,7 @@ public class MergedPanel extends JPanel {
 	}
 
 	private void deleteAllSelected() {
-		List<DrawableCropRect> removeList = new ArrayList<>();
-		for (DrawableCropRect crop : crops) {
-			if (crop.isSelected()) {
-				removeList.add(crop);
-			}
-		}
-		crops.removeAll(removeList);
+		crops.removeIf(e -> e.isSelected());
 		updateClusterRatios(crops);
 		repaint();
 	}
@@ -491,13 +457,7 @@ public class MergedPanel extends JPanel {
 
 	private void removeTooSmallCrops() {
 		// throw away all crops which are too small
-		List<DrawableCropRect> cropsToTrash = new ArrayList<>();
-		for (DrawableCropRect crop : crops) {
-			if (isCropTooSmall(crop)) {
-				cropsToTrash.add(crop);
-			}
-		}
-		crops.removeAll(cropsToTrash);
+		crops.removeIf(e -> isCropTooSmall(e));
 	}
 
 	private boolean isCropTooSmall(DrawableCropRect crop) {

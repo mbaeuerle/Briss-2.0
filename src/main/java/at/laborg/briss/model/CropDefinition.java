@@ -19,11 +19,7 @@ package at.laborg.briss.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class CropDefinition {
 
@@ -45,22 +41,20 @@ public final class CropDefinition {
 		if (!source.exists())
 			throw new IllegalArgumentException("Source(" + source.getAbsolutePath() + ") file doesn't exist");
 
-		HashMap<Integer, List<float[]>> pagesToCrops = new HashMap<Integer, List<float[]>>();
+		HashMap<Integer, List<float[]>> pagesToCrops = new HashMap<>();
 
 		for (PageCluster cluster : clusters.getClusterList()) {
 			for (Integer pageNumber : cluster.getAllPages()) {
 				List<float[]> cropRectangles = pagesToCrops.get(pageNumber);
 				if (cropRectangles == null) {
-					cropRectangles = new ArrayList<float[]>();
+					cropRectangles = new ArrayList<>();
 				}
 				cropRectangles.addAll(cluster.getRatiosList());
 				pagesToCrops.put(pageNumber, cropRectangles);
 			}
 		}
 
-		CropDefinition result = new CropDefinition(source, destination, pagesToCrops);
-
-		return result;
+		return new CropDefinition(source, destination, pagesToCrops);
 	}
 
 	public File getSourceFile() {
@@ -72,9 +66,7 @@ public final class CropDefinition {
 	}
 
 	public List<float[]> getRectanglesForPage(final Integer page) {
-		if (pageToCropRectangles.containsKey(page))
-			return pageToCropRectangles.get(page);
-		else
-			return Collections.emptyList();
+		return Optional.ofNullable(page).filter(e -> pageToCropRectangles.containsKey(e))
+				.map(e -> pageToCropRectangles.get(e)).orElseGet(Collections::emptyList);
 	}
 }

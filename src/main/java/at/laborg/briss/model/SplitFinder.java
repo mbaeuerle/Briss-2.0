@@ -1,20 +1,19 @@
 package at.laborg.briss.model;
 
 import at.laborg.briss.gui.DrawableCropRect;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class SplitFinder {
 
 	private static final double LOOK_RATIO = 0.5;
 	private static final double MAX_DIST_RATIO = 0.1;
 	private static final float ROW_OVERLAP_RATIO = 0.01f;
-
-	private SplitFinder() {
-	}
 
 	private static float getSplitRatio(final BufferedImage image, int axis) {
 		WritableRaster raster = image.getRaster();
@@ -55,11 +54,7 @@ public final class SplitFinder {
 
 		List<float[]> split = splitColumn(image, cropFloat);
 
-		ArrayList<DrawableCropRect> result = new ArrayList<>(split.size());
-		for (float[] splitFloat : split) {
-			result.add(convertToDrawableCropRect(image, splitFloat));
-		}
-		return result;
+		return split.stream().map(e -> convertToDrawableCropRect(image, e)).collect(Collectors.toList());
 	}
 
 	public static List<float[]> splitRow(final BufferedImage image, float[] crop) {
