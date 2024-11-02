@@ -35,8 +35,9 @@ import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.SimpleBookmark;
 import com.itextpdf.text.pdf.SimpleNamedDestination;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,48 +75,51 @@ public final class DocumentCropper {
 		Document document = new Document();
 
 		File resultFile = File.createTempFile("cropped", ".pdf");
-		PdfSmartCopy pdfCopy = new PdfSmartCopy(document, new FileOutputStream(resultFile));
-		document.open();
+		try (OutputStream outputStream = Files.newOutputStream(resultFile.toPath())) {
+			PdfSmartCopy pdfCopy = new PdfSmartCopy(document, outputStream);
+			document.open();
 
-		Map<Integer, List<String>> pageNrToDestinations = new HashMap<Integer, List<String>>();
-		for (String single : map.keySet()) {
-			StringTokenizer st = new StringTokenizer(map.get(single), " ");
-			if (st.hasMoreElements()) {
-				String pageNrString = (String) st.nextElement();
-				int pageNr = Integer.parseInt(pageNrString);
-				List<String> singleList = (pageNrToDestinations.get(pageNr));
-				if (singleList == null) {
-					singleList = new ArrayList<String>();
-					singleList.add(single);
-					pageNrToDestinations.put(pageNr, singleList);
-				} else {
-					singleList.add(single);
+			Map<Integer, List<String>> pageNrToDestinations = new HashMap<Integer, List<String>>();
+			for (String single : map.keySet()) {
+				StringTokenizer st = new StringTokenizer(map.get(single), " ");
+				if (st.hasMoreElements()) {
+					String pageNrString = (String) st.nextElement();
+					int pageNr = Integer.parseInt(pageNrString);
+					List<String> singleList = (pageNrToDestinations.get(pageNr));
+					if (singleList == null) {
+						singleList = new ArrayList<String>();
+						singleList.add(single);
+						pageNrToDestinations.put(pageNr, singleList);
+					} else {
+						singleList.add(single);
+					}
 				}
 			}
-		}
 
-		int outputPageNumber = 0;
-		for (int pageNumber = 1; pageNumber <= pdfMetaInformation.getSourcePageCount(); pageNumber++) {
+			int outputPageNumber = 0;
+			for (int pageNumber = 1; pageNumber <= pdfMetaInformation.getSourcePageCount(); pageNumber++) {
 
-			PdfImportedPage pdfPage = pdfCopy.getImportedPage(reader, pageNumber);
+				PdfImportedPage pdfPage = pdfCopy.getImportedPage(reader, pageNumber);
 
-			pdfCopy.addPage(pdfPage);
-			outputPageNumber++;
-			List<String> destinations = pageNrToDestinations.get(pageNumber);
-			if (destinations != null) {
-				for (String destination : destinations)
-					pdfCopy.addNamedDestination(destination, outputPageNumber, new PdfDestination(PdfDestination.FIT));
-			}
-			List<float[]> rectangles = cropDefinition.getRectanglesForPage(pageNumber);
-			for (int j = 1; j < rectangles.size(); j++) {
 				pdfCopy.addPage(pdfPage);
 				outputPageNumber++;
+				List<String> destinations = pageNrToDestinations.get(pageNumber);
+				if (destinations != null) {
+					for (String destination : destinations)
+						pdfCopy.addNamedDestination(destination, outputPageNumber,
+								new PdfDestination(PdfDestination.FIT));
+				}
+				List<float[]> rectangles = cropDefinition.getRectanglesForPage(pageNumber);
+				for (int j = 1; j < rectangles.size(); j++) {
+					pdfCopy.addPage(pdfPage);
+					outputPageNumber++;
+				}
 			}
+			document.close();
+			pdfCopy.close();
+			reader.close();
+			return resultFile;
 		}
-		document.close();
-		pdfCopy.close();
-		reader.close();
-		return resultFile;
 	}
 
 	private static void cropMultipliedFile(final CropDefinition cropDefinition, final File multipliedDocument,
@@ -123,49 +127,51 @@ public final class DocumentCropper {
 
 		PdfReader reader = PDFReaderUtil.getPdfReader(multipliedDocument.getAbsolutePath(), password);
 
-		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(cropDefinition.getDestinationFile()));
-		stamper.setMoreInfo(pdfMetaInformation.getSourceMetaInfo());
+		try (OutputStream outputStream = Files.newOutputStream(cropDefinition.getDestinationFile().toPath())) {
+			PdfStamper stamper = new PdfStamper(reader, outputStream);
+			stamper.setMoreInfo(pdfMetaInformation.getSourceMetaInfo());
 
-		PdfDictionary pageDict;
-		int newPageNumber = 1;
+			PdfDictionary pageDict;
+			int newPageNumber = 1;
 
-		for (int sourcePageNumber = 1; sourcePageNumber <= pdfMetaInformation
-				.getSourcePageCount(); sourcePageNumber++) {
+			for (int sourcePageNumber = 1; sourcePageNumber <= pdfMetaInformation
+					.getSourcePageCount(); sourcePageNumber++) {
 
-			List<float[]> rectangleList = cropDefinition.getRectanglesForPage(sourcePageNumber);
+				List<float[]> rectangleList = cropDefinition.getRectanglesForPage(sourcePageNumber);
 
-			// if no crop was selected do nothing
-			if (rectangleList.isEmpty()) {
-				newPageNumber++;
-				continue;
+				// if no crop was selected do nothing
+				if (rectangleList.isEmpty()) {
+					newPageNumber++;
+					continue;
+				}
+
+				for (float[] ratios : rectangleList) {
+					pageDict = reader.getPageN(newPageNumber);
+
+					List<Rectangle> boxes = new ArrayList<Rectangle>();
+					boxes.add(reader.getBoxSize(newPageNumber, "media"));
+					boxes.add(reader.getBoxSize(newPageNumber, "crop"));
+					int rotation = reader.getPageRotation(newPageNumber);
+
+					Rectangle scaledBox = RectangleHandler.calculateScaledRectangle(boxes, ratios, rotation);
+
+					PdfArray scaleBoxArray = createScaledBoxArray(scaledBox);
+
+					pageDict.put(PdfName.CROPBOX, scaleBoxArray);
+					pageDict.put(PdfName.MEDIABOX, scaleBoxArray);
+					// increment the pagenumber
+					newPageNumber++;
+				}
+				int[] range = new int[2];
+				range[0] = newPageNumber - 1;
+				range[1] = pdfMetaInformation.getSourcePageCount() + (newPageNumber - sourcePageNumber);
+				SimpleBookmark.shiftPageNumbers(pdfMetaInformation.getSourceBookmarks(), rectangleList.size() - 1,
+						range);
 			}
-
-			for (float[] ratios : rectangleList) {
-
-				pageDict = reader.getPageN(newPageNumber);
-
-				List<Rectangle> boxes = new ArrayList<Rectangle>();
-				boxes.add(reader.getBoxSize(newPageNumber, "media"));
-				boxes.add(reader.getBoxSize(newPageNumber, "crop"));
-				int rotation = reader.getPageRotation(newPageNumber);
-
-				Rectangle scaledBox = RectangleHandler.calculateScaledRectangle(boxes, ratios, rotation);
-
-				PdfArray scaleBoxArray = createScaledBoxArray(scaledBox);
-
-				pageDict.put(PdfName.CROPBOX, scaleBoxArray);
-				pageDict.put(PdfName.MEDIABOX, scaleBoxArray);
-				// increment the pagenumber
-				newPageNumber++;
-			}
-			int[] range = new int[2];
-			range[0] = newPageNumber - 1;
-			range[1] = pdfMetaInformation.getSourcePageCount() + (newPageNumber - sourcePageNumber);
-			SimpleBookmark.shiftPageNumbers(pdfMetaInformation.getSourceBookmarks(), rectangleList.size() - 1, range);
+			stamper.setOutlines(pdfMetaInformation.getSourceBookmarks());
+			stamper.close();
+			reader.close();
 		}
-		stamper.setOutlines(pdfMetaInformation.getSourceBookmarks());
-		stamper.close();
-		reader.close();
 	}
 
 	private static PdfArray createScaledBoxArray(final Rectangle scaledBox) {
