@@ -70,7 +70,7 @@ public class ImageFinderUtil {
 				break;
 			case ORIENTATION_BOTTOM :
 			case ORIENTATION_RIGHT :
-				for (int i = sds.length - 1; i >= 0 + LOOK_AHEAD_PIXEL_NR; i--) {
+				for (int i = sds.length - 1; i >= LOOK_AHEAD_PIXEL_NR; i--) {
 					int cnt = diffCounter(sds, i - LOOK_AHEAD_PIXEL_NR, i);
 					if (cnt > RATIO_LOOK_AHEAD_SATISFY * LOOK_AHEAD_PIXEL_NR) {
 						position = i;
