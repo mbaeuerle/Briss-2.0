@@ -98,10 +98,10 @@ public final class BrissCMD {
 					cluster.addRatios(ratio);
 				}
 			}
-			CropDefinition cropDefintion = CropDefinition.createCropDefinition(workDescription.getSourceFile(),
+			CropDefinition cropDefinition = CropDefinition.createCropDefinition(workDescription.getSourceFile(),
 					workDescription.getDestFile(), clusterDefinition);
 			System.out.println("Starting to crop files.");
-			DocumentCropper.crop(cropDefintion, password);
+			DocumentCropper.crop(cropDefinition, password);
 			System.out.println("Cropping successful. Cropped to: " + workDescription.getDestFile().getAbsolutePath());
 		} catch (IOException | DocumentException | IllegalArgumentException e) {
 			e.printStackTrace();
