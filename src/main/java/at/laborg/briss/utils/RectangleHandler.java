@@ -53,9 +53,7 @@ public final class RectangleHandler {
 	 */
 	private static float[] rotateRatios(final float[] ratios, final int rotation) {
 		float[] tmpRatios = new float[4];
-		for (int i = 0; i < 4; i++) {
-			tmpRatios[i] = ratios[i];
-		}
+		System.arraycopy(ratios, 0, tmpRatios, 0, 4);
 		int tmpRotation = rotation;
 		while (tmpRotation > 0 && tmpRotation < 360) {
 			float tmpValue = tmpRatios[0];
