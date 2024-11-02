@@ -713,7 +713,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		private final File source;
 		private final PageExcludes pageExcludes;
 		private ClusterDefinition clusterDefinition = null;
-		private String password;
+		private final String password;
 
 		public ClusterPagesTask(File source, String password, PageExcludes pageExcludes) {
 			super();
