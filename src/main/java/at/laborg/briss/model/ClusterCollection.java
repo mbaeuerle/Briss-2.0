@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ClusterCollection {
-	private HashMap<Integer, SingleCluster> pageToClustersMapping;
-	private HashMap<SingleCluster, List<Integer>> clusterToPagesMapping;
+	private final HashMap<Integer, SingleCluster> pageToClustersMapping;
+	private final HashMap<SingleCluster, List<Integer>> clusterToPagesMapping;
 	private boolean dirty;
 
 	public ClusterCollection() {
