@@ -62,13 +62,12 @@ public final class BrissCMD {
 		cRW.start();
 
 		System.out.print("Starting to render clusters.");
-		while (cRW.isAlive()) {
-			System.out.print(".");
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-			}
+
+		try {
+			cRW.join();
+		} catch (InterruptedException e) {
 		}
+
 		System.out.println("finished!");
 		System.out.println("Calculating crop rectangles.");
 		try {
