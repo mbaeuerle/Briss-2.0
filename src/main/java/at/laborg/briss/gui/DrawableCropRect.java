@@ -12,6 +12,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.Locale;
 
 public class DrawableCropRect extends Rectangle {
 
@@ -139,6 +140,15 @@ public class DrawableCropRect extends Rectangle {
 		int w = Math.round(INCH_IN_MILLIMETERS * this.width / INCH_IN_USER_UNIT);
 		int h = Math.round(INCH_IN_MILLIMETERS * this.height / INCH_IN_USER_UNIT);
 		String size = w + "x" + h;
+		// Add 1:x.xx aspect ratio
+		if (h > 0 && w > 0) {
+			float ratio = (float) w / (float) h;
+			if (ratio < 1) {
+				ratio = 1 / ratio;
+			}
+			// Locale.ROOT forces a dot as separator
+			size +=	String.format(Locale.ROOT, " 1:%.2f", ratio);
+		}
 		g2.setFont(scaleFont(size, fontMetrics));
 		g2.setColor(Color.YELLOW);
 		g2.setComposite(SMOOTH_SELECT);
