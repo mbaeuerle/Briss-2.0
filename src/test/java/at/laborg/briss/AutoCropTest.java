@@ -11,10 +11,10 @@ import java.nio.file.Paths;
 
 import org.junit.jupiter.api.Test;
 
-public class AutoCropTest {
+class AutoCropTest {
 
 	@Test
-	public void testAutocrop() throws Exception {
+	void testAutocrop() throws Exception {
 		Path outputDirectory = Files.createTempDirectory(AutoCropTest.class.getCanonicalName());
 
 		Path documentPath = Paths.get("src/test/resources/pdfs/CREATIVE_COMMONS.pdf");
@@ -28,7 +28,7 @@ public class AutoCropTest {
 	}
 
 	@Test
-	public void testCrop() throws Exception {
+	void testCrop() throws Exception {
 		Path outputDirectory = Files.createTempDirectory(AutoCropTest.class.getCanonicalName());
 
 		Path documentPath = Paths.get("src/test/resources/pdfs/example.pdf");
@@ -39,7 +39,7 @@ public class AutoCropTest {
 	}
 
 	@Test
-	public void testCropWithPasswordProtectedFile() throws Exception {
+	void testCropWithPasswordProtectedFile() throws Exception {
 		Path outputDirectory = Files.createTempDirectory(AutoCropTest.class.getCanonicalName());
 
 		Path documentPath = Paths.get("src/test/resources/pdfs/example-protected.pdf");
