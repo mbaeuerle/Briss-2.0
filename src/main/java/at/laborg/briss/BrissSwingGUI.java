@@ -129,8 +129,6 @@ public class BrissSwingGUI implements BrissGUIApp {
 
 	// Use AWT FileDialog for native file chooser
 	private final FileDialog fileChooser;
-	private DragAndDropPanel dndPanel;
-	private JScrollPane scrollPane;
 	private CardLayout cardLayout;
 	private JPanel wrapperPanel;
 	private JButton showPreview;
@@ -208,13 +206,14 @@ public class BrissSwingGUI implements BrissGUIApp {
 		showPreview.addActionListener(a -> showPreview());
 		showPreview.setVisible(false);
 
-		scrollPane = new JScrollPane(previewPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+		JScrollPane scrollPane = new JScrollPane(previewPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setVisible(true);
 		scrollPane.setBorder(null);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(30);
 
-		dndPanel = new DragAndDropPanel(loadDragAndDropLabelImage(), e -> showOpenFileDialog());
+		DragAndDropPanel dndPanel = new DragAndDropPanel(loadDragAndDropLabelImage(), e -> showOpenFileDialog());
+
 		new FileDrop(dndPanel, true, files -> {
 			if (files.length == 1) {
 				File file = files[0];
