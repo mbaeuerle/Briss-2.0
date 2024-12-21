@@ -14,10 +14,6 @@ public interface BrissGUIApp {
 
 	void deselectAllRects();
 
-	void setDefinedSizeSelRects();
-
-	void setPositionSelRects();
-
 	void resizeSelRects(int w, int h);
 
 	void importNewPdfFile(File loadFile) throws IOException, PdfException;
