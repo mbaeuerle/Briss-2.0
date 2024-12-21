@@ -468,11 +468,10 @@ public class BrissSwingGUI implements BrissGUIApp {
 	}
 
 	private static PageExcludes getExcludedPages() {
-		boolean inputIsValid = false;
 		String previousInput = "";
 
 		// repeat show_dialog until valid input or canceled
-		while (!inputIsValid) {
+		while (true) {
 			String input = JOptionPane.showInputDialog(Messages.getString("BrissGUI.excludedPagesInfo"), previousInput);
 			previousInput = input;
 
@@ -486,7 +485,6 @@ public class BrissSwingGUI implements BrissGUIApp {
 			}
 
 		}
-		return null;
 	}
 
 	@Override
