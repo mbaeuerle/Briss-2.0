@@ -255,7 +255,6 @@ public class BrissSwingGUI implements BrissGUIApp {
 		menuBar.add(helpMenu);
 
 		JMenuItem loadButton = new JMenuItem(Messages.getString("BrissGUI.loadFile"), KeyEvent.VK_L); // $NON-NLS-1$
-		loadButton = new JMenuItem(Messages.getString("BrissGUI.loadFile"), KeyEvent.VK_L); // $NON-NLS-1$
 		loadButton.setEnabled(true);
 		loadButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
 		loadButton.addActionListener(a -> showOpenFileDialog());
@@ -264,12 +263,10 @@ public class BrissSwingGUI implements BrissGUIApp {
 		fileMenu.addSeparator();
 
 		JMenuItem exitButton = new JMenuItem(Messages.getString("BrissGUI.exit"), KeyEvent.VK_E); // $NON-NLS-1$
-		exitButton = new JMenuItem(Messages.getString("BrissGUI.exit"), KeyEvent.VK_E); // $NON-NLS-1$
 		exitButton.addActionListener(a -> System.exit(0));
 		fileMenu.add(exitButton);
 
 		JMenuItem openDonationLinkButton = new JMenuItem(Messages.getString("BrissGUI.donate")); // $NON-NLS-1$
-		openDonationLinkButton = new JMenuItem(Messages.getString("BrissGUI.donate")); // $NON-NLS-1$
 		openDonationLinkButton.addActionListener(a -> {
 			try {
 				if (Desktop.isDesktopSupported()) {
@@ -283,7 +280,6 @@ public class BrissSwingGUI implements BrissGUIApp {
 		helpMenu.add(openDonationLinkButton);
 
 		JMenuItem showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); // $NON-NLS-1$
-		showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); // $NON-NLS-1$
 		showHelpButton.addActionListener(a -> new HelpDialog(mainWindow, Messages.getString("BrissGUI.brissHelp"),
 				Dialog.ModalityType.MODELESS));
 		helpMenu.add(showHelpButton);
