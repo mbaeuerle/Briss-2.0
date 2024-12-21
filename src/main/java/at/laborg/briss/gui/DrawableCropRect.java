@@ -147,7 +147,7 @@ public class DrawableCropRect extends Rectangle {
 				ratio = 1 / ratio;
 			}
 			// Locale.ROOT forces a dot as separator
-			size +=	String.format(Locale.ROOT, " 1:%.2f", ratio);
+			size += String.format(Locale.ROOT, " 1:%.2f", ratio);
 		}
 		g2.setFont(scaleFont(size, fontMetrics));
 		g2.setColor(Color.YELLOW);
