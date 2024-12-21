@@ -393,8 +393,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		File tmpCropFileDestination = File.createTempFile("briss", ".pdf"); // $NON-NLS-1$ //$NON-NLS-2$
 		CropDefinition cropDefinition = CropDefinition.createCropDefinition(workingSet.getSourceFile(),
 				tmpCropFileDestination, workingSet.getClusterDefinition());
-		File result = DocumentCropper.crop(cropDefinition, workingSet.getSourceFilePassword());
-		return result;
+		return DocumentCropper.crop(cropDefinition, workingSet.getSourceFilePassword());
 	}
 
 	private void setIdleState() {
@@ -481,8 +480,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 				return null;
 
 			try {
-				PageExcludes pageExcludes = new PageExcludes(PageNumberParser.parsePageNumber(input));
-				return pageExcludes;
+				return new PageExcludes(PageNumberParser.parsePageNumber(input));
 			} catch (ParseException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage(), "Input Error", JOptionPane.ERROR_MESSAGE);
 			}
