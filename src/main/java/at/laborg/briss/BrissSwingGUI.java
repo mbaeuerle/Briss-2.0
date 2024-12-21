@@ -475,7 +475,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 			String input = JOptionPane.showInputDialog(Messages.getString("BrissGUI.excludedPagesInfo"), previousInput);
 			previousInput = input;
 
-			if (input == null || input.equals(""))
+			if (input == null || input.isEmpty())
 				return null;
 
 			try {
