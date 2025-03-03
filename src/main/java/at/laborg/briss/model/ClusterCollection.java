@@ -20,8 +20,8 @@ package at.laborg.briss.model;
 import java.util.*;
 
 public class ClusterCollection {
-	private HashMap<Integer, SingleCluster> pageToClustersMapping;
-	private HashMap<SingleCluster, List<Integer>> clusterToPagesMapping;
+	private final HashMap<Integer, SingleCluster> pageToClustersMapping;
+	private final HashMap<SingleCluster, List<Integer>> clusterToPagesMapping;
 	private boolean dirty;
 
 	public ClusterCollection() {

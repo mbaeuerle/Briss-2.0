@@ -129,8 +129,6 @@ public class BrissSwingGUI implements BrissGUIApp {
 
 	// Use AWT FileDialog for native file chooser
 	private final FileDialog fileChooser;
-	private DragAndDropPanel dndPanel;
-	private JScrollPane scrollPane;
 	private CardLayout cardLayout;
 	private JPanel wrapperPanel;
 	private JButton showPreview;
@@ -208,13 +206,14 @@ public class BrissSwingGUI implements BrissGUIApp {
 		showPreview.addActionListener(a -> showPreview());
 		showPreview.setVisible(false);
 
-		scrollPane = new JScrollPane(previewPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+		JScrollPane scrollPane = new JScrollPane(previewPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setVisible(true);
 		scrollPane.setBorder(null);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(30);
 
-		dndPanel = new DragAndDropPanel(loadDragAndDropLabelImage(), e -> showOpenFileDialog());
+		DragAndDropPanel dndPanel = new DragAndDropPanel(loadDragAndDropLabelImage(), e -> showOpenFileDialog());
+
 		new FileDrop(dndPanel, true, files -> {
 			if (files.length == 1) {
 				File file = files[0];
@@ -256,7 +255,6 @@ public class BrissSwingGUI implements BrissGUIApp {
 		menuBar.add(helpMenu);
 
 		JMenuItem loadButton = new JMenuItem(Messages.getString("BrissGUI.loadFile"), KeyEvent.VK_L); // $NON-NLS-1$
-		loadButton = new JMenuItem(Messages.getString("BrissGUI.loadFile"), KeyEvent.VK_L); // $NON-NLS-1$
 		loadButton.setEnabled(true);
 		loadButton.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 0));
 		loadButton.addActionListener(a -> showOpenFileDialog());
@@ -265,12 +263,10 @@ public class BrissSwingGUI implements BrissGUIApp {
 		fileMenu.addSeparator();
 
 		JMenuItem exitButton = new JMenuItem(Messages.getString("BrissGUI.exit"), KeyEvent.VK_E); // $NON-NLS-1$
-		exitButton = new JMenuItem(Messages.getString("BrissGUI.exit"), KeyEvent.VK_E); // $NON-NLS-1$
 		exitButton.addActionListener(a -> System.exit(0));
 		fileMenu.add(exitButton);
 
 		JMenuItem openDonationLinkButton = new JMenuItem(Messages.getString("BrissGUI.donate")); // $NON-NLS-1$
-		openDonationLinkButton = new JMenuItem(Messages.getString("BrissGUI.donate")); // $NON-NLS-1$
 		openDonationLinkButton.addActionListener(a -> {
 			try {
 				if (Desktop.isDesktopSupported()) {
@@ -284,7 +280,6 @@ public class BrissSwingGUI implements BrissGUIApp {
 		helpMenu.add(openDonationLinkButton);
 
 		JMenuItem showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); // $NON-NLS-1$
-		showHelpButton = new JMenuItem(Messages.getString("BrissGUI.showHelp")); // $NON-NLS-1$
 		showHelpButton.addActionListener(a -> new HelpDialog(mainWindow, Messages.getString("BrissGUI.brissHelp"),
 				Dialog.ModalityType.MODELESS));
 		helpMenu.add(showHelpButton);
@@ -474,15 +469,14 @@ public class BrissSwingGUI implements BrissGUIApp {
 	}
 
 	private static PageExcludes getExcludedPages() {
-		boolean inputIsValid = false;
 		String previousInput = "";
 
 		// repeat show_dialog until valid input or canceled
-		while (!inputIsValid) {
+		while (true) {
 			String input = JOptionPane.showInputDialog(Messages.getString("BrissGUI.excludedPagesInfo"), previousInput);
 			previousInput = input;
 
-			if (input == null || input.equals(""))
+			if (input == null || input.isEmpty())
 				return null;
 
 			try {
@@ -492,7 +486,6 @@ public class BrissSwingGUI implements BrissGUIApp {
 			}
 
 		}
-		return null;
 	}
 
 	@Override
@@ -526,117 +519,6 @@ public class BrissSwingGUI implements BrissGUIApp {
 	public void deselectAllRects() {
 		for (MergedPanel mp : mergedPanels) {
 			mp.selectCrops(false);
-		}
-	}
-
-	@Override
-	public void setDefinedSizeSelRects() {
-		// set size of selected rectangles
-		// based on user input
-
-		String defInput = ""; // $NON-NLS-1$
-
-		// get maximum dimensions
-		int maxWidth = -1;
-		int maxHeight = -1;
-		for (MergedPanel panel : mergedPanels) {
-			int panelMaxWidth = panel.getWidestSelectedRect();
-			if (maxWidth < panelMaxWidth) {
-				maxWidth = panelMaxWidth;
-			}
-			int panelMaxHeight = panel.getHighestSelectedRect();
-			if (maxHeight < panelMaxHeight) {
-				maxHeight = panelMaxHeight;
-			}
-		}
-		if ((maxWidth >= 0) && (maxHeight >= 0)) {
-			maxWidth = Math.round(25.4f * maxWidth / 72f);
-			maxHeight = Math.round(25.4f * maxHeight / 72f);
-			defInput = maxWidth + " " + maxHeight; // $NON-NLS-1$
-		}
-
-		// get user input
-		// maximums are used as a default
-		String input = JOptionPane.showInputDialog(Messages.getString("BrissGUI.size"), defInput);
-
-		if (input == null || input.equals("")) // $NON-NLS-1$
-			return;
-
-		String[] dims = input.split(" ", 2); // $NON-NLS-1$
-		if (dims.length != 2)
-			return;
-
-		int w = -1;
-		int h = -1;
-		try {
-			w = Integer.parseInt(dims[0]);
-			h = Integer.parseInt(dims[1]);
-		} catch (NumberFormatException e) {
-			return;
-		}
-
-		// convert from milimeters to points
-		w = Math.round(w * 72f / 25.4f);
-		h = Math.round(h * 72f / 25.4f);
-
-		for (MergedPanel mp : mergedPanels) {
-			mp.setSelCropWidth(w);
-			mp.setSelCropHeight(h);
-		}
-	}
-
-	@Override
-	public void setPositionSelRects() {
-		// set position of selected rectangles
-		// based on user input
-
-		String defInput = ""; // $NON-NLS-1$
-
-		// get minimums of positions
-		int minX = Integer.MAX_VALUE;
-		int minY = Integer.MAX_VALUE;
-		for (MergedPanel panel : mergedPanels) {
-			int panelMinX = panel.getLeftmostSelectedRect();
-			if (minX > panelMinX) {
-				minX = panelMinX;
-			}
-			int panelMinY = panel.getUpmostSelectedRect();
-			if (minY > panelMinY) {
-				minY = panelMinY;
-			}
-		}
-		if ((minX < Integer.MAX_VALUE) && (minY < Integer.MAX_VALUE)) {
-			minX = Math.round(25.4f * minX / 72f);
-			minY = Math.round(25.4f * minY / 72f);
-			defInput = minX + " " + minY; // $NON-NLS-1$
-		}
-
-		// get user input
-		// minimums are used as a default
-		String input = JOptionPane.showInputDialog(Messages.getString("BrissGUI.position"), defInput);
-
-		if (input == null || input.equals("")) // $NON-NLS-1$
-			return;
-
-		String[] dims = input.split(" ", 2); // $NON-NLS-1$
-		if (dims.length != 2)
-			return;
-
-		int x = -1;
-		int y = -1;
-		try {
-			x = Integer.parseInt(dims[0]);
-			y = Integer.parseInt(dims[1]);
-		} catch (NumberFormatException e) {
-			return;
-		}
-
-		// convert from milimeters to points
-		x = Math.round(x * 72f / 25.4f);
-		y = Math.round(y * 72f / 25.4f);
-
-		for (MergedPanel mp : mergedPanels) {
-			mp.moveToSelectedCrops(x, y);
 		}
 	}
 
@@ -712,7 +594,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		private final File source;
 		private final PageExcludes pageExcludes;
 		private ClusterDefinition clusterDefinition = null;
-		private String password;
+		private final String password;
 
 		public ClusterPagesTask(File source, String password, PageExcludes pageExcludes) {
 			super();

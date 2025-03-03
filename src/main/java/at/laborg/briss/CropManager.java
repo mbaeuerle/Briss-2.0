@@ -28,6 +28,7 @@ import com.itextpdf.text.pdf.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class CropManager {
 		Document document = new Document();
 
 		File resultFile = File.createTempFile("cropped", ".pdf");
-		PdfSmartCopy pdfCopy = new PdfSmartCopy(document, new FileOutputStream(resultFile));
+		PdfSmartCopy pdfCopy = new PdfSmartCopy(document, Files.newOutputStream(resultFile.toPath()));
 		document.open();
 		PdfImportedPage page;
 
@@ -94,7 +95,7 @@ public class CropManager {
 	private static void cropMultipliedFile(File source, CropJob cropJob) throws DocumentException, IOException {
 
 		PdfReader reader = new PdfReader(source.getAbsolutePath());
-		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(cropJob.getDestinationFile()));
+		PdfStamper stamper = new PdfStamper(reader, Files.newOutputStream(cropJob.getDestinationFile().toPath()));
 		stamper.setMoreInfo(cropJob.getSourceMetaInfo());
 
 		PdfDictionary pageDict;
