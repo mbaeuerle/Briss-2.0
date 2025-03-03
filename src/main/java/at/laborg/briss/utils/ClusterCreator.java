@@ -34,7 +34,7 @@ public final class ClusterCreator {
 			throws IOException {
 		PdfReader reader = PDFReaderUtil.getPdfReader(source.getAbsolutePath(), password);
 
-		ClusterDefinition clusters = new ClusterDefinition();
+		var clusters = new ClusterDefinition();
 
 		for (int page = 1; page <= reader.getNumberOfPages(); page++) {
 
