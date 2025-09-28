@@ -85,17 +85,17 @@ public class ClusterManager {
 		public void run() {
 			File source = new File(clusterJob.getSource().getAbsolutePath());
 
-            try (PDFImageExtractor pdfImageExtractor = new PDFImageExtractor(source, null)) {
-                for (SingleCluster cluster : clusterJob.getClusterCollection().getAsList()) {
-                    for (Integer pageNumber : cluster.getPagesToMerge()) {
-                        BufferedImage renderedPage = pdfImageExtractor.extractImage(pageNumber - 1);
-                        cluster.getImageData().addImageToPreview(renderedPage);
-                        workerUnitCounter++;
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+			try (PDFImageExtractor pdfImageExtractor = new PDFImageExtractor(source, null)) {
+				for (SingleCluster cluster : clusterJob.getClusterCollection().getAsList()) {
+					for (Integer pageNumber : cluster.getPagesToMerge()) {
+						BufferedImage renderedPage = pdfImageExtractor.extractImage(pageNumber - 1);
+						cluster.getImageData().addImageToPreview(renderedPage);
+						workerUnitCounter++;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

@@ -10,22 +10,21 @@ import java.io.File;
 import java.io.IOException;
 
 public class PDFImageExtractor implements AutoCloseable {
-    private final PDDocument document;
-    private final PDFRenderer pdfRenderer;
+	private final PDDocument document;
+	private final PDFRenderer pdfRenderer;
 
-    public PDFImageExtractor(File pdfFile, String password) throws IOException {
-        this.document = Loader.loadPDF(pdfFile, password);
+	public PDFImageExtractor(File pdfFile, String password) throws IOException {
+		this.document = Loader.loadPDF(pdfFile, password);
 
-        this.pdfRenderer = new PDFRenderer(document);
-    }
+		this.pdfRenderer = new PDFRenderer(document);
+	}
 
-    public BufferedImage extractImage(int pageNumber) throws IOException {
-        return pdfRenderer.renderImageWithDPI(
-            pageNumber, 300, ImageType.RGB);
-    }
+	public BufferedImage extractImage(int pageNumber) throws IOException {
+		return pdfRenderer.renderImageWithDPI(pageNumber, 300, ImageType.RGB);
+	}
 
-    @Override
-    public void close() throws IOException {
-        this.document.close();
-    }
+	@Override
+	public void close() throws IOException {
+		this.document.close();
+	}
 }

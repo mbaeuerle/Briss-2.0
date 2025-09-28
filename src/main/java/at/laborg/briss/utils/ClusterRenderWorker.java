@@ -25,15 +25,15 @@ public class ClusterRenderWorker extends Thread {
 	@Override
 	public final void run() {
 		try (PDFImageExtractor pdfImageExtractor = new PDFImageExtractor(source, password)) {
-            for (PageCluster cluster : clusters.getClusterList()) {
-                for (Integer pageNumber : cluster.getPagesToMerge()) {
-                    BufferedImage renderedPage = pdfImageExtractor.extractImage(pageNumber - 1);
-                    cluster.getImageData().addImageToPreview(renderedPage);
-                    workerUnitCounter++;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+			for (PageCluster cluster : clusters.getClusterList()) {
+				for (Integer pageNumber : cluster.getPagesToMerge()) {
+					BufferedImage renderedPage = pdfImageExtractor.extractImage(pageNumber - 1);
+					cluster.getImageData().addImageToPreview(renderedPage);
+					workerUnitCounter++;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
