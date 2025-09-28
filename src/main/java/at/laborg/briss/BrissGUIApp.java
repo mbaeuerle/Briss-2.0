@@ -2,7 +2,6 @@ package at.laborg.briss;
 
 import java.io.File;
 import java.io.IOException;
-import org.jpedal.exception.PdfException;
 
 public interface BrissGUIApp {
 
@@ -16,5 +15,5 @@ public interface BrissGUIApp {
 
 	void resizeSelRects(int w, int h);
 
-	void importNewPdfFile(File loadFile) throws IOException, PdfException;
+	void importNewPdfFile(File loadFile) throws IOException;
 }

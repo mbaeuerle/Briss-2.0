@@ -20,17 +20,17 @@ package at.laborg.briss;
 import at.laborg.briss.model.ClusterCollection;
 import at.laborg.briss.model.ClusterJob;
 import at.laborg.briss.model.SingleCluster;
+import at.laborg.briss.utils.PDFImageExtractor;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfReader;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import org.jpedal.PdfDecoder;
-import org.jpedal.exception.PdfException;
 
 public class ClusterManager {
 
-	public static ClusterJob createClusterJob(File origFile) throws IOException, PdfException {
+	public static ClusterJob createClusterJob(File origFile) throws IOException {
 
 		PdfReader reader = new PdfReader(origFile.getAbsolutePath());
 		ClusterJob clusterJob = new ClusterJob(origFile);
@@ -83,27 +83,19 @@ public class ClusterManager {
 
 		@Override
 		public void run() {
-			PdfDecoder pdfDecoder = new PdfDecoder(true);
-			try {
-				pdfDecoder.openPdfFile(clusterJob.getSource().getAbsolutePath());
-			} catch (PdfException e1) {
-				e1.printStackTrace();
-			}
+			File source = new File(clusterJob.getSource().getAbsolutePath());
 
-			for (SingleCluster cluster : clusterJob.getClusterCollection().getAsList()) {
-				for (Integer pageNumber : cluster.getPagesToMerge()) {
-					try {
-						BufferedImage renderedPage = pdfDecoder.getPageAsImage(pageNumber);
-						cluster.getImageData().addImageToPreview(renderedPage);
-						workerUnitCounter++;
-					} catch (PdfException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-			// now close the reader as it's not used anymore
-			pdfDecoder.closePdfFile();
+            try (PDFImageExtractor pdfImageExtractor = new PDFImageExtractor(source, null)) {
+                for (SingleCluster cluster : clusterJob.getClusterCollection().getAsList()) {
+                    for (Integer pageNumber : cluster.getPagesToMerge()) {
+                        BufferedImage renderedPage = pdfImageExtractor.extractImage(pageNumber - 1);
+                        cluster.getImageData().addImageToPreview(renderedPage);
+                        workerUnitCounter++;
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 		}
 	}
 }
