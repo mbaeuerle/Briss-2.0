@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.swing.TransferHandler;
-import org.jpedal.exception.PdfException;
 
 final class BrissTransferHandler extends TransferHandler {
 
@@ -69,7 +68,7 @@ final class BrissTransferHandler extends TransferHandler {
 					}
 					try {
 						this.brissGUI.importNewPdfFile(loadFile);
-					} catch (PdfException e) {
+					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}

@@ -82,7 +82,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import org.jpedal.exception.PdfException;
 
 /**
  * @author gerhard, hybridtupel
@@ -155,7 +154,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		if (fileArg.exists() && fileArg.getAbsolutePath().trim().endsWith(".pdf")) { // $NON-NLS-1$
 			try {
 				importNewPdfFile(fileArg);
-			} catch (IOException | PdfException e) {
+			} catch (IOException e) {
 				JOptionPane.showMessageDialog(mainWindow, e.getMessage(), Messages.getString("BrissGUI.brissError"),
 						JOptionPane.ERROR_MESSAGE); // $NON-NLS-1$
 			}
@@ -351,7 +350,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(mainWindow, e.getMessage(), Messages.getString("BrissGUI."),
 					JOptionPane.ERROR_MESSAGE); // $NON-NLS-1$
-		} catch (PdfException e) {
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(mainWindow, e.getMessage(), Messages.getString("BrissGUI.loadingError"),
 					JOptionPane.ERROR_MESSAGE); // $NON-NLS-1$
 		}
@@ -409,7 +408,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		mainWindow.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 	}
 
-	public void importNewPdfFile(File loadFile) throws IOException, PdfException {
+	public void importNewPdfFile(File loadFile) throws IOException {
 		String password = null;
 
 		if (PDFReaderUtil.isEncrypted(loadFile.getAbsolutePath())) {
