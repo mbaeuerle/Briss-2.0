@@ -25,7 +25,7 @@ public class PDFImageExtractor implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws IOException {
         this.document.close();
     }
 }
