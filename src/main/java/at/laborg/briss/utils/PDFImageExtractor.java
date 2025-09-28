@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class PDFImageExtractor implements AutoCloseable{
+public class PDFImageExtractor implements AutoCloseable {
     private final PDDocument document;
     private final PDFRenderer pdfRenderer;
 
