@@ -82,6 +82,6 @@ You can find the built version in `build/distributions`
 ## Libraries used
  * This software uses two libraries to render and crop PDF files: 
   * itext (AGPLv3) http://itextpdf.com/ 
-  * jpedal (LGPL) http://www.jpedal.org/
+  * Apache PDFBox (Apache-2.0) https://pdfbox.apache.org/
   * JavaFX (GPLv2) https://openjfx.io
   
