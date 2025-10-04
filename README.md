@@ -1,5 +1,5 @@
 # Briss 2.0 
-![Java CI with Gradle](https://github.com/mbaeuerle/Briss-2.0/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=master)
+![Java CI with Gradle](https://github.com/mbaeuerle/Briss-2.0/actions/workflows/gradle.yml/badge.svg)
 
 Briss is a small application to crop PDF files. It is useful for example to crop whitespaces at the edeges so text is rendered bigger on small screens like eInk displays or tablet PCs.
 
