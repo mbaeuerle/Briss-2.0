@@ -50,9 +50,8 @@ public class ClusterImageData {
 
 	private BufferedImage renderOutputImage() {
 		if ((outputImageWidth <= 0) || (outputImageHeight <= 0)) {
-			// we have no image data - the PDF renderer was probably not able to provide us with
-			// the data
-			// so we create an empty image
+			// we have no image data - the PDF renderer was probably not able to provide us
+			// with the data so we create an empty image
 			BufferedImage im = new BufferedImage(100, 100, BufferedImage.TYPE_BYTE_BINARY);
 			WritableRaster raster = im.getRaster();
 			for (int h = 0; h < 100; h++)
