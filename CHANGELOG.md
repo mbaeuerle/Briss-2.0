@@ -22,6 +22,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+* [Issue-91] Migrate from JPedal to Apache PDFBox since the former has been removed from public repositories.
+
 ## [2.0-alpha 5]
 
 ### Added
