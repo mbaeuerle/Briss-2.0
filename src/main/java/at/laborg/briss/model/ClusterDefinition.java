@@ -22,14 +22,10 @@ import java.util.List;
 
 public class ClusterDefinition {
 
-	private final List<PageCluster> clusters = new ArrayList<PageCluster>();
+	private final List<PageCluster> clusters = new ArrayList<>();
 
 	public final PageCluster getSingleCluster(final int pageNumber) {
-		for (PageCluster cluster : clusters) {
-			if (cluster.getAllPages().contains(pageNumber))
-				return cluster;
-		}
-		return null;
+		return clusters.stream().filter(e -> e.getAllPages().contains(pageNumber)).findFirst().orElse(null);
 	}
 
 	public final List<PageCluster> getClusterList() {
@@ -46,24 +42,14 @@ public class ClusterDefinition {
 	}
 
 	private PageCluster findNearlyEqualCluster(final PageCluster clusterToCheck) {
-		for (PageCluster cluster : clusters) {
-			if (cluster.isClusterNearlyEqual(clusterToCheck))
-				return cluster;
-		}
-		return null;
+		return clusters.stream().filter(e -> e.isClusterNearlyEqual(clusterToCheck)).findFirst().orElse(null);
 	}
 
 	public final void selectAndSetPagesForMerging() {
-		for (PageCluster cluster : clusters) {
-			cluster.choosePagesToMerge();
-		}
+		clusters.forEach(c -> c.choosePagesToMerge());
 	}
 
 	public final int getNrOfPagesToRender() {
-		int size = 0;
-		for (PageCluster cluster : clusters) {
-			size += cluster.getPagesToMerge().size();
-		}
-		return size;
+		return clusters.stream().mapToInt(e -> e.getPagesToMerge().size()).sum();
 	}
 }

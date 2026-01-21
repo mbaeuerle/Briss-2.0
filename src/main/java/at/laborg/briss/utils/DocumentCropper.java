@@ -46,9 +46,6 @@ import java.util.StringTokenizer;
 
 public final class DocumentCropper {
 
-	private DocumentCropper() {
-	}
-
 	public static File crop(final CropDefinition cropDefinition, String password)
 			throws IOException, DocumentException, CropException {
 
@@ -57,7 +54,7 @@ public final class DocumentCropper {
 			throw new IOException("Destination file not valid");
 
 		// read out necessary meta information
-		PdfMetaInformation pdfMetaInformation = new PdfMetaInformation(cropDefinition.getSourceFile(), password);
+		var pdfMetaInformation = new PdfMetaInformation(cropDefinition.getSourceFile(), password);
 
 		// first make a copy containing the right amount of pages
 		File intermediatePdf = copyToMultiplePages(cropDefinition, pdfMetaInformation, password);
@@ -72,7 +69,7 @@ public final class DocumentCropper {
 
 		PdfReader reader = PDFReaderUtil.getPdfReader(cropDefinition.getSourceFile().getAbsolutePath(), password);
 		HashMap<String, String> map = SimpleNamedDestination.getNamedDestination(reader, false);
-		Document document = new Document();
+		var document = new Document();
 
 		File resultFile = File.createTempFile("cropped", ".pdf");
 		try (OutputStream outputStream = Files.newOutputStream(resultFile.toPath())) {

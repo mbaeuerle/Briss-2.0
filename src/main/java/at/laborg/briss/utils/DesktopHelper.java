@@ -42,6 +42,7 @@ public final class DesktopHelper {
 				donationURI = new URI(uri);
 				desktop.browse(donationURI);
 			} catch (URISyntaxException e) {
+				System.out.println("Exception Occurred !! " + e.getMessage());
 			}
 		}
 	}

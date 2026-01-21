@@ -26,9 +26,6 @@ import java.util.regex.Pattern;
 
 public final class PageNumberParser {
 
-	private PageNumberParser() {
-	}
-
 	/**
 	 * Super simple page-number parser. It handles entries like: "1-2;34;3-16"
 	 *
@@ -48,7 +45,7 @@ public final class PageNumberParser {
 		// now tokenize by ;
 		StringTokenizer tokenizer = new StringTokenizer(input, ";");
 
-		Set<Integer> pNS = new HashSet<Integer>();
+		Set<Integer> pNS = new HashSet<>();
 		while (tokenizer.hasMoreElements()) {
 			pNS.addAll(extractPageNumbers(tokenizer.nextToken()));
 		}
@@ -59,7 +56,7 @@ public final class PageNumberParser {
 	private static Set<Integer> extractPageNumbers(final String input) throws ParseException {
 
 		StringTokenizer tokenizer = new StringTokenizer(input, "-");
-		Set<Integer> returnSet = new HashSet<Integer>();
+		Set<Integer> returnSet = new HashSet<>();
 		if (tokenizer.countTokens() == 1) {
 			// it's only a number, lets parse it
 			Integer pageNumber = Integer.parseInt(input);

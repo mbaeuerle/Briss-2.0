@@ -1,10 +1,6 @@
 package at.laborg.briss.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
+import javax.swing.*;
 
 public class ClusterConfigurationDialog extends JDialog {
 
@@ -23,11 +19,7 @@ public class ClusterConfigurationDialog extends JDialog {
 		okButton = new JButton(OK_STRING);
 		this.add(evenAndOddChecker);
 		this.add(okButton);
-		okButton.addActionListener(new ActionListener() {
-			public void actionPerformed(final ActionEvent e) {
-				okPressed();
-			}
-		});
+		okButton.addActionListener(e -> okPressed());
 	}
 
 	private void okPressed() {

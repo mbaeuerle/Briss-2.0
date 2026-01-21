@@ -98,7 +98,7 @@ public class WrapLayout extends FlowLayout {
 	 */
 	private Dimension layoutSize(final Container target, final boolean preferred) {
 		synchronized (target.getTreeLock()) {
-			// Each row must fit with the width allocated to the containter.
+			// Each row must fit with the width allocated to the container.
 			// When the container width = 0, the preferred width of the
 			// container
 			// has not yet been calculated so lets ask for the maximum.

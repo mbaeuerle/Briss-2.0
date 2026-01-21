@@ -86,7 +86,7 @@ public class ImageFinderUtil {
 
 	public static double[] createSdOfDerivation(final double[] diffOut) {
 
-		double[] sds = new double[diffOut.length];
+		var sds = new double[diffOut.length];
 
 		for (int i = 0; i < diffOut.length; i++) {
 			double[] tmp = new double[SD_CALC_SIZE_NR];

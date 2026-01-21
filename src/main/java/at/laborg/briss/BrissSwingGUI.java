@@ -305,6 +305,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 		} catch (UnsupportedLookAndFeelException ex) {
 			System.out.println(Messages.getString("BrissGUI.lookAndFeelError")); // $NON-NLS-1$
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			System.out.println("Exception Occurred !! " + e.getMessage());
 		}
 	}
 
@@ -632,6 +633,7 @@ public class BrissSwingGUI implements BrissGUIApp {
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
+					System.out.println("Exception Occurred !! " + e.getMessage());
 				}
 			}
 

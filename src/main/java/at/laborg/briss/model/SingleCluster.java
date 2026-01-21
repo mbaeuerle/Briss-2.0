@@ -43,7 +43,7 @@ public class SingleCluster implements Comparable<SingleCluster> {
 		this.pageHeight = pageHeight;
 		this.evenPage = isEvenPage;
 		this.excludedPageNumber = excludedPageNumber;
-		this.pagesToMerge = new ArrayList<Integer>();
+		this.pagesToMerge = new ArrayList<>();
 	}
 
 	public ClusterImageData getImageData() {
